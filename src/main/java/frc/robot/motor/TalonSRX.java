@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import frc.robot.sensors.Encoder;
 
-
 /*
  * Motor control (talonSRX)
  */
