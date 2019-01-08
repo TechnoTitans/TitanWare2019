@@ -12,11 +12,9 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DriveTrain;
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.SPI;
 
 
@@ -30,8 +28,7 @@ import edu.wpi.first.wpilibj.SPI;
 public class TechnoTitan extends TimedRobot {
   public static OI oi;
   public static DriveTrain drive;
-  public static Gyro gyro;
-  public static AHRS ahrs;
+  public static AHRS navx;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -40,10 +37,8 @@ public class TechnoTitan extends TimedRobot {
   @Override
   public void robotInit() {
     oi = new OI();
-    ahrs = new AHRS(SPI.Port.kMXP);
-    gyro = new AnalogGyro(0);
-    gyro.reset();
-    ahrs.reset();
+    navx = new AHRS(SPI.Port.kMXP);
+    navx.reset();
   }
 
   /**
@@ -56,6 +51,7 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    SmartDashboard.putNumber("Angle", navx.getAngle());
   }
 
   /**
@@ -105,9 +101,6 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putNumber("Angle", ahrs.getAngle());
-    SmartDashboard.putNumber("Angle from sketchy gyro", gyro.getAngle());
-    SmartDashboard.putNumberArray("Velocity", new double[] { ahrs.getVelocityX(), ahrs.getVelocityY(), ahrs.getVelocityZ() });
     Scheduler.getInstance().run();
   }
 

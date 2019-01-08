@@ -1,9 +1,10 @@
 package frc.robot.movements;
 
 import edu.wpi.first.wpilibj.command.Command;
-
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.TechnoTitan;
+import frc.robot.sensors.NavXGyro;
 
 
 public class Turn extends Command {
@@ -11,16 +12,18 @@ public class Turn extends Command {
   private final double minSpeed = .5;
   private double turnSpeed;
   private double turnAngle;
+  private Gyro gyro;
 
   public Turn(double turnAngle, double turnSpeed) {
     requires(TechnoTitan.drive);
     this.turnAngle = turnAngle;
     this.turnSpeed = turnSpeed;
+    gyro = new NavXGyro();
   }
 
   @Override
   protected void initialize() {
-    TechnoTitan.gyro.reset();
+    gyro.reset();
   }
 
   private double getTargetAngle() {
@@ -30,14 +33,14 @@ public class Turn extends Command {
   @Override
   protected void execute() {
     double speed;
-    double gyro = Math.abs(TechnoTitan.gyro.getAngle());
-    SmartDashboard.putNumber("Turn gyro (abs)", gyro);
+    double gyroAngle = Math.abs(gyro.getAngle());
+    SmartDashboard.putNumber("Turn gyro (abs)", gyroAngle);
     SmartDashboard.putNumber("Target angle", getTargetAngle());
     if (turnSpeed > minSpeed) {
-      if (gyro < Math.abs(getTargetAngle()/2)) {
-        speed = minSpeed + increasePerDegree * gyro;
+      if (gyroAngle < Math.abs(getTargetAngle()/2)) {
+        speed = minSpeed + increasePerDegree * gyroAngle;
       } else {
-        speed = minSpeed + increasePerDegree * (Math.abs(getTargetAngle()) - gyro);
+        speed = minSpeed + increasePerDegree * (Math.abs(getTargetAngle()) - gyroAngle);
       }
       if (speed > turnSpeed) {
         speed = turnSpeed;
@@ -54,9 +57,9 @@ public class Turn extends Command {
   protected boolean isFinished() {
     if (timeSinceInitialized() < 0.2) return false;
     if (turnAngle > 0) {
-      return TechnoTitan.gyro.getAngle() > getTargetAngle();
+      return gyro.getAngle() > getTargetAngle();
     } else {
-      return TechnoTitan.gyro.getAngle() < getTargetAngle();
+      return gyro.getAngle() < getTargetAngle();
     }
   }
 
