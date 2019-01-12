@@ -9,11 +9,13 @@ package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.motor.TalonSRX;
 import edu.wpi.first.wpilibj.SPI;
@@ -29,8 +31,8 @@ import edu.wpi.first.wpilibj.SPI;
 public class TechnoTitan extends TimedRobot {
   public static OI oi;
   public static DriveTrain drive;
+  public static Arm arm;
   public static AHRS navx;
-  public static TalonSRX wristTalon;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -41,6 +43,9 @@ public class TechnoTitan extends TimedRobot {
     oi = new OI();
     navx = new AHRS(SPI.Port.kMXP);
     navx.reset();
+    TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
+            elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, false);
+    arm = new Arm(elbow, wrist);
   }
 
   /**
