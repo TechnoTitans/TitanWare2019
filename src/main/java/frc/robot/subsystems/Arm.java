@@ -14,11 +14,19 @@ public class Arm extends Subsystem {
     }
 
     public void moveElbow(double speed) {
-
+      if(speed > 0.01 || speed < -0.01){
+        elbow.set(speed);
+      } else {
+        elbow.set(0);
+      }
     }
 
     public void moveWrist(double speed) {
-
+      if(speed > 0.01 || speed < -0.01){
+        elbow.set(speed);
+      } else {
+        elbow.set(0)
+      }
     }
 
 
