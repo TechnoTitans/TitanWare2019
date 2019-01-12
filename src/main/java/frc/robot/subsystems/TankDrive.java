@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import frc.robot.motor.TalonSRX;
 import frc.robot.sensors.Encoder;
+import frc.robot.sensors.NavXGyro;
 
 /*
  * Controls tank drive
@@ -14,8 +15,7 @@ public class TankDrive extends DriveTrain {
 	private Gyro gyro;
 
 	public TankDrive(TalonSRX leftETalonSRX, TalonSRX rightETalonSRX) {
-		this.left = leftETalonSRX;
-		this.right = rightETalonSRX;
+		this(leftETalonSRX, rightETalonSRX, new NavXGyro());
 	}
 
 	/**
