@@ -8,18 +8,16 @@
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
-
-import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.motor.TalonSRX;
+import frc.robot.movements.ControlDriveTrain;
 import frc.robot.sensors.QuadEncoder;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.motor.TalonSRX;
-import edu.wpi.first.wpilibj.SPI;
 import frc.robot.subsystems.TankDrive;
 
 
@@ -51,7 +49,7 @@ public class TechnoTitan extends TimedRobot {
     navx.reset();
     TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
             elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, false);
-    arm = new Arm(elbow, wrist);
+    arm = new Arm(elbow, wrist, new Solenoid(RobotMap.ARM_PISTON));
 
     TalonSRX leftETalonSRX = new TalonSRX(RobotMap.LEFT_TALON_E, LEFT_REVERSE),
       rightETalonSRX = new TalonSRX(RobotMap.RIGHT_TALON_E, RIGHT_REVERSE);
@@ -118,6 +116,8 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    ControlDriveTrain driveCommand = new ControlDriveTrain(oi);
+    driveCommand.start();
   }
 
   /**
@@ -130,7 +130,6 @@ public class TechnoTitan extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    // Make sure autonomous command is cancelled
   }
 
   /**
