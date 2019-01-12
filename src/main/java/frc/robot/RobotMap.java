@@ -14,11 +14,12 @@ package frc.robot;
  * floating around.
  */
 public class RobotMap {
-  
-  // Elbow and Wrist Talons
-  public static final int WRIST_TALON = -999; // todo calcuate actual value
-  public static final int ELBOW_TALON = -999;
-
+    public static final int WRIST_MOTOR = -1;
+    public static final int ELBOW_MOTOR = -1;
+    // For example to map the left and right motors, you could define the
+  // following variables to use with your drivetrain subsystem.
+  // public static int leftMotor = 1;
+  // public static int rightMotor = 2;
 
   public static int LEFT_JOYSTICK = 0;
   public static int RIGHT_JOYSTICK = 1;
