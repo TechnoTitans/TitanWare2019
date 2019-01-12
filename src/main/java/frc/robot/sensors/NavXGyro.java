@@ -43,7 +43,7 @@ public class NavXGyro implements Gyro {
 
     @Override
     public void free() {
-        TechnoTitan.navx.free();
+        TechnoTitan.navx.close(); // free is depricated, and calls close anyways lmao
     }
 
 }
