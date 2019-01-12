@@ -5,11 +5,10 @@ import frc.robot.motor.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-/**
- * I have no idea what im doing.
- */
+
 public class Wrist extends Subsystem {
-  Private TalonSRX wristTalon;
+  private TalonSRX wristTalon;
+
 
 public Wrist(TalonSRX wristTalon) {
   this.wristTalon = wristTalon;
