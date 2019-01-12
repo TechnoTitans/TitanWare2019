@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.motor.TalonSRX;
 import edu.wpi.first.wpilibj.SPI;
 
 
@@ -29,6 +30,7 @@ public class TechnoTitan extends TimedRobot {
   public static OI oi;
   public static DriveTrain drive;
   public static AHRS navx;
+  public static TalonSRX wristTalon;
 
   /**
    * This function is run when the robot is first started up and should be
