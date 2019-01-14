@@ -116,6 +116,7 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    oi.initialize();
     ControlDriveTrain driveCommand = new ControlDriveTrain(oi);
     driveCommand.start();
   }
