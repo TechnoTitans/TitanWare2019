@@ -19,6 +19,8 @@ import frc.robot.movements.ControlDriveTrainStraight;
  */
 public class OI {
     private Joystick left, right, aux1, aux2;
+    public static final double percentDeadbandThreshold = 0.01;
+
     //// CREATING BUTTONS
     // One type of button is a joystick button which is any button on a
     //// joystick.
@@ -58,20 +60,28 @@ public class OI {
         driveTriggerLeft.whenPressed(new ControlDriveTrainStraight());
     }
 
+    public double clampInput(double input) {
+        if (input > percentDeadbandThreshold || input < -percentDeadbandThreshold) {
+            return input;
+        } else {
+            return 0;
+        }
+    }
+
     public double getLeft() {
-        return -left.getY();
+        return clampInput(-left.getY());
     }
 
     public double getRight() {
-        return -right.getY();
+        return clampInput(-right.getY());
     }
 
     public double getElbowMove() {
-        return -aux1.getY();
+        return clampInput(-aux1.getY());
     }
 
     public double getWristMove() {
-        return -aux2.getY();
+        return clampInput(-aux2.getY());
     }
 
     public boolean toggleArmUp() {
