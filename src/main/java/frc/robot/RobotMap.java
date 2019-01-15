@@ -31,12 +31,12 @@ public class RobotMap {
   public static final int ARM_PISTON = 0;
 
 
-  public static final int WRIST_MOTOR = -1;
-  public static final int ELBOW_MOTOR = -1;
+  public static final int WRIST_MOTOR = 6;
+  public static final int ELBOW_MOTOR = 10;
 
   // Talons with encoders
-  public static final int LEFT_TALON_E = 0, RIGHT_TALON_E = 0;
+  public static final int LEFT_TALON_E = 11, RIGHT_TALON_E = 5;
 
   // Other talons
-  public static final int LEFT_TALON_2 = 1, LEFT_TALON_3 = 2, RIGHT_TALON_2 = 1, RIGHT_TALON_3 = 2;
+  public static final int LEFT_TALON_2 = 12, LEFT_TALON_3 = 13, RIGHT_TALON_2 = 4, RIGHT_TALON_3 = 3;
 }
