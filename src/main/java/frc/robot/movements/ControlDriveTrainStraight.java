@@ -15,9 +15,9 @@ public class ControlDriveTrainStraight extends Command  {
 
     private Filter filter;
 
-    public ControlDriveTrainStraight(OI oi) {
+    public ControlDriveTrainStraight() {
         requires(TechnoTitan.drive);
-        this.oi = oi;
+        this.oi = TechnoTitan.oi;
         gyro = new NavXGyro();
     }
 

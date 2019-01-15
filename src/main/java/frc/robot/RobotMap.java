@@ -25,7 +25,8 @@ public class RobotMap {
   // public static int rangefinderModule = 1;
   public static final int LEFT_JOYSTICK = 0;
   public static final int RIGHT_JOYSTICK = 1;
-  public static final int AUX_JOYSTICK = 2;
+  public static final int AUX_JOYSTICK_1 = 2,
+                          AUX_JOYSTICK_2 = 3;
 
   public static final int ARM_PISTON = 0;
 
@@ -36,5 +37,6 @@ public class RobotMap {
   // Talons with encoders
   public static final int LEFT_TALON_E = 0, RIGHT_TALON_E = 0;
 
+  // Other talons
   public static final int LEFT_TALON_2 = 1, LEFT_TALON_3 = 2, RIGHT_TALON_2 = 1, RIGHT_TALON_3 = 2;
 }

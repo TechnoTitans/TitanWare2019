@@ -16,9 +16,9 @@ public class ControlDriveTrain extends Command {
   private OI oi;
   private Filter leftFilter, rightFilter;
 
-  public ControlDriveTrain(OI oi) {
+  public ControlDriveTrain() {
     requires(TechnoTitan.drive);
-    this.oi = oi;
+    this.oi = TechnoTitan.oi;
   }
 
   // Called just before this Command runs the first time

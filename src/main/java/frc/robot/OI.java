@@ -10,7 +10,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import frc.robot.movements.ControlDriveTrain;
 import frc.robot.movements.ControlDriveTrainStraight;
 
 
@@ -19,7 +18,7 @@ import frc.robot.movements.ControlDriveTrainStraight;
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
-    private Joystick left, right, aux;
+    private Joystick left, right, aux1, aux2;
     //// CREATING BUTTONS
     // One type of button is a joystick button which is any button on a
     //// joystick.
@@ -48,13 +47,15 @@ public class OI {
   // until it is finished as determined by it's isFinished method.
   // button.whenPressed(new ExampleCommand());
 
+    private static final int TOGGLE_ARM_UP_BTN = 0;
+
     public void initialize() {
         left = new Joystick(RobotMap.LEFT_JOYSTICK);
         right = new Joystick(RobotMap.RIGHT_JOYSTICK);
-        aux = new Joystick(RobotMap.AUX_JOYSTICK);
+        aux1 = new Joystick(RobotMap.AUX_JOYSTICK_1);
+        aux2 = new Joystick(RobotMap.AUX_JOYSTICK_2);
         Button driveTriggerLeft = new JoystickButton(left, 0);
-        driveTriggerLeft.whenPressed(new ControlDriveTrainStraight(this));
-        driveTriggerLeft.whenReleased(new ControlDriveTrain(this));
+        driveTriggerLeft.whenPressed(new ControlDriveTrainStraight());
     }
 
     public double getLeft() {
@@ -66,10 +67,14 @@ public class OI {
     }
 
     public double getElbowMove() {
-        return -aux.getY();
+        return -aux1.getY();
     }
 
     public double getWristMove() {
-        return aux.getPOV(0);
+        return -aux2.getY();
+    }
+
+    public boolean toggleArmUp() {
+        return aux1.getRawButtonPressed(TOGGLE_ARM_UP_BTN);
     }
 }
