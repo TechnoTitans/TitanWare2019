@@ -51,7 +51,11 @@ public class OI {
 
     private static final int TOGGLE_ARM_UP_BTN = 0;
 
-    public void initialize() {
+    public OI() {
+        initialize();
+    }
+
+    private void initialize() {
         left = new Joystick(RobotMap.LEFT_JOYSTICK);
         right = new Joystick(RobotMap.RIGHT_JOYSTICK);
         aux1 = new Joystick(RobotMap.AUX_JOYSTICK_1);

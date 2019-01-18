@@ -14,8 +14,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
-import frc.robot.movements.ControlDriveTrain;
-import frc.robot.sensors.AngleSensor;
+import frc.robot.sensors.ArmAngleSensor;
 import frc.robot.sensors.QuadEncoder;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveTrain;
@@ -34,7 +33,7 @@ public class TechnoTitan extends TimedRobot {
   public static DriveTrain drive;
   public static Arm arm;
   public static AHRS navx;
-  public static AngleSensor angleSensor;
+  public static ArmAngleSensor angleSensor;
 
   private static final boolean LEFT_REVERSE = false,
                                 RIGHT_REVERSE = false;
@@ -78,7 +77,7 @@ public class TechnoTitan extends TimedRobot {
     drive = new TankDrive(leftETalonSRX, rightETalonSRX);
 
 
-    angleSensor = new AngleSensor(0);
+    angleSensor = new ArmAngleSensor(0);
   }
 
   /**
@@ -91,7 +90,7 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    SmartDashboard.putNumber("Angle", navx.getAngle());
+    SmartDashboard.putNumber("Gyro", navx.getAngle());
   }
 
   /**
@@ -121,9 +120,7 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    oi.initialize();
-    ControlDriveTrain driveCommand = new ControlDriveTrain();
-    driveCommand.start();
+
   }
 
   /**

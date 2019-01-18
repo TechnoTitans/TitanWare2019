@@ -3,7 +3,7 @@ package frc.robot.sensors;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.PIDSource;
 
-public class AngleSensor extends AnalogInput implements PIDSource {
+public class ArmAngleSensor extends AnalogInput implements PIDSource {
 
     private double sensorValue;
 
@@ -12,7 +12,7 @@ public class AngleSensor extends AnalogInput implements PIDSource {
      *
      * @param channel The channel number to represent. 0-3 are on-board 4-7 are on the MXP port.
      */
-    public AngleSensor(int channel) {
+    public ArmAngleSensor(int channel) {
         super(channel);
     }
 
