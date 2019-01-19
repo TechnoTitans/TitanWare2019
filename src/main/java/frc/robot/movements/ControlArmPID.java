@@ -14,6 +14,7 @@ public class ControlArmPID extends Command {
     private static final double kElbowP = 0;
     private static final double kElbowI = 0;
     private static final double kElbowD = 0;
+    private final ArmPosition positionInfo;
 
 
     private PIDController elbowController;
@@ -33,6 +34,8 @@ public class ControlArmPID extends Command {
         this.wristController.setPercentTolerance(15);
         this.wristController.setSetpoint(positionInfo.getWristAngle());
 
+        this.positionInfo = positionInfo;
+
     }
 
 
@@ -40,6 +43,7 @@ public class ControlArmPID extends Command {
     protected void initialize() {
         this.elbowController.enable();
         this.wristController.enable();
+        TechnoTitan.arm.setArmSolenoid(this.positionInfo.isSolenoidEnabled());
     }
 
     @Override

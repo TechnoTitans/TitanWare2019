@@ -19,7 +19,7 @@ public enum ArmPosition {
 
     // in reference to where it attaches to on elevator to end of wrist
     public double getHorizontalArmLength() {
-        return Arm.ELBOW_LENGTH * Math.sin(this.elbowAngle) + Arm.WRIST_LENGTH * Math.cos(this.wristAngle);
+        return Arm.ELBOW_LENGTH * Math.sin(Math.toRadians(elbowAngle)) + Arm.WRIST_LENGTH * Math.cos(Math.toRadians(wristAngle));
     }
 
     public double getElbowAngle() {

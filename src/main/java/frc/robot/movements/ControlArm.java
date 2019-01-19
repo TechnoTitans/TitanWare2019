@@ -28,8 +28,7 @@ public class ControlArm extends Command {
         TechnoTitan.arm.moveElbow(elbowFilter.getValue());
         TechnoTitan.arm.moveWrist(elbowFilter.getValue());
         if (oi.toggleArmUp()) {
-            isUp = !isUp;
-            TechnoTitan.arm.setArmSolenoid(isUp);
+            TechnoTitan.arm.toggleUp();
         }
     }
 

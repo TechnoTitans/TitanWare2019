@@ -14,6 +14,10 @@ public class Arm extends Subsystem {
     public ArmAngleSensor elbowSensor;
     public ArmAngleSensor wristSensor;
 
+
+
+    private boolean isUp = false;
+
     public static final double ELBOW_LENGTH = 32.7, // in
                                WRIST_LENGTH = 15; // in
 
@@ -38,6 +42,7 @@ public class Arm extends Subsystem {
 
 
     public void setArmSolenoid(boolean on) {
+        this.isUp = on;
         armSolenoid.set(on);
     }
 
@@ -50,9 +55,17 @@ public class Arm extends Subsystem {
     }
 
     public void getCalculatedDistance() {
-
+        // todo implement if needed
     }
 
+    public void toggleUp() {
+        this.setArmSolenoid(!isUp);
+    }
+
+
+    public boolean isUp() {
+        return isUp;
+    }
 
 
     @Override
