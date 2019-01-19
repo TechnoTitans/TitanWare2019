@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
+import frc.robot.movements.ControlArmPID;
 import frc.robot.sensors.ArmAngleSensor;
 import frc.robot.sensors.QuadEncoder;
 import frc.robot.subsystems.Arm;
@@ -33,12 +34,14 @@ public class TechnoTitan extends TimedRobot {
   public static DriveTrain drive;
   public static Arm arm;
   public static AHRS navx;
-  public static ArmAngleSensor angleSensor;
 
   private static final boolean LEFT_REVERSE = false,
                                 RIGHT_REVERSE = false;
 
   private static final double INCHES_PER_PULSE = 0.00475;
+
+
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -48,10 +51,20 @@ public class TechnoTitan extends TimedRobot {
     oi = new OI();
     navx = new AHRS(SPI.Port.kMXP);
     navx.reset();
+
+
+
+    // Arm setup
     TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
             elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, false);
-    arm = new Arm(elbow, wrist, new Solenoid(RobotMap.ARM_PISTON));
 
+    ArmAngleSensor elbowAngleSensor = new ArmAngleSensor(RobotMap.ELBOW_ACCEL);
+    ArmAngleSensor wristAngleSensor = new ArmAngleSensor(RobotMap.WRIST_ACCEL);
+    arm = new Arm(elbow, wrist, new Solenoid(RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
+
+
+
+    // Drivetrain setup
     TalonSRX leftETalonSRX = new TalonSRX(RobotMap.LEFT_TALON_E, LEFT_REVERSE),
       rightETalonSRX = new TalonSRX(RobotMap.RIGHT_TALON_E, RIGHT_REVERSE);
       leftETalonSRX.setEncoder(new QuadEncoder(leftETalonSRX, INCHES_PER_PULSE, true));
@@ -76,8 +89,6 @@ public class TechnoTitan extends TimedRobot {
 
     drive = new TankDrive(leftETalonSRX, rightETalonSRX);
 
-
-    angleSensor = new ArmAngleSensor(0);
   }
 
   /**

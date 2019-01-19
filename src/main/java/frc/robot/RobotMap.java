@@ -39,4 +39,8 @@ public class RobotMap {
 
   // Other talons
   public static final int LEFT_TALON_2 = 12, LEFT_TALON_3 = 13, RIGHT_TALON_2 = 4, RIGHT_TALON_3 = 3;
+
+  // accelerometers
+  public static final int ELBOW_ACCEL = -999;
+  public static final int WRIST_ACCEL = -999;
 }
