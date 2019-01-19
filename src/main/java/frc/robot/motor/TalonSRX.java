@@ -89,7 +89,6 @@ public class TalonSRX extends com.ctre.phoenix.motorcontrol.can.TalonSRX impleme
 		this.encoder = encoder;
 	}
 
-	// TODO: make sure this works.
 	@Override
 	public int getChannel() {
 		return super.getDeviceID();

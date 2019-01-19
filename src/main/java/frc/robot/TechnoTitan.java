@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
 import frc.robot.sensors.ArmAngleSensor;
 import frc.robot.sensors.QuadEncoder;
+import frc.robot.sensors.VisionSensor;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.TankDrive;
@@ -34,9 +35,10 @@ public class TechnoTitan extends TimedRobot {
   public static Arm arm;
   public static AHRS navx;
   public static ArmAngleSensor angleSensor;
+  public static VisionSensor vision;
 
   private static final boolean LEFT_REVERSE = false,
-                                RIGHT_REVERSE = false;
+                               RIGHT_REVERSE = true;
 
   private static final double INCHES_PER_PULSE = 0.00475;
   /**
@@ -49,13 +51,13 @@ public class TechnoTitan extends TimedRobot {
     navx = new AHRS(SPI.Port.kMXP);
     navx.reset();
     TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
-            elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, false);
+             elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, false);
     arm = new Arm(elbow, wrist, new Solenoid(RobotMap.ARM_PISTON));
 
     TalonSRX leftETalonSRX = new TalonSRX(RobotMap.LEFT_TALON_E, LEFT_REVERSE),
-      rightETalonSRX = new TalonSRX(RobotMap.RIGHT_TALON_E, RIGHT_REVERSE);
-      leftETalonSRX.setEncoder(new QuadEncoder(leftETalonSRX, INCHES_PER_PULSE, true));
-      rightETalonSRX.setEncoder(new QuadEncoder(rightETalonSRX, INCHES_PER_PULSE, true));
+             rightETalonSRX = new TalonSRX(RobotMap.RIGHT_TALON_E, RIGHT_REVERSE);
+    leftETalonSRX.setEncoder(new QuadEncoder(leftETalonSRX, INCHES_PER_PULSE, true));
+    rightETalonSRX.setEncoder(new QuadEncoder(rightETalonSRX, INCHES_PER_PULSE, true));
 
     TalonSRX leftFollow1 = new TalonSRX(RobotMap.LEFT_TALON_2, LEFT_REVERSE),
             leftFollow2 = new TalonSRX(RobotMap.LEFT_TALON_3, LEFT_REVERSE),
@@ -91,6 +93,8 @@ public class TechnoTitan extends TimedRobot {
   @Override
   public void robotPeriodic() {
     SmartDashboard.putNumber("Gyro", navx.getAngle());
+    SmartDashboard.putNumber("Encoder left", drive.getLeftEncoder().getDistance());
+    SmartDashboard.putNumber("Encoder right", drive.getRightEncoder().getDistance());
   }
 
   /**

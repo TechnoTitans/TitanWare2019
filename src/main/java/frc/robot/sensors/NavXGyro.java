@@ -26,9 +26,23 @@ public class NavXGyro implements Gyro {
         throw new UnsupportedOperationException("Cannot calibrate navx");
     }
 
+    /**
+     * Resets the gyro so that the next reading of getAngle will be 0
+     * Note: this is implemented so that each individual instance of NavxGyro can be reset without affecting other instances
+     * This allows you to reset without worrying about what else is using the gyro
+     */
     @Override
     public void reset() {
         angle = TechnoTitan.navx.getAngle();
+    }
+
+    /**
+     * Resets such that the gyro reads angle
+     * @param angle The angle that the next call of getAngle() should return
+     */
+    public void resetTo(double angle) {
+        reset(); // sets the "0 angle" to the current direction
+        this.angle -= angle; // subtract angle from the "0 angle"
     }
 
     @Override
