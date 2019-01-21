@@ -1,6 +1,8 @@
 package frc.robot.sensors;
 
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 
 import java.nio.ByteBuffer;
@@ -10,7 +12,7 @@ import static frc.robot.sensors.AccelerometerConstants.*;
 import static java.util.Objects.requireNonNull;
 
 @SuppressWarnings("Duplicates")
-public class Accel_LIS3DH implements Accelerometer {
+public class Accel_LIS3DH implements Accelerometer, PIDSource {
 
     private final I2C i2c_conn;
 
@@ -19,6 +21,8 @@ public class Accel_LIS3DH implements Accelerometer {
     private double x_accel,
                    y_accel,
                    z_accel;
+
+    private PIDSourceType pidSourceType = PIDSourceType.kDisplacement; // todo figure out what this is
 
     /**
      * Represents the adafruit LIS3DH accelerometer
@@ -139,5 +143,38 @@ public class Accel_LIS3DH implements Accelerometer {
     public double getZ() {
         this.updateAllValues();
         return this.z_accel;
+    }
+
+    /**
+     * Calculates the angle on the X-Y plane.
+     * @return The angle at which the sensor is at currently
+     */
+    public double getAngleXY() {
+        return Math.atan(this.getY() / this.getX()); // TODO Test this function
+    }
+
+
+    @Override
+    public void setPIDSourceType(PIDSourceType pidSource) {
+        // TODO maybe throw an error if it is an invalid type?
+        // TODO Figure out what is kDisplacement vs kRate?
+        this.pidSourceType = pidSource;
+    }
+
+    @Override
+    public PIDSourceType getPIDSourceType() {
+        return this.pidSourceType;
+    }
+
+    @Override
+    public double pidGet() {
+        switch (pidSourceType) {
+            case kDisplacement:
+                return this.getAngleXY();
+            case kRate:
+                return this.getX(); // TODO See if this is appropriate
+            default:
+                throw new IllegalStateException("Invalid pidsourcetype at this point in execution");
+        }
     }
 }

@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
-import frc.robot.sensors.AccelerometerTester;
 import frc.robot.sensors.Accel_LIS3DH;
 import frc.robot.sensors.QuadEncoder;
 import frc.robot.subsystems.Arm;
@@ -34,6 +33,9 @@ public class TechnoTitan extends TimedRobot {
   public static DriveTrain drive;
   public static Arm arm;
   public static AHRS navx;
+
+  private Accel_LIS3DH elbowAngleSensor;
+  private Accel_LIS3DH wristAngleSensor;
 
   private static final boolean LEFT_REVERSE = false,
                                 RIGHT_REVERSE = false;
@@ -58,8 +60,9 @@ public class TechnoTitan extends TimedRobot {
     TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
             elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, false);
 
-    Accel_LIS3DH elbowAngleSensor = new Accel_LIS3DH(RobotMap.ELBOW_ACCEL);
-    Accel_LIS3DH wristAngleSensor = new Accel_LIS3DH(RobotMap.WRIST_ACCEL);
+    elbowAngleSensor = new Accel_LIS3DH(RobotMap.ELBOW_ACCEL_ADDR);
+    wristAngleSensor = new Accel_LIS3DH(RobotMap.WRIST_ACCEL_ADDR);
+
     arm = new Arm(elbow, wrist, new Solenoid(RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
 
 
@@ -153,7 +156,7 @@ public class TechnoTitan extends TimedRobot {
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
 
-    SmartDashboard.putBoolean("Accel Test Success", AccelerometerTester.isSensorAccessable());
+    SmartDashboard.putBoolean("Accel Test Success", elbowAngleSensor.isConnected());
   }
 
   /**
