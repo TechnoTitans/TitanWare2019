@@ -14,8 +14,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
-import frc.robot.movements.ControlArmPID;
-import frc.robot.sensors.ArmAngleSensor;
+import frc.robot.sensors.AccelerometerTester;
+import frc.robot.sensors.Accel_LIS3DH;
 import frc.robot.sensors.QuadEncoder;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveTrain;
@@ -42,13 +42,13 @@ public class TechnoTitan extends TimedRobot {
 
 
 
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
    */
   @Override
   public void robotInit() {
-    oi = new OI();
     navx = new AHRS(SPI.Port.kMXP);
     navx.reset();
 
@@ -58,8 +58,8 @@ public class TechnoTitan extends TimedRobot {
     TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
             elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, false);
 
-    ArmAngleSensor elbowAngleSensor = new ArmAngleSensor(RobotMap.ELBOW_ACCEL);
-    ArmAngleSensor wristAngleSensor = new ArmAngleSensor(RobotMap.WRIST_ACCEL);
+    Accel_LIS3DH elbowAngleSensor = new Accel_LIS3DH(RobotMap.ELBOW_ACCEL);
+    Accel_LIS3DH wristAngleSensor = new Accel_LIS3DH(RobotMap.WRIST_ACCEL);
     arm = new Arm(elbow, wrist, new Solenoid(RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
 
 
@@ -88,7 +88,7 @@ public class TechnoTitan extends TimedRobot {
     rightFollow2.setupCurrentLimiting();
 
     drive = new TankDrive(leftETalonSRX, rightETalonSRX);
-
+    oi = new OI(); // must initializae oi after drive because it requires it as a a subsystem
   }
 
   /**
@@ -152,6 +152,8 @@ public class TechnoTitan extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
+
+    SmartDashboard.putBoolean("Accel Test Success", AccelerometerTester.isSensorAccessable());
   }
 
   /**

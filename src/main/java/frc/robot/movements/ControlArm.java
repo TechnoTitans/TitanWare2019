@@ -10,8 +10,6 @@ public class ControlArm extends Command {
     private OI oi;
     private Filter elbowFilter, wristFilter;
 
-    private boolean isUp = false;
-
     public ControlArm() {
         requires(TechnoTitan.arm);
         this.oi = TechnoTitan.oi;
