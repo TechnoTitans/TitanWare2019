@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
+import frc.robot.sensors.util.AccelerationInfo;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -87,7 +88,7 @@ public class Accel_LIS3DH implements Accelerometer, PIDSource {
         //  X_L  X_H  Y_L  Y_H  Z_L  Z_H
         //  0    1    2    3    4    5
         double rawX = rawBuffer.getShort(0); // creates a short from [0,1] (Short.BYTES == 2)
-        double rawY = rawBuffer.getShort(2); // creats a short from [2,3]
+        double rawY = rawBuffer.getShort(2); // creates a short from [2,3]
         double rawZ = rawBuffer.getShort(4);
 
         this.x_accel = (rawX / currentResolution) * STANDARD_GRAVITY;
@@ -144,6 +145,11 @@ public class Accel_LIS3DH implements Accelerometer, PIDSource {
         this.updateAllValues();
         return this.z_accel;
     }
+
+    public AccelerationInfo getAllAxes() {
+        return new AccelerationInfo(this.getX(), this.getY(), this.getZ());
+    }
+
 
     /**
      * Calculates the angle on the X-Y plane.
