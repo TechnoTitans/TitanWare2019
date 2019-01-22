@@ -10,8 +10,6 @@ public class ControlArm extends Command {
     private OI oi;
     private Filter elbowFilter, wristFilter;
 
-    private boolean isUp = false;
-
     public ControlArm() {
         requires(TechnoTitan.arm);
         this.oi = TechnoTitan.oi;
@@ -28,8 +26,7 @@ public class ControlArm extends Command {
         TechnoTitan.arm.moveElbow(elbowFilter.getValue());
         TechnoTitan.arm.moveWrist(elbowFilter.getValue());
         if (oi.toggleArmUp()) {
-            isUp = !isUp;
-            TechnoTitan.arm.setArmSolenoid(isUp);
+            TechnoTitan.arm.toggleUp();
         }
     }
 

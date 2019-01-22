@@ -1,19 +1,26 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.AnalogAccelerometer;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.motor.Motor;
 import frc.robot.movements.ControlArm;
+import frc.robot.sensors.Accel_LIS3DH;
 
 public class Arm extends Subsystem {
 
-//    private final AnalogAccelerometer accelerometer;
     private Motor elbow, wrist;
     private Solenoid armSolenoid;
 
-    public static final double ARM_LENGTH   = 32.7, // in
-                               WRIST_LENGTH = 10; // in
+    public Accel_LIS3DH elbowSensor;
+    public Accel_LIS3DH wristSensor;
+
+
+
+    private boolean isUp = false;
+
+    public static final double ELBOW_LENGTH = 32.7, // in
+                               WRIST_LENGTH = 15; // in
+
 
     public void moveElbow(double speed) {
         // OI handles the deadband processing
@@ -24,14 +31,18 @@ public class Arm extends Subsystem {
         wrist.set(speed);
     }
 
-    public Arm(Motor elbow, Motor wrist, Solenoid armPiston) {
+    public Arm(Motor elbow, Motor wrist, Solenoid armPiston, Accel_LIS3DH elbowSensor, Accel_LIS3DH wristSensor) {
         this.elbow = elbow;
         this.wrist = wrist;
         this.armSolenoid = armPiston;
+
+        this.elbowSensor = elbowSensor;
+        this.wristSensor = wristSensor;
     }
 
 
     public void setArmSolenoid(boolean on) {
+        this.isUp = on;
         armSolenoid.set(on);
     }
 
@@ -43,6 +54,18 @@ public class Arm extends Subsystem {
         setArmSolenoid(false);
     }
 
+    public void getCalculatedDistance() {
+        // todo implement if needed
+    }
+
+    public void toggleUp() {
+        this.setArmSolenoid(!isUp);
+    }
+
+
+    public boolean isUp() {
+        return isUp;
+    }
 
 
     @Override

@@ -10,7 +10,11 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.robot.movements.ArmPosition;
+import frc.robot.movements.ControlArm;
+import frc.robot.movements.ControlArmPID;
 import frc.robot.movements.ControlDriveTrainStraight;
+import frc.robot.subsystems.Arm;
 
 
 /**
@@ -20,6 +24,7 @@ import frc.robot.movements.ControlDriveTrainStraight;
 public class OI {
     private Joystick left, right, aux1, aux2;
     public static final double percentDeadbandThreshold = 0.01;
+
 
     //// CREATING BUTTONS
     // One type of button is a joystick button which is any button on a
@@ -60,8 +65,19 @@ public class OI {
         right = new Joystick(RobotMap.RIGHT_JOYSTICK);
         aux1 = new Joystick(RobotMap.AUX_JOYSTICK_1);
         aux2 = new Joystick(RobotMap.AUX_JOYSTICK_2);
+
         Button driveTriggerLeft = new JoystickButton(left, 0);
+        Button btnArmLevel1 = new JoystickButton(aux2, 1);
+        Button btnArmLevel2 = new JoystickButton(aux2, 2);
+        Button btnArmLevel3 = new JoystickButton(aux2, 3);
+
         driveTriggerLeft.whenPressed(new ControlDriveTrainStraight());
+
+        // arm controls
+        btnArmLevel1.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_1));
+        btnArmLevel2.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_2));
+        btnArmLevel3.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_3));
+
     }
 
     public double clampInput(double input) {
