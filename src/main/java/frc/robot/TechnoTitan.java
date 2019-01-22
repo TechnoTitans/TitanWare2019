@@ -14,7 +14,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
-import frc.robot.movements.ControlDriveTrain;
+import frc.robot.sensors.AccelerometerTester;
+import frc.robot.sensors.Accel_LIS3DH;
 import frc.robot.sensors.QuadEncoder;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveTrain;
@@ -38,19 +39,32 @@ public class TechnoTitan extends TimedRobot {
                                 RIGHT_REVERSE = false;
 
   private static final double INCHES_PER_PULSE = 0.00475;
+
+
+
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
    */
   @Override
   public void robotInit() {
-    oi = new OI();
     navx = new AHRS(SPI.Port.kMXP);
     navx.reset();
+
+
+
+    // Arm setup
     TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
             elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, false);
-    arm = new Arm(elbow, wrist, new Solenoid(RobotMap.ARM_PISTON));
 
+    Accel_LIS3DH elbowAngleSensor = new Accel_LIS3DH(RobotMap.ELBOW_ACCEL);
+    Accel_LIS3DH wristAngleSensor = new Accel_LIS3DH(RobotMap.WRIST_ACCEL);
+    arm = new Arm(elbow, wrist, new Solenoid(RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
+
+
+
+    // Drivetrain setup
     TalonSRX leftETalonSRX = new TalonSRX(RobotMap.LEFT_TALON_E, LEFT_REVERSE),
       rightETalonSRX = new TalonSRX(RobotMap.RIGHT_TALON_E, RIGHT_REVERSE);
       leftETalonSRX.setEncoder(new QuadEncoder(leftETalonSRX, INCHES_PER_PULSE, true));
@@ -74,6 +88,7 @@ public class TechnoTitan extends TimedRobot {
     rightFollow2.setupCurrentLimiting();
 
     drive = new TankDrive(leftETalonSRX, rightETalonSRX);
+    oi = new OI(); // must initializae oi after drive because it requires it as a a subsystem
   }
 
   /**
@@ -86,7 +101,7 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    SmartDashboard.putNumber("Angle", navx.getAngle());
+    SmartDashboard.putNumber("Gyro", navx.getAngle());
   }
 
   /**
@@ -116,9 +131,7 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    oi.initialize();
-    ControlDriveTrain driveCommand = new ControlDriveTrain(oi);
-    driveCommand.start();
+
   }
 
   /**
@@ -139,6 +152,8 @@ public class TechnoTitan extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
+
+    SmartDashboard.putBoolean("Accel Test Success", AccelerometerTester.isSensorAccessable());
   }
 
   /**
