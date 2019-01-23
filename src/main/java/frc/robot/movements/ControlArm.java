@@ -7,12 +7,10 @@ import frc.robot.TechnoTitan;
 import frc.robot.motor.Filter;
 
 public class ControlArm extends Command {
-    private OI oi;
     private Filter elbowFilter, wristFilter;
 
     public ControlArm() {
         requires(TechnoTitan.arm);
-        this.oi = TechnoTitan.oi;
     }
 
     public void initialize() {
@@ -21,11 +19,11 @@ public class ControlArm extends Command {
     }
 
     public void execute() {
-        elbowFilter.update(oi.getElbowMove());
-        wristFilter.update(oi.getWristMove());
+        elbowFilter.update(TechnoTitan.oi.getElbowMove());
+        wristFilter.update(TechnoTitan.oi.getWristMove());
         TechnoTitan.arm.moveElbow(elbowFilter.getValue());
-        TechnoTitan.arm.moveWrist(elbowFilter.getValue());
-        if (oi.toggleArmUp()) {
+        // TechnoTitan.arm.moveWrist(elbowFilter.getValue());
+        if (TechnoTitan.oi.toggleArmUp()) {
             TechnoTitan.arm.toggleUp();
         }
     }

@@ -9,6 +9,7 @@ package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -40,9 +41,9 @@ public class TechnoTitan extends TimedRobot {
   private static final boolean LEFT_REVERSE = false,
                                RIGHT_REVERSE = true;
 
-  private static final double INCHES_PER_PULSE = 0.00475;
+  private static final double INCHES_PER_PULSE = 0.0045;
 
-
+  public static SerialPort serial;
 
 
   /**
@@ -54,7 +55,8 @@ public class TechnoTitan extends TimedRobot {
     navx = new AHRS(SPI.Port.kMXP);
     navx.reset();
 
-
+    vision = new VisionSensor();
+    // serial = new SerialPort(115200, SerialPort.Port.kOnboard);
 
     // Arm setup
     TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
@@ -91,6 +93,8 @@ public class TechnoTitan extends TimedRobot {
 
     drive = new TankDrive(leftETalonSRX, rightETalonSRX);
     oi = new OI(); // must initializae oi after drive because it requires it as a a subsystem
+
+    drive.resetEncoders();
   }
 
   /**
@@ -106,6 +110,7 @@ public class TechnoTitan extends TimedRobot {
     SmartDashboard.putNumber("Gyro", navx.getAngle());
     SmartDashboard.putNumber("Encoder left", drive.getLeftEncoder().getDistance());
     SmartDashboard.putNumber("Encoder right", drive.getRightEncoder().getDistance());
+    // SmartDashboard.putRaw("Serial port reading", serial.read(8));
   }
 
   /**

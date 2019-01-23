@@ -8,6 +8,7 @@
 package frc.robot.movements;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.TechnoTitan;
 import frc.robot.sensors.NavXGyro;
 import jaci.pathfinder.Pathfinder;
@@ -17,8 +18,8 @@ import jaci.pathfinder.followers.DistanceFollower;
 import jaci.pathfinder.modifiers.TankModifier;
 
 public class AutoAlign extends Command {
-  private static final double WHEELBASE_WIDTH = 0.5; // width between wheels in meters
-  private static final double MAX_VELOCITY = 3.0; // max velocity of path in m/s
+  private static final double WHEELBASE_WIDTH = 0.57; // width between wheels in meters
+  private static final double MAX_VELOCITY = 1.0; // max velocity of path in m/s
 
   private final Trajectory.Config config;
 
@@ -54,8 +55,8 @@ public class AutoAlign extends Command {
            skew = TechnoTitan.vision.getSkew();  // get angle, with 0 degrees = straight
     gyro.resetTo(skew);
     Waypoint[] points = new Waypoint[] {
-      new Waypoint(xOffset, -distance, Math.toRadians(90 - skew)),
-      new Waypoint(0, -FINAL_DISTANCE, Math.PI / 2)
+      new Waypoint(1, -1, Math.toRadians(90)),
+      new Waypoint(0, 2, Math.PI / 2)
     };
 
     Trajectory trajectory = Pathfinder.generate(points, config);
@@ -83,46 +84,53 @@ public class AutoAlign extends Command {
     // Make sure no errors are thrown if it couldn't find the strips
     if (lFollower == null || rFollower == null) return;
     if (!lFollower.isFinished() || !rFollower.isFinished()) {
+      SmartDashboard.putString("Align state", "Path");
       // If either one is finished, it just outputs 0 for "calculate", so it is safe to perform calculations even on finished followers
       double lOutput = lFollower.calculate(TechnoTitan.drive.getLeftEncoder().getDistance() * inchesToMeters);
       double rOutput = rFollower.calculate(TechnoTitan.drive.getRightEncoder().getDistance() * inchesToMeters);
       // headings are expressed as positive counterclockwise and 0 deg = right
+      SmartDashboard.putString("Output", lOutput + ", " + rOutput);
       double heading = 90 - gyro.getAngle();
       double wantedHeading = Math.toDegrees(lFollower.getHeading() / 2 + rFollower.getHeading() / 2); // get the average desired heading
+      
+      SmartDashboard.putNumber("Wanted heading", wantedHeading);
       double error = Pathfinder.boundHalfDegrees(heading - wantedHeading); // positive if robot is too far counterclockwise
       TechnoTitan.drive.set(lOutput + kP_GYRO * error, rOutput - kP_GYRO * error);
     } else {
-      // we are in fine adjustments mode
-      if (!initializedFineAdjustments) TechnoTitan.drive.resetEncoders();
-      initializedFineAdjustments = true;
-      double speed = 0.3;
-      if (isVisionReasonable()) {
-        distanceToTarget = TechnoTitan.vision.getYDistance();
-        double skewAngle = TechnoTitan.vision.getSkew();
-        double xOffset = TechnoTitan.vision.getXOffset();
-        gyro.resetTo(skewAngle); // since vision is reasonable, we can reset the gyro to the "true" angle we know it to be, in case we lose vision
-        lastSkewAngle = skewAngle;
-        if (distanceToTarget - STOP_DISTANCE < (FINAL_DISTANCE - STOP_DISTANCE) / 2) {
-          // more than halfway there -- just go straight
-          TechnoTitan.drive.set(speed - kP_GYRO * skewAngle, speed + kP_GYRO * skewAngle);
-        } else {
-          double error = skewAngle - Math.toDegrees(-Math.atan(xOffset / distanceToTarget));
-          // go towards the center
-          TechnoTitan.drive.set(speed - kP_GYRO * error, speed + kP_GYRO * error);
-        }
-      } else {
-        // Just keep going straight
-        double skewAngle = gyro.getAngle();
-        if (distanceToTarget - STOP_DISTANCE < (FINAL_DISTANCE - STOP_DISTANCE) / 2) {
-          // more than halfway there -- just go straight
-          TechnoTitan.drive.set(speed - kP_GYRO * skewAngle, speed + kP_GYRO * skewAngle);
-        } else {
-          double error = skewAngle - lastSkewAngle;
-          TechnoTitan.drive.set(speed - kP_GYRO * error, speed + kP_GYRO * error);
-        }
-        double encoderDist = (TechnoTitan.drive.getLeftEncoder().getDistance() + TechnoTitan.drive.getRightEncoder().getDistance()) / 2 * inchesToMeters;
-        distanceToTarget = FINAL_DISTANCE - encoderDist;
-      }
+      // // we are in fine adjustments mode
+      // if (!initializedFineAdjustments) TechnoTitan.drive.resetEncoders();
+      // initializedFineAdjustments = true;
+      // double speed = 0.3;
+      // if (isVisionReasonable()) {
+      //   SmartDashboard.putString("Align state", "Vision");
+      //   distanceToTarget = TechnoTitan.vision.getYDistance();
+      //   double skewAngle = TechnoTitan.vision.getSkew();
+      //   double xOffset = TechnoTitan.vision.getXOffset();
+      //   gyro.resetTo(skewAngle); // since vision is reasonable, we can reset the gyro to the "true" angle we know it to be, in case we lose vision
+      //   lastSkewAngle = skewAngle;
+      //   if (distanceToTarget - STOP_DISTANCE < (FINAL_DISTANCE - STOP_DISTANCE) / 2) {
+      //     // more than halfway there -- just go straight
+      //     TechnoTitan.drive.set(speed - kP_GYRO * skewAngle, speed + kP_GYRO * skewAngle);
+      //   } else {
+      //     double error = skewAngle - Math.toDegrees(-Math.atan(xOffset / distanceToTarget));
+      //     // go towards the center
+      //     TechnoTitan.drive.set(speed - kP_GYRO * error, speed + kP_GYRO * error);
+      //   }
+      // } else {
+      //   SmartDashboard.putString("Align state", "Dead");
+      //   // Just keep going straight
+      //   double skewAngle = gyro.getAngle();
+      //   if (distanceToTarget - STOP_DISTANCE < (FINAL_DISTANCE - STOP_DISTANCE) / 2) {
+      //     // more than halfway there -- just go straight
+      //     TechnoTitan.drive.set(speed - kP_GYRO * skewAngle, speed + kP_GYRO * skewAngle);
+      //   } else {
+      //     double error = skewAngle - lastSkewAngle;
+      //     TechnoTitan.drive.set(speed - kP_GYRO * error, speed + kP_GYRO * error);
+      //   }
+      //   double encoderDist = (TechnoTitan.drive.getLeftEncoder().getDistance() + TechnoTitan.drive.getRightEncoder().getDistance()) / 2 * inchesToMeters;
+      //   distanceToTarget = FINAL_DISTANCE - encoderDist;
+      // }
+      TechnoTitan.drive.stop();
     }
   }
 

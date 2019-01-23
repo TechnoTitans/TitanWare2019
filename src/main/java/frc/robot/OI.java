@@ -10,7 +10,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.movements.ArmPosition;
+import frc.robot.movements.AutoAlign;
 import frc.robot.movements.ControlArm;
 import frc.robot.movements.ControlArmPID;
 import frc.robot.movements.ControlDriveTrainStraight;
@@ -66,17 +68,21 @@ public class OI {
         aux1 = new Joystick(RobotMap.AUX_JOYSTICK_1);
         aux2 = new Joystick(RobotMap.AUX_JOYSTICK_2);
 
-        Button driveTriggerLeft = new JoystickButton(left, 0);
+        Button driveTriggerLeft = new JoystickButton(left, 1);
         Button btnArmLevel1 = new JoystickButton(aux2, 1);
         Button btnArmLevel2 = new JoystickButton(aux2, 2);
         Button btnArmLevel3 = new JoystickButton(aux2, 3);
 
-        driveTriggerLeft.whenPressed(new ControlDriveTrainStraight());
-
+        Button autoAlign = new JoystickButton(right, 3);
+        Command driveStraight = new ControlDriveTrainStraight();
+        driveTriggerLeft.whileHeld(driveStraight);
         // arm controls
         btnArmLevel1.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_1));
         btnArmLevel2.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_2));
         btnArmLevel3.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_3));
+
+        AutoAlign align = new AutoAlign();
+        autoAlign.toggleWhenPressed(align);
 
     }
 
@@ -89,11 +95,12 @@ public class OI {
     }
 
     public double getLeft() {
-        return clampInput(-left.getY());
+        return -left.getRawAxis(1);
+        // return clampInput(-left.getY());
     }
 
     public double getRight() {
-        return clampInput(-right.getY());
+        return clampInput(-right.getRawAxis(1));
     }
 
     public double getElbowMove() {

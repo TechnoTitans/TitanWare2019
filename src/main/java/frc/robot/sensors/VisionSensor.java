@@ -20,14 +20,14 @@ public class VisionSensor {
      * @return the x offset to the vision targets in meters (not inches!), when the robot is left of the strips, it is negative
      */
     public double getXOffset() {
-        return 0.0;
+        return 2;
     }
 
     /**
      * @return the y distance from the tarrgets in meters (not inches!)
      */
     public double getYDistance() {
-        return 0.0;
+        return 3;
     }
 
     /**
@@ -39,6 +39,6 @@ public class VisionSensor {
     }
     
     public boolean canSeeTargets() {
-        return false;
+        return true;
     }
 }
