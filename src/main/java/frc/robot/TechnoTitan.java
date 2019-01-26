@@ -18,6 +18,7 @@ import frc.robot.motor.TalonSRX;
 import frc.robot.sensors.AccelerometerTester;
 import frc.robot.sensors.Accel_LIS3DH;
 import frc.robot.sensors.QuadEncoder;
+import frc.robot.sensors.TimeOfFlight;
 import frc.robot.sensors.VisionSensor;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveTrain;
@@ -37,13 +38,14 @@ public class TechnoTitan extends TimedRobot {
   public static Arm arm;
   public static AHRS navx;
   public static VisionSensor vision;
+  public static TimeOfFlight tfDistance;
 
   private static final boolean LEFT_REVERSE = false,
                                RIGHT_REVERSE = true;
 
   private static final double INCHES_PER_PULSE = 0.0045;
 
-  public static SerialPort serial;
+  
 
 
   /**
@@ -56,7 +58,7 @@ public class TechnoTitan extends TimedRobot {
     navx.reset();
 
     vision = new VisionSensor();
-    // serial = new SerialPort(115200, SerialPort.Port.kOnboard);
+    tfDistance = new TimeOfFlight();
 
     // Arm setup
     TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
@@ -110,7 +112,7 @@ public class TechnoTitan extends TimedRobot {
     SmartDashboard.putNumber("Gyro", navx.getAngle());
     SmartDashboard.putNumber("Encoder left", drive.getLeftEncoder().getDistance());
     SmartDashboard.putNumber("Encoder right", drive.getRightEncoder().getDistance());
-    // SmartDashboard.putRaw("Serial port reading", serial.read(8));
+    tfDistance.update();
   }
 
   /**
