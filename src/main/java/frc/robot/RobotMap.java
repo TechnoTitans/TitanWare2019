@@ -31,14 +31,14 @@ public class RobotMap {
   public static final int ARM_PISTON = 0;
 
 
-  public static final int WRIST_MOTOR = 6;
+  public static final int WRIST_MOTOR = 7;
   public static final int ELBOW_MOTOR = 10;
 
   // Talons with encoders
-  public static final int LEFT_TALON_E = 11, RIGHT_TALON_E = 5;
+  public static final int LEFT_TALON_E = 5, RIGHT_TALON_E = 11;
 
   // Other talons
-  public static final int LEFT_TALON_2 = 12, LEFT_TALON_3 = 13, RIGHT_TALON_2 = 4, RIGHT_TALON_3 = 3;
+  public static final int LEFT_TALON_2 = 4, LEFT_TALON_3 = 3, RIGHT_TALON_2 = 12, RIGHT_TALON_3 = 13;
 
   // accelerometers
   public static final int ELBOW_ACCEL_ADDR = 0x18;

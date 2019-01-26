@@ -23,16 +23,16 @@ public class ControlArmPID extends Command {
     public ControlArmPID(ArmPosition positionInfo) {
         requires(TechnoTitan.arm);
 
-        this.elbowController = new PIDController(kElbowP, kElbowI, kElbowD, TechnoTitan.arm.elbowSensor, output -> TechnoTitan.arm.moveElbow(output));
-        this.elbowController.setOutputRange(-1, 1);
-        this.elbowController.setPercentTolerance(15); // todo configure tolerance of pid controllers
-        this.elbowController.setSetpoint(positionInfo.getElbowAngle());
+        // this.elbowController = new PIDController(kElbowP, kElbowI, kElbowD, TechnoTitan.arm.elbowSensor, output -> TechnoTitan.arm.moveElbow(output));
+        // this.elbowController.setOutputRange(-1, 1);
+        // this.elbowController.setPercentTolerance(15); // todo configure tolerance of pid controllers
+        // this.elbowController.setSetpoint(positionInfo.getElbowAngle());
 
-        // wrist
-        this.wristController = new PIDController(kWristP, kWristI, kWristD, TechnoTitan.arm.wristSensor, output -> TechnoTitan.arm.moveWrist(output));
-        this.wristController.setOutputRange(-1, 1);
-        this.wristController.setPercentTolerance(15);
-        this.wristController.setSetpoint(positionInfo.getWristAngle());
+        // // wrist
+        // this.wristController = new PIDController(kWristP, kWristI, kWristD, TechnoTitan.arm.wristSensor, output -> TechnoTitan.arm.moveWrist(output));
+        // this.wristController.setOutputRange(-1, 1);
+        // this.wristController.setPercentTolerance(15);
+        // this.wristController.setSetpoint(positionInfo.getWristAngle());
 
         this.positionInfo = positionInfo;
 
