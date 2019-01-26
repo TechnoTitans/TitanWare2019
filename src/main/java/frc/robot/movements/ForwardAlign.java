@@ -11,6 +11,8 @@ public class ForwardAlign extends Command {
 	private double distEnd;
 	
 	private double speed;
+	private double minSpeed = 0.1;
+
 	private double kP_GYRO = 0.05;
 
 	private Gyro gyro;
@@ -20,6 +22,7 @@ public class ForwardAlign extends Command {
 		requires(TechnoTitan.drive);
 		this.slowdownDist = slowdownDist;
 		this.distEnd = stage.getHorizontalArmLength();
+		distEnd = Math.max(distEnd, 11.9); // the sensor can't read closer than 11.9 in
 		this.speed = speed;
 	}
 
@@ -30,7 +33,7 @@ public class ForwardAlign extends Command {
 
 	protected void execute() {
 		double distanceLeft = TechnoTitan.tfDistance.getDistance() - distEnd;
-		double speed = this.speed * Math.min(1, distanceLeft / slowdownDist);
+		double speed = minSpeed + (this.speed - minSpeed) * Math.min(1, distanceLeft / slowdownDist);
 		double error = gyro.getAngle() * kP_GYRO;
 		TechnoTitan.drive.set(speed - error, speed + error);
 	}
@@ -39,5 +42,10 @@ public class ForwardAlign extends Command {
 	@Override
 	protected boolean isFinished() {
 		return TechnoTitan.tfDistance.getDistance() <= distEnd;
+	}
+
+	@Override
+	protected void end() {
+		TechnoTitan.drive.stop();
 	}
 }

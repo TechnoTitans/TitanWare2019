@@ -16,6 +16,7 @@ import frc.robot.movements.AutoAlign;
 import frc.robot.movements.ControlArm;
 import frc.robot.movements.ControlArmPID;
 import frc.robot.movements.ControlDriveTrainStraight;
+import frc.robot.movements.ForwardAlign;
 import frc.robot.subsystems.Arm;
 
 
@@ -74,8 +75,10 @@ public class OI {
         Button btnArmLevel3 = new JoystickButton(aux2, 3);
 
         Button autoAlign = new JoystickButton(right, 3);
-        Command driveStraight = new ControlDriveTrainStraight();
-        driveTriggerLeft.whileHeld(driveStraight);
+        Button forwardAlign = new JoystickButton(aux1, 1);
+
+        driveTriggerLeft.whileHeld(new ControlDriveTrainStraight());
+
         // arm controls
         btnArmLevel1.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_1));
         btnArmLevel2.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_2));
@@ -84,6 +87,7 @@ public class OI {
         AutoAlign align = new AutoAlign();
         autoAlign.toggleWhenPressed(align);
 
+        forwardAlign.whenPressed(new ForwardAlign(ArmPosition.ROCKET_LEVEL_1, 24, 0.5));
     }
 
     public double clampInput(double input) {
