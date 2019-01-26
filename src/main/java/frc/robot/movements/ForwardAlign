@@ -1,0 +1,56 @@
+package frc.robot.movements;
+
+import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.TechnoTitan;
+import frc.robot.sensors.TimeofFlight;
+enum Stage{
+	Rocket1,Rocket2, Rocket3,
+	Cargo1, Cargo2, Cargo3
+}
+public class ForwardAlign extends Command{
+	private double stageDist=0;
+	private double dist;
+	private double speed;
+	private double gyroAngle;
+	private double ANGLE_MULTIPLIER=0.5;
+	public ForwardAlign(Stage stage, double totaldist) {
+		
+		switch(stage) {
+			case Rocket1:
+				stageDist=1;
+				break;
+			case Rocket2:
+				stageDist=1;
+				break;
+			case Rocket3:
+				stageDist=1;
+				break;
+			case Cargo1:
+				stageDist=1;
+				break;
+			case Cargo2:
+				stageDist=1;
+				break;
+			case Cargo3:
+				stageDist=1;
+				break;
+		}
+		this.dist=totaldist-stageDist;
+	}
+	protected void initialize() {
+		TechnoTitan.drive.getLeftEncoder().reset();
+		TechnoTitan.drive.getGyro().reset();
+	}
+	protected void execute() {
+		speed=(dist-TechnoTitan.drive.getLeftEncoder().getDistance())/dist;
+		gyroAngle=TechnoTitan.drive.getGyro().getAngle()*ANGLE_MULTIPLIER;//divide by x
+		TechnoTitan.drive.set(speed-gyroAngle, speed+gyroAngle);
+	}
+	@Override
+	protected boolean isFinished() {
+		if(TimeofFlight.getAngle()<stageDist)return true;
+		return false;
+	}
+	
+
+}
