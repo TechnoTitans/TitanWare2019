@@ -114,17 +114,18 @@ public class TechnoTitan extends TimedRobot {
   public void robotPeriodic() {
     SmartDashboard.putNumber("Gyro", navx.getAngle());
 
-
-    // accel
     SmartDashboard.putBoolean("Accel Test Success", elbowAngleSensor.isConnected());
     SmartDashboard.putNumber("X", elbowAngleSensor.getX());
     SmartDashboard.putNumber("Y", elbowAngleSensor.getY());
     SmartDashboard.putNumber("Z", elbowAngleSensor.getZ());
 
     SmartDashboard.putNumber("Calculated Angle", elbowAngleSensor.getAngleXY());
-    //SmartDashboard.putNumber("Encoder left", drive.getLeftEncoder().getDistance());
-    //SmartDashboard.putNumber("Encoder right", drive.getRightEncoder().getDistance());
-    //tfDistance.update();
+    
+    SmartDashboard.putNumber("Encoder left", drive.getLeftEncoder().getDistance());
+    SmartDashboard.putNumber("Encoder right", drive.getRightEncoder().getDistance());
+    SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
+    SmartDashboard.putBoolean("TF is valid?", tfDistance.isValid());
+    tfDistance.update();
   }
 
   /**

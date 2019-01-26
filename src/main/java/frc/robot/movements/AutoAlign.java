@@ -19,7 +19,7 @@ import jaci.pathfinder.modifiers.TankModifier;
 
 public class AutoAlign extends Command {
   private static final double WHEELBASE_WIDTH = 0.57; // width between wheels in meters
-  private static final double MAX_VELOCITY = 1.0; // max velocity of path in m/s
+  private static final double MAX_VELOCITY = 3.9; // max velocity of path in m/s
 
   private final Trajectory.Config config;
 
@@ -34,18 +34,12 @@ public class AutoAlign extends Command {
   private static final double kP_GYRO = 0.01;
 
   private static final double FINAL_DISTANCE = 0.5; // distance at which robot should be aligned and switch to fine adjustments, in meters
-  private static final double STOP_DISTANCE = 0.3; // distance at which robot should stop
-
-  // This is only used during the second segment (fine adjustments), which is why it is initialized to FINAL_DISTANCE
-  private double distanceToTarget = FINAL_DISTANCE;
-  private boolean initializedFineAdjustments = false;
-  private double lastSkewAngle = 0;
-
 
   public AutoAlign() {
     requires(TechnoTitan.drive);
     gyro = new NavXGyro();
-    config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, TechnoTitan.kDefaultPeriod, MAX_VELOCITY, 2.0, 60.0);
+    double speed = 0.3;
+    config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_FAST, TechnoTitan.kDefaultPeriod, MAX_VELOCITY * speed, 2.0, 60.0);
   }
 
   public void generateTrajectoryFromVision() {
@@ -96,41 +90,6 @@ public class AutoAlign extends Command {
       SmartDashboard.putNumber("Wanted heading", wantedHeading);
       double error = Pathfinder.boundHalfDegrees(heading - wantedHeading); // positive if robot is too far counterclockwise
       TechnoTitan.drive.set(lOutput + kP_GYRO * error, rOutput - kP_GYRO * error);
-    } else {
-      // // we are in fine adjustments mode
-      // if (!initializedFineAdjustments) TechnoTitan.drive.resetEncoders();
-      // initializedFineAdjustments = true;
-      // double speed = 0.3;
-      // if (isVisionReasonable()) {
-      //   SmartDashboard.putString("Align state", "Vision");
-      //   distanceToTarget = TechnoTitan.vision.getYDistance();
-      //   double skewAngle = TechnoTitan.vision.getSkew();
-      //   double xOffset = TechnoTitan.vision.getXOffset();
-      //   gyro.resetTo(skewAngle); // since vision is reasonable, we can reset the gyro to the "true" angle we know it to be, in case we lose vision
-      //   lastSkewAngle = skewAngle;
-      //   if (distanceToTarget - STOP_DISTANCE < (FINAL_DISTANCE - STOP_DISTANCE) / 2) {
-      //     // more than halfway there -- just go straight
-      //     TechnoTitan.drive.set(speed - kP_GYRO * skewAngle, speed + kP_GYRO * skewAngle);
-      //   } else {
-      //     double error = skewAngle - Math.toDegrees(-Math.atan(xOffset / distanceToTarget));
-      //     // go towards the center
-      //     TechnoTitan.drive.set(speed - kP_GYRO * error, speed + kP_GYRO * error);
-      //   }
-      // } else {
-      //   SmartDashboard.putString("Align state", "Dead");
-      //   // Just keep going straight
-      //   double skewAngle = gyro.getAngle();
-      //   if (distanceToTarget - STOP_DISTANCE < (FINAL_DISTANCE - STOP_DISTANCE) / 2) {
-      //     // more than halfway there -- just go straight
-      //     TechnoTitan.drive.set(speed - kP_GYRO * skewAngle, speed + kP_GYRO * skewAngle);
-      //   } else {
-      //     double error = skewAngle - lastSkewAngle;
-      //     TechnoTitan.drive.set(speed - kP_GYRO * error, speed + kP_GYRO * error);
-      //   }
-      //   double encoderDist = (TechnoTitan.drive.getLeftEncoder().getDistance() + TechnoTitan.drive.getRightEncoder().getDistance()) / 2 * inchesToMeters;
-      //   distanceToTarget = FINAL_DISTANCE - encoderDist;
-      // }
-      TechnoTitan.drive.stop();
     }
   }
 
@@ -145,7 +104,7 @@ public class AutoAlign extends Command {
    */
   private boolean isVisionReasonable() {
     return TechnoTitan.vision.canSeeTargets()
-      && TechnoTitan.vision.getYDistance() > distanceToTarget * 1.5 // We allow 50% error because this is just to filter bogus data
+      && TechnoTitan.vision.getYDistance() > FINAL_DISTANCE * 1.5 // We allow 50% error because this is just to filter bogus data
       && Math.abs(TechnoTitan.vision.getXOffset()) < 1 // Be less than 1 meter (approx 3 ft) from the center of the target
       && Math.abs(TechnoTitan.vision.getSkew()) < 30; // no more than 30 degrees angle error
   }
@@ -154,7 +113,7 @@ public class AutoAlign extends Command {
   @Override
   protected boolean isFinished() {
     return lFollower == null || rFollower == null ||
-            (lFollower.isFinished() && rFollower.isFinished() && distanceToTarget < STOP_DISTANCE);
+            (lFollower.isFinished() && rFollower.isFinished());
   }
 
   // Called once after isFinished returns true
