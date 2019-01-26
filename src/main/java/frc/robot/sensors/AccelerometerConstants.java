@@ -22,6 +22,7 @@ public class AccelerometerConstants {
     public static final int CTRL_REG2 = 0x21;
     public static final int CTRL_REG3 = 0x22;
     public static final int CTRL_REG4 = 0x23;
+    public static final int CTRL_REG5 = 0x24;
 
     public static final int OUT_X_L = 0x28,
             OUT_X_H = 0x29,
@@ -41,5 +42,5 @@ public class AccelerometerConstants {
                             SETTING_4G = 0b01,
                             SETTING_8G = 0b10,
                             SETTING_16G = 0b11; // pg 37 of manual
-    
+
 }

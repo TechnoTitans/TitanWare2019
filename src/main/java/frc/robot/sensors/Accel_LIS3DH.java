@@ -8,6 +8,7 @@ import frc.robot.sensors.util.AccelerationInfo;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 
 import static frc.robot.sensors.AccelerometerConstants.*;
 import static java.util.Objects.requireNonNull;
@@ -34,6 +35,22 @@ public class Accel_LIS3DH implements Accelerometer, PIDSource {
         this.x_accel = 0;
         this.y_accel = 0;
         this.z_accel = 0;
+        this.init();
+    }
+
+    private void init() {
+        i2c_conn.write(CTRL_REG5, 0x80); // this reboots the device
+        // 5 ms delay to wait for reboot
+        try {
+            Thread.sleep((long) 5);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // 0x47 is actually 0b0100_0111:
+        // 0b0100 means HR / Normal / Low-power mode (50 Hz)
+        // 0b0111 means enable axis x, y, and z respectively
+        // consult pg 35
+        i2c_conn.write(CTRL_REG1, 0x47);
     }
 
     /**
@@ -80,10 +97,11 @@ public class Accel_LIS3DH implements Accelerometer, PIDSource {
     private void updateAllValues() {
         double currentResolution = getCurrentResolution();
         ByteBuffer rawBuffer = ByteBuffer.allocate(6); // 3 axes * 2 bytes each (Low, High)
-
         // starts at the first register, OUT_X_L, then auto-increments until the last register, OUT_Z_H.
         i2c_conn.read(OUT_X_L | ENABLE_AUTOINCR, 6, rawBuffer);
+
         rawBuffer.order(ByteOrder.LITTLE_ENDIAN); // Low, High ordering means that LSB is first, so this is necessary
+        System.out.println("The buffer is " + Arrays.toString(rawBuffer.array()));
 
         //  X_L  X_H  Y_L  Y_H  Z_L  Z_H
         //  0    1    2    3    4    5
@@ -91,9 +109,9 @@ public class Accel_LIS3DH implements Accelerometer, PIDSource {
         double rawY = rawBuffer.getShort(2); // creates a short from [2,3]
         double rawZ = rawBuffer.getShort(4);
 
-        this.x_accel = (rawX / currentResolution) * STANDARD_GRAVITY;
-        this.y_accel = (rawY / currentResolution) * STANDARD_GRAVITY;
-        this.z_accel = (rawZ / currentResolution) * STANDARD_GRAVITY;
+        this.x_accel = (rawX / currentResolution) /* * STANDARD_GRAVITY*/;
+        this.y_accel = (rawY / currentResolution) /* * STANDARD_GRAVITY*/;
+        this.z_accel = (rawZ / currentResolution) /* * STANDARD_GRAVITY*/;
     }
 
     // todo refactor duplicate code
@@ -153,10 +171,10 @@ public class Accel_LIS3DH implements Accelerometer, PIDSource {
 
     /**
      * Calculates the angle on the X-Y plane.
-     * @return The angle at which the sensor is at currently
+     * @return The angle (in degrees) at which the sensor is at currently on the XY plane
      */
     public double getAngleXY() {
-        return Math.atan(this.getY() / this.getX()); // TODO Test this function
+        return Math.toDegrees(Math.atan2(this.getY(), this.getX()));
     }
 
 

@@ -105,6 +105,14 @@ public class TechnoTitan extends TimedRobot {
   @Override
   public void robotPeriodic() {
     SmartDashboard.putNumber("Gyro", navx.getAngle());
+
+    // accel
+    SmartDashboard.putBoolean("Accel Test Success", elbowAngleSensor.isConnected());
+    SmartDashboard.putNumber("X", elbowAngleSensor.getX());
+    SmartDashboard.putNumber("Y", elbowAngleSensor.getY());
+    SmartDashboard.putNumber("Z", elbowAngleSensor.getZ());
+
+    SmartDashboard.putNumber("Calculated Angle", elbowAngleSensor.getAngleXY());
   }
 
   /**
@@ -156,7 +164,6 @@ public class TechnoTitan extends TimedRobot {
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
 
-    SmartDashboard.putBoolean("Accel Test Success", elbowAngleSensor.isConnected());
   }
 
   /**
