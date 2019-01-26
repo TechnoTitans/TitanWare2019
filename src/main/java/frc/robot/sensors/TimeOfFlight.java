@@ -7,12 +7,8 @@
 
 package frc.robot.sensors;
 
-import java.nio.ByteBuffer;
-import java.util.Deque;
 
-import edu.wpi.first.wpilibj.CircularBuffer;
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.sensors.util.CircularByteBuffer;
 
 /**
@@ -21,15 +17,32 @@ import frc.robot.sensors.util.CircularByteBuffer;
 public class TimeOfFlight {
     private CircularByteBuffer buffer;
 
-    private Deque<Byte> dequeBuffer;
     private SerialPort serial;
 
     private boolean aligned = false;
+
+    private double distance;
+    private int strength;
 
     public TimeOfFlight() {
         serial = new SerialPort(115200, SerialPort.Port.kMXP);
         buffer = new CircularByteBuffer(50);
         // serial.setTimeout(0.01);
+    }
+
+    /**
+     * @return the distance
+     */
+    public double getDistance() {
+        return distance;
+    }
+
+    /**
+     * 
+     * @return true if the sensor is being successfully read and checksum is valid
+     */
+    public boolean isValid() {
+        return aligned;
     }
 
     public void update() {
@@ -52,12 +65,11 @@ public class TimeOfFlight {
         if (verify(data)) {
             int distance = parse2Bytes(data[2], data[3]);
             int strength = parse2Bytes(data[4], data[5]);
-            SmartDashboard.putNumber("TF Distance", distance);
+            this.distance = distance / 2.54;
+            this.strength = strength;
         } else {
             aligned = false;
         }
-        SmartDashboard.putBoolean("TF Distance sensor aligned", aligned);
-        SmartDashboard.putRaw("TF Byte", data);
     }
 
     private int parse2Bytes(byte lo, byte hi) {
@@ -81,8 +93,5 @@ public class TimeOfFlight {
             buffer.skip(1);
         }
     }
-
-
-
 
 }

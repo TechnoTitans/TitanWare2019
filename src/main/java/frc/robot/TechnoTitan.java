@@ -112,6 +112,8 @@ public class TechnoTitan extends TimedRobot {
     SmartDashboard.putNumber("Gyro", navx.getAngle());
     SmartDashboard.putNumber("Encoder left", drive.getLeftEncoder().getDistance());
     SmartDashboard.putNumber("Encoder right", drive.getRightEncoder().getDistance());
+    SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
+    SmartDashboard.putBoolean("TF is valid?", tfDistance.isValid());
     tfDistance.update();
   }
 
