@@ -87,7 +87,7 @@ public class OI {
         AutoAlign align = new AutoAlign();
         autoAlign.toggleWhenPressed(align);
 
-        forwardAlign.whenPressed(new ForwardAlign(ArmPosition.ROCKET_LEVEL_1, 24, 0.5));
+        forwardAlign.whenPressed(new ForwardAlign(ArmPosition.ROCKET_LEVEL_1, 60, 0.5));
     }
 
     public double clampInput(double input) {

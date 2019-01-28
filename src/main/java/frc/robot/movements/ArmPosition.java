@@ -4,7 +4,7 @@ package frc.robot.movements;
 import frc.robot.subsystems.Arm;
 
 public enum ArmPosition {
-    ROCKET_LEVEL_1(90, 90, false, 10),
+    ROCKET_LEVEL_1(90, 90, false, 36),
     ROCKET_LEVEL_2(90, 90, false),
     ROCKET_LEVEL_3(90, 90, true); // TODO figure out optimal configuration for these
 
