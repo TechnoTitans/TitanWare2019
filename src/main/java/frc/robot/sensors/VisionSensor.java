@@ -7,6 +7,8 @@
 
 package frc.robot.sensors;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /**
  * Add your docs here.
  */
@@ -20,14 +22,14 @@ public class VisionSensor {
      * @return the x offset to the vision targets in meters (not inches!), when the robot is left of the strips, it is negative
      */
     public double getXOffset() {
-        return 2;
+        return SmartDashboard.getNumber("pi-x-offset", 0.0);
     }
 
     /**
      * @return the y distance from the tarrgets in meters (not inches!)
      */
     public double getYDistance() {
-        return 3;
+        return SmartDashboard.getNumber("piDistance", 600);
     }
 
     /**
@@ -35,10 +37,14 @@ public class VisionSensor {
      * @return the angle of the robot relative to the strips in degrees, with clockwise being positive
      */
     public double getSkew() {
-        return 0.0;
+        return SmartDashboard.getNumber("piAngle", 0.0);
     }
     
     public boolean canSeeTargets() {
-        return true;
+        return SmartDashboard.getBoolean("pi-detected", false);
     }
+
+	public double getCenterOffset() {
+		return SmartDashboard.getNumber("pi-c-offset", 0.0);
+	}
 }

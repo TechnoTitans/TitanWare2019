@@ -8,8 +8,9 @@
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.hal.util.UncleanStatusException;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -141,7 +142,12 @@ public class TechnoTitan extends TimedRobot {
     SmartDashboard.putNumber("Encoder right", drive.getRightEncoder().getDistance());
     SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
     SmartDashboard.putBoolean("TF is valid?", tfDistance.isValid());
-    tfDistance.update();
+    try {
+      tfDistance.update();
+    } catch (UncleanStatusException e) {
+      // serial port not started yet
+      System.out.println("Warning: " + e);
+    }
   }
 
   /**

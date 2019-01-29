@@ -93,21 +93,6 @@ public class AutoAlign extends Command {
     }
   }
 
-  /**
-   * This method is used so that if the robot spots something other than the
-   * vision targets, it doesn't go beserk for a bit It should be called during the
-   * last bit of the robot's journey (fine adjustments) as it makes assumptions
-   * that it is in that part
-   * 
-   * @return true if the vision target parameters are reasonable with what we know
-   *         about where the robot is
-   */
-  private boolean isVisionReasonable() {
-    return TechnoTitan.vision.canSeeTargets()
-      && TechnoTitan.vision.getYDistance() > FINAL_DISTANCE * 1.5 // We allow 50% error because this is just to filter bogus data
-      && Math.abs(TechnoTitan.vision.getXOffset()) < 1 // Be less than 1 meter (approx 3 ft) from the center of the target
-      && Math.abs(TechnoTitan.vision.getSkew()) < 30; // no more than 30 degrees angle error
-  }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
