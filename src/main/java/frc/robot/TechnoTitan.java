@@ -8,18 +8,25 @@
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Solenoid;
+
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import frc.robot.motor.TalonSRX;
 import frc.robot.movements.ControlDriveTrain;
 import frc.robot.sensors.Accel_GY521;
 import frc.robot.sensors.QuadEncoder;
 import frc.robot.subsystems.Arm;
+
+
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.TankDrive;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.SPI;
 
 
 /**
@@ -35,12 +42,9 @@ public class TechnoTitan extends TimedRobot {
   public static Arm arm;
   public static AHRS navx;
   public Accel_GY521 accelGyro;
+  public static AnalogInput ai;
+  public static I2C icu;
 
-
-  private static final boolean LEFT_REVERSE = false,
-                                RIGHT_REVERSE = false;
-
-  private static final double INCHES_PER_PULSE = 0.00475;
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -50,33 +54,7 @@ public class TechnoTitan extends TimedRobot {
     oi = new OI();
     navx = new AHRS(SPI.Port.kMXP);
     navx.reset();
-    TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
-            elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, false);
-    arm = new Arm(elbow, wrist, new Solenoid(RobotMap.ARM_PISTON));
-
-    TalonSRX leftETalonSRX = new TalonSRX(RobotMap.LEFT_TALON_E, LEFT_REVERSE),
-      rightETalonSRX = new TalonSRX(RobotMap.RIGHT_TALON_E, RIGHT_REVERSE);
-      leftETalonSRX.setEncoder(new QuadEncoder(leftETalonSRX, INCHES_PER_PULSE, true));
-      rightETalonSRX.setEncoder(new QuadEncoder(rightETalonSRX, INCHES_PER_PULSE, true));
-
-    TalonSRX leftFollow1 = new TalonSRX(RobotMap.LEFT_TALON_2, LEFT_REVERSE),
-            leftFollow2 = new TalonSRX(RobotMap.LEFT_TALON_3, LEFT_REVERSE),
-            rightFollow1 = new TalonSRX(RobotMap.RIGHT_TALON_2, RIGHT_REVERSE),
-            rightFollow2 = new TalonSRX(RobotMap.RIGHT_TALON_3, RIGHT_REVERSE);
-
-    leftFollow1.follow(leftETalonSRX);
-    leftFollow2.follow(leftETalonSRX);
-    rightFollow1.follow(rightETalonSRX);
-    rightFollow2.follow(rightETalonSRX);
-
-    leftETalonSRX.setupCurrentLimiting();
-    rightETalonSRX.setupCurrentLimiting();
-    leftFollow1.setupCurrentLimiting();
-    leftFollow2.setupCurrentLimiting();
-    rightFollow1.setupCurrentLimiting();
-    rightFollow2.setupCurrentLimiting();
-
-    drive = new TankDrive(leftETalonSRX, rightETalonSRX);
+    ai = new AnalogInput(0);
   }
 
   /**
@@ -90,6 +68,7 @@ public class TechnoTitan extends TimedRobot {
   @Override
   public void robotPeriodic() {
     SmartDashboard.putNumber("Angle", navx.getAngle());
+    SmartDashboard.putNumber("Distance", ai.getVoltage());
   }
 
   /**
@@ -119,9 +98,6 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    oi.initialize();
-    ControlDriveTrain driveCommand = new ControlDriveTrain(oi);
-    driveCommand.start();
   }
 
   /**
@@ -134,6 +110,7 @@ public class TechnoTitan extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    // Make sure autonomous command is cancelled
   }
 
   /**
