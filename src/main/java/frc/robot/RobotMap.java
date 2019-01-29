@@ -36,4 +36,7 @@ public class RobotMap {
   public static final int LEFT_TALON_E = 0, RIGHT_TALON_E = 0;
 
   public static final int LEFT_TALON_2 = 1, LEFT_TALON_3 = 2, RIGHT_TALON_2 = 1, RIGHT_TALON_3 = 2;
+
+  // address of the accelerometer
+  public static final int ACCEL_ADDRESS = 0xAD;
 }

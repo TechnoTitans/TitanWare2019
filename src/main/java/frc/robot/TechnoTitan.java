@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
 import frc.robot.movements.ControlDriveTrain;
+import frc.robot.sensors.Accel_GY521;
 import frc.robot.sensors.QuadEncoder;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveTrain;
@@ -33,6 +34,8 @@ public class TechnoTitan extends TimedRobot {
   public static DriveTrain drive;
   public static Arm arm;
   public static AHRS navx;
+  public Accel_GY521 accelGyro;
+
 
   private static final boolean LEFT_REVERSE = false,
                                 RIGHT_REVERSE = false;
