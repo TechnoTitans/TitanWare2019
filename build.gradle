@@ -50,6 +50,7 @@ dependencies {
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
     testCompile 'junit:junit:4.12'
+    compile 'org.jetbrains:annotations:17.0.0' // experimental addition of jetbrains annotation
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
