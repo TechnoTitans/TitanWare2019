@@ -2,7 +2,7 @@ package frc.robot.sensors;
 
 import edu.wpi.first.wpilibj.I2C;
 
-import static frc.robot.sensors.AccelerometerConstants.WHOAMI_DEFAULT_VALUE;
+import static frc.robot.sensors.LIS3DHConstants.WHOAMI_DEFAULT_VALUE;
 
 public class AccelerometerTester {
 
