@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
-import static frc.robot.sensors.AccelerometerConstants.*;
+import static frc.robot.sensors.LIS3DHConstants.*;
 import static java.util.Objects.requireNonNull;
 
 @SuppressWarnings("Duplicates")

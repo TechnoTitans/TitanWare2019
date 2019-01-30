@@ -1,6 +1,6 @@
 package frc.robot.sensors;
 
-public class AccelerometerConstants {
+public class LIS3DHConstants {
 
     // MARK - Universal Constants
 
