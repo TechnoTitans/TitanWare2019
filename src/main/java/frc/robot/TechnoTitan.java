@@ -13,17 +13,27 @@ import edu.wpi.first.hal.util.UncleanStatusException;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.filters.LinearDigitalFilter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import frc.robot.motor.TalonSRX;
 import frc.robot.sensors.Accel_LIS3DH;
+import frc.robot.movements.ControlDriveTrain;
+import frc.robot.sensors.Accel_GY521;
 import frc.robot.sensors.QuadEncoder;
 import frc.robot.sensors.TimeOfFlight;
 import frc.robot.sensors.VisionSensor;
 import frc.robot.subsystems.Arm;
+
+
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.TankDrive;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.SPI;
 
 
 /**
@@ -46,6 +56,9 @@ public class TechnoTitan extends TimedRobot {
 
   private Accel_LIS3DH elbowAngleSensor;
   private Accel_LIS3DH wristAngleSensor;
+  public Accel_GY521 accelGyro;
+  public static AnalogInput ai;
+  public static I2C icu;
 
   private static final boolean LEFT_REVERSE = false,
                                RIGHT_REVERSE = true;
@@ -74,15 +87,15 @@ public class TechnoTitan extends TimedRobot {
     // Arm setup
     TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
             elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, false);
-  
-    
+
+
     // MARK - accelerometer setup
     elbowAngleSensor = new Accel_LIS3DH(RobotMap.ELBOW_ACCEL_ADDR);
     wristAngleSensor = new Accel_LIS3DH(RobotMap.WRIST_ACCEL_ADDR);
 
     movingAverageFilter = LinearDigitalFilter.movingAverage(elbowAngleSensor, MVA_TAPS);
     singlePoleIIRFilter = LinearDigitalFilter.singlePoleIIR(elbowAngleSensor, TIME_CONSTANT, 0.01);
-    
+
     arm = new Arm(elbow, wrist, new Solenoid(RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
 
 
@@ -114,6 +127,7 @@ public class TechnoTitan extends TimedRobot {
     oi = new OI(); // must initializae oi after drive because it requires it as a a subsystem
 
     drive.resetEncoders();
+    ai = new AnalogInput(0);
   }
 
   /**
@@ -148,6 +162,8 @@ public class TechnoTitan extends TimedRobot {
       // serial port not started yet
       System.out.println("Warning: " + e);
     }
+    SmartDashboard.putNumber("Angle", navx.getAngle());
+    SmartDashboard.putNumber("Distance", ai.getVoltage());
   }
 
   /**
@@ -190,6 +206,7 @@ public class TechnoTitan extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    // Make sure autonomous command is cancelled
   }
 
   /**
