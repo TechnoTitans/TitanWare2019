@@ -1,4 +1,4 @@
-package frc.robot.sensors;
+package frc.robot.sensors.lis3dh;
 
 public class LIS3DHConstants {
 

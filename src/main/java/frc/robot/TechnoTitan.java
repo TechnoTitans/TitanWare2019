@@ -13,16 +13,12 @@ import edu.wpi.first.hal.util.UncleanStatusException;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Ultrasonic;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.filters.LinearDigitalFilter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.motor.TalonSRX;
-import frc.robot.sensors.Accel_LIS3DH;
-import frc.robot.movements.ControlDriveTrain;
+import frc.robot.sensors.lis3dh.Accel_LIS3DH;
 import frc.robot.sensors.Accel_GY521;
 import frc.robot.sensors.QuadEncoder;
 import frc.robot.sensors.TimeOfFlight;
@@ -33,7 +29,6 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.SPI;
 
 
 /**

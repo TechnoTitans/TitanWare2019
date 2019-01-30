@@ -1,4 +1,4 @@
-package frc.robot.sensors;
+package frc.robot.sensors.lis3dh;
 
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PIDSource;
@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
-import static frc.robot.sensors.LIS3DHConstants.*;
+import static frc.robot.sensors.lis3dh.LIS3DHConstants.*;
 import static java.util.Objects.requireNonNull;
 
 @SuppressWarnings("Duplicates")
