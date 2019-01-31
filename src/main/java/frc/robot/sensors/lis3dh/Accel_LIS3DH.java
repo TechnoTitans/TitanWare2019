@@ -1,4 +1,4 @@
-package frc.robot.sensors;
+package frc.robot.sensors.lis3dh;
 
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PIDSource;
