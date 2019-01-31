@@ -23,18 +23,21 @@ public class Accel_GY521 implements Accelerometer {
         this.x_accel = 0;
         this.y_accel = 0;
         this.z_accel = 0;
+
+        this.reset();
     }
 
-    private void init() {
-        accel.write(RESET_ADDRESS, RESET_VAL); //REVIEW THIS: should reset all the stored values
-        //TO DO: look how to initialize everything
+    private void reset() {
+        accel.write(RESET_ADDRESS, RESET_VAL);
     }
 
+    //checks whether the sensor is connected
     public boolean isConnected(){
         return accel.verifySensor(WHO_AM_I, 1, WHO_AM_I_DEFAULT);
     }
 
     @Override
+    //sets the range for the accelerometer
     public void setRange(Range range) {
         //Ensures that the range is not null pointer
         requireNonNull(range, "The range that has been entered is invalid");
@@ -50,6 +53,44 @@ public class Accel_GY521 implements Accelerometer {
 
         this.currRange = range;
     }
+
+    private void updateAllValues() {
+        double currentResolution = getCurrentResolution();
+        ByteBuffer rawBuffer = ByteBuffer.allocate(6);
+        accel.read(OUT_X_H, 6, rawBuffer);
+
+        rawBuffer.order(ByteOrder.LITTLE_ENDIAN); // Low, High ordering means that LSB is first, so this is necessary
+        System.out.println("The buffer is " + Arrays.toString(rawBuffer.array()));
+
+        //  X_H  X_L  Y_H  Y_L  Z_H  Z_L
+        //  0    1    2    3    4    5
+        double rawX = rawBuffer.getShort(0); // creates a short from [0,1] (Short.BYTES == 2)
+        double rawY = rawBuffer.getShort(2); // creates a short from [2,3]
+        double rawZ = rawBuffer.getShort(4);
+
+        this.x_accel = (rawX / currentResolution) /* * STANDARD_GRAVITY*/;
+        this.y_accel = (rawY / currentResolution) /* * STANDARD_GRAVITY*/;
+        this.z_accel = (rawZ / currentResolution) /* * STANDARD_GRAVITY*/;
+    }
+
+    //gets the resolution requestion
+    private int getCurrentResolution() {
+        switch (currRange) {
+            case k16G:
+                return ACCEL_RESOLUTION_16G;
+            case k8G:
+                return ACCEL_RESOLUTION_8G;
+            case k4G:
+                return ACCEL_RESOLUTION_4G;
+            case k2G:
+                return ACCEL_RESOLUTION_2G;
+
+            default:
+                throw new IllegalArgumentException("Invalid range given");
+        }
+    }
+
+    //gets the range requested
 
     private int getSettingFromRange(Range range) {
         switch (range) {
@@ -68,16 +109,19 @@ public class Accel_GY521 implements Accelerometer {
 
     @Override
     public double getX() {
+        this.updateAllValues();
         return x_accel;
     }
 
     @Override
     public double getY() {
+        this.updateAllValues();
         return y_accel;
     }
 
     @Override
     public double getZ() {
+        this.updateAllValues();
         return z_accel;
     }
 }

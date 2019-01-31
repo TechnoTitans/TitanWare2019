@@ -93,5 +93,4 @@ public class TimeOfFlight {
             buffer.skip(1);
         }
     }
-
 }
