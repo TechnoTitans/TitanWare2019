@@ -18,7 +18,7 @@ import frc.robot.subsystems.Arm;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.motor.TalonSRX;
-import frc.robot.sensors.Accel_GY521;
+import frc.robot.sensors.gy521.Accel_GY521;
 import frc.robot.sensors.TimeOfFlight;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.TankDrive;

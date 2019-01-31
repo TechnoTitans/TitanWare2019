@@ -1,4 +1,4 @@
-package frc.robot.sensors;
+package frc.robot.sensors.gy521;
 
 
 import edu.wpi.first.wpilibj.I2C;
@@ -9,7 +9,7 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 
 import static java.util.Objects.requireNonNull;
-import static frc.robot.sensors.Accelerometer_Constants.*;
+import static frc.robot.sensors.gy521.GY521_Constants.*;
 
 public class Accel_GY521 implements Accelerometer {
     private static I2C accel;

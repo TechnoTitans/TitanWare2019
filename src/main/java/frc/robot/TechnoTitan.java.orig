@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.motor.TalonSRX;
 import frc.robot.sensors.lis3dh.Accel_LIS3DH;
-import frc.robot.sensors.Accel_GY521;
+import frc.robot.sensors.gy521.Accel_GY521;
 import frc.robot.sensors.QuadEncoder;
 import frc.robot.sensors.TimeOfFlight;
 import frc.robot.sensors.VisionSensor;

@@ -1,6 +1,6 @@
-package frc.robot.sensors;
+package frc.robot.sensors.gy521;
 
-public class Accelerometer_Constants {
+public class GY521_Constants {
     public static final int WHO_AM_I = 0x75;
     public static final byte[] WHO_AM_I_DEFAULT = new byte[] {
       0b01101000
