@@ -4,7 +4,8 @@ import edu.wpi.first.wpilibj.I2C;
 import frc.robot.RobotMap;
 import org.junit.Test;
 
-import static frc.robot.sensors.AccelerometerConstants.*;
+import static frc.robot.sensors.LIS3DHConstants.REG_WHO_AM_I;
+import static frc.robot.sensors.LIS3DHConstants.WHOAMI_DEFAULT_VALUE;
 import static org.junit.Assert.assertTrue;
 
 public class AccelerometerTester {
