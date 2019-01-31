@@ -2,9 +2,9 @@ package frc.robot.sensors;
 
 public interface Encoder {
 
-	public double getDistance();
+	double getDistance();
 	
-	public double getSpeed();
+	double getSpeed();
 
-	public void reset();
+	void reset();
 }

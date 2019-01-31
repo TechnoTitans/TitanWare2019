@@ -84,8 +84,7 @@ public class TimeOfFlight {
         for (int i = 0; i < 8; ++i) {
             total += (data[i] & 0xFF);
         }
-        if ((total & 0xFF) != (data[8] & 0xFF)) return false;
-        return true;
+        return (total & 0xFF) == (data[8] & 0xFF);
     }
 
     private void align() {

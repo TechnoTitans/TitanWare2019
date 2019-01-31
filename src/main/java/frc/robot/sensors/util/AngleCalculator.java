@@ -3,7 +3,7 @@ package frc.robot.sensors.util;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.sensors.Accel_LIS3DH;
+import frc.robot.sensors.lis3dh.Accel_LIS3DH;
 
 public class AngleCalculator implements PIDSource {
     private PIDSourceType pidSourceType = PIDSourceType.kDisplacement;
