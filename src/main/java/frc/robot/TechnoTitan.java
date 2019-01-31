@@ -11,17 +11,22 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.hal.util.UncleanStatusException;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.filters.LinearDigitalFilter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
-import frc.robot.sensors.Accel_LIS3DH;
+import frc.robot.sensors.lis3dh.Accel_LIS3DH;
+import frc.robot.sensors.Accel_GY521;
 import frc.robot.sensors.QuadEncoder;
 import frc.robot.sensors.TimeOfFlight;
 import frc.robot.sensors.VisionSensor;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveTrain;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.I2C;
 import frc.robot.subsystems.TankDrive;
 
 
@@ -33,6 +38,9 @@ import frc.robot.subsystems.TankDrive;
  * project.
  */
 public class TechnoTitan extends TimedRobot {
+  private static final double TIME_CONSTANT = (0.030); // seconds
+  // 100 ms = 3t
+  // t = 100/3 ms, 33 ms.
   public static OI oi;
   public static DriveTrain drive;
   public static Arm arm;
@@ -42,14 +50,21 @@ public class TechnoTitan extends TimedRobot {
 
   private Accel_LIS3DH elbowAngleSensor;
   private Accel_LIS3DH wristAngleSensor;
+  public Accel_GY521 accelGyro;
+  public static AnalogInput ai;
+  public static I2C icu;
 
   private static final boolean LEFT_REVERSE = false,
                                RIGHT_REVERSE = true;
 
   private static final double INCHES_PER_PULSE = 0.0045;
 
-  
+  private static final int MVA_TAPS = 25;
 
+
+  // filtering
+  private LinearDigitalFilter movingAverageFilter;
+  private LinearDigitalFilter singlePoleIIRFilter;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -67,8 +82,13 @@ public class TechnoTitan extends TimedRobot {
     TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
             elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, false);
 
+
+    // MARK - accelerometer setup
     elbowAngleSensor = new Accel_LIS3DH(RobotMap.ELBOW_ACCEL_ADDR);
     wristAngleSensor = new Accel_LIS3DH(RobotMap.WRIST_ACCEL_ADDR);
+
+    movingAverageFilter = LinearDigitalFilter.movingAverage(elbowAngleSensor, MVA_TAPS);
+    singlePoleIIRFilter = LinearDigitalFilter.singlePoleIIR(elbowAngleSensor, TIME_CONSTANT, 0.01);
 
     arm = new Arm(elbow, wrist, new Solenoid(RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
 
@@ -101,6 +121,7 @@ public class TechnoTitan extends TimedRobot {
     oi = new OI(); // must initializae oi after drive because it requires it as a a subsystem
 
     drive.resetEncoders();
+    ai = new AnalogInput(0);
   }
 
   /**
@@ -120,8 +141,11 @@ public class TechnoTitan extends TimedRobot {
     SmartDashboard.putNumber("Y", elbowAngleSensor.getY());
     SmartDashboard.putNumber("Z", elbowAngleSensor.getZ());
 
-    SmartDashboard.putNumber("Calculated Angle", elbowAngleSensor.getAngleXY());
-    
+    SmartDashboard.putNumber("Raw Calculated Angle", elbowAngleSensor.getAngleXY());
+    SmartDashboard.putNumber("Moving Average Filtered Angle", movingAverageFilter.pidGet());
+    SmartDashboard.putNumber("Single Pole IIR Filtered Angle", singlePoleIIRFilter.pidGet());
+
+    // time of flight
     SmartDashboard.putNumber("Encoder left", drive.getLeftEncoder().getDistance());
     SmartDashboard.putNumber("Encoder right", drive.getRightEncoder().getDistance());
     SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
@@ -132,6 +156,8 @@ public class TechnoTitan extends TimedRobot {
       // serial port not started yet
       System.out.println("Warning: " + e);
     }
+    SmartDashboard.putNumber("Angle", navx.getAngle());
+    SmartDashboard.putNumber("Distance", ai.getVoltage());
   }
 
   /**

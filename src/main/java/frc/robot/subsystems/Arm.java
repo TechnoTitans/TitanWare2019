@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.motor.Motor;
 import frc.robot.movements.ControlArm;
-import frc.robot.sensors.Accel_LIS3DH;
+import frc.robot.sensors.lis3dh.Accel_LIS3DH;
 
 public class Arm extends Subsystem {
 

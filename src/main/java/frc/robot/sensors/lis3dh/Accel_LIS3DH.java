@@ -10,13 +10,15 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
-import static frc.robot.sensors.LIS3DHConstants.*;
+import static frc.robot.sensors.lis3dh.LIS3DHConstants.*;
 import static java.util.Objects.requireNonNull;
 
 @SuppressWarnings("Duplicates")
 public class Accel_LIS3DH implements Accelerometer, PIDSource {
 
     private final I2C i2c_conn;
+
+    // TODO Test filtering base raw values
 
     // MARK - state variables
     private Range currentRange = Range.k2G; // set this as default range
@@ -180,8 +182,8 @@ public class Accel_LIS3DH implements Accelerometer, PIDSource {
 
     @Override
     public void setPIDSourceType(PIDSourceType pidSource) {
-        // TODO maybe throw an error if it is an invalid type?
-        // TODO Figure out what is kDisplacement vs kRate?
+        // kDisplacement - angle
+        // kRate - rate of change of the angle (tbi)
         this.pidSourceType = pidSource;
     }
 
@@ -196,9 +198,9 @@ public class Accel_LIS3DH implements Accelerometer, PIDSource {
             case kDisplacement:
                 return this.getAngleXY();
             case kRate:
-                return this.getX(); // TODO See if this is appropriate
+                throw new IllegalStateException("PIDSourceType kRate is unsupported at this time."); // TODO calculated the rate of change of the angle instead
             default:
-                throw new IllegalStateException("Invalid pidsourcetype at this point in execution");
+                throw new IllegalStateException("Invalid PIDSourceType at this point in execution");
         }
     }
 }

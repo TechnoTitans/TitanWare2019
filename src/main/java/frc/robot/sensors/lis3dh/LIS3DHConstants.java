@@ -1,5 +1,6 @@
-package frc.robot.sensors;
+package frc.robot.sensors.lis3dh;
 
+@SuppressWarnings("WeakerAccess")
 public class LIS3DHConstants {
 
     // MARK - Universal Constants
