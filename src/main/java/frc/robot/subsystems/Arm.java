@@ -3,45 +3,73 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.motor.Motor;
+import frc.robot.movements.ControlArm;
+import frc.robot.sensors.lis3dh.Accel_LIS3DH;
 
 public class Arm extends Subsystem {
 
     private Motor elbow, wrist;
     private Solenoid armSolenoid;
 
-    public Arm(Motor elbow, Motor wrist, Solenoid armPiston) {
-        this.elbow = elbow;
-        this.wrist = wrist;
-        this.armSolenoid = armPiston;
-    }
+    public Accel_LIS3DH elbowSensor;
+    public Accel_LIS3DH wristSensor;
+
+
+
+    private boolean isUp = false;
+
+    public static final double ELBOW_LENGTH = 32.7, // in
+                               WRIST_LENGTH = 15; // in
+
 
     public void moveElbow(double speed) {
-      if(speed > 0.01 || speed < -0.01){
+        // OI handles the deadband processing
         elbow.set(speed);
-      } else {
-        elbow.set(0);
-      }
     }
 
     public void moveWrist(double speed) {
-      if(speed > 0.01 || speed < -0.01){
         wrist.set(speed);
-      } else {
-        wrist.set(0);
-      }
     }
 
-    public void moveUp() {
-        armSolenoid.set(true);
+    public Arm(Motor elbow, Motor wrist, Solenoid armPiston, Accel_LIS3DH elbowSensor, Accel_LIS3DH wristSensor) {
+        this.elbow = elbow;
+        this.wrist = wrist;
+        this.armSolenoid = armPiston;
+
+        this.elbowSensor = elbowSensor;
+        this.wristSensor = wristSensor;
     }
 
-    public void moveDown() {
-        armSolenoid.set(false);
+
+    public void setArmSolenoid(boolean on) {
+        this.isUp = on;
+        armSolenoid.set(on);
+    }
+
+    public void moveArmUp() {
+        setArmSolenoid(true);
+    }
+
+    public void moveArmDown() {
+        setArmSolenoid(false);
+    }
+
+    public void getCalculatedDistance() {
+        // todo implement if needed
+    }
+
+    public void toggleUp() {
+        this.setArmSolenoid(!isUp);
+    }
+
+
+    public boolean isUp() {
+        return isUp;
     }
 
 
     @Override
     protected void initDefaultCommand() {
-
+        setDefaultCommand(new ControlArm());
     }
 }

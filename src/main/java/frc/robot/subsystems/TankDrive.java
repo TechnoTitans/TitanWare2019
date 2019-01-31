@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import frc.robot.motor.TalonSRX;
+import frc.robot.movements.ControlDriveTrain;
 import frc.robot.sensors.Encoder;
 import frc.robot.sensors.NavXGyro;
 
@@ -137,7 +138,6 @@ public class TankDrive extends DriveTrain {
 
 	@Override
 	protected void initDefaultCommand() {
-		// This command is run by default when the subsystem is initialized
-		// Leave blank for now
+		setDefaultCommand(new ControlDriveTrain());
 	}
 }

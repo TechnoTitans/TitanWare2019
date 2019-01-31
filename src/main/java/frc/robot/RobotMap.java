@@ -25,17 +25,25 @@ public class RobotMap {
   // public static int rangefinderModule = 1;
   public static final int LEFT_JOYSTICK = 0;
   public static final int RIGHT_JOYSTICK = 1;
+  public static final int AUX_JOYSTICK_1 = 2,
+                          AUX_JOYSTICK_2 = 3;
 
   public static final int ARM_PISTON = 0;
 
 
-  public static final int WRIST_MOTOR = -1;
-  public static final int ELBOW_MOTOR = -1;
+  public static final int WRIST_MOTOR = 7;
+  public static final int ELBOW_MOTOR = 10;
 
   // Talons with encoders
-  public static final int LEFT_TALON_E = 0, RIGHT_TALON_E = 0;
+  public static final int LEFT_TALON_E = 5, RIGHT_TALON_E = 11;
 
-  public static final int LEFT_TALON_2 = 1, LEFT_TALON_3 = 2, RIGHT_TALON_2 = 1, RIGHT_TALON_3 = 2;
+
+  // Other talons
+  public static final int LEFT_TALON_2 = 4, LEFT_TALON_3 = 3, RIGHT_TALON_2 = 12, RIGHT_TALON_3 = 13;
+
+  // accelerometers
+  public static final int ELBOW_ACCEL_ADDR = 0x18;
+  public static final int WRIST_ACCEL_ADDR = 0x19; // todo setup the second accelerometer to use the secondary addr if its the same
 
   // address of the accelerometer
   public static final int ACCEL_ADDRESS = 0xAD;

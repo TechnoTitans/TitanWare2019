@@ -13,12 +13,10 @@ import frc.robot.TechnoTitan;
 import frc.robot.motor.Filter;
 
 public class ControlDriveTrain extends Command {
-  private OI oi;
   private Filter leftFilter, rightFilter;
 
-  public ControlDriveTrain(OI oi) {
+  public ControlDriveTrain() {
     requires(TechnoTitan.drive);
-    this.oi = oi;
   }
 
   // Called just before this Command runs the first time
@@ -31,8 +29,8 @@ public class ControlDriveTrain extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    leftFilter.update(oi.getLeft());
-    rightFilter.update(oi.getRight());
+    leftFilter.update(TechnoTitan.oi.getLeft());
+    rightFilter.update(TechnoTitan.oi.getRight());
     TechnoTitan.drive.set(leftFilter.getValue(), rightFilter.getValue());
   }
 

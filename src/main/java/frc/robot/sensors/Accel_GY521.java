@@ -23,6 +23,7 @@ public class Accel_GY521 implements Accelerometer {
         this.x_accel = 0;
         this.y_accel = 0;
         this.z_accel = 0;
+
         this.reset();
     }
 
@@ -49,6 +50,7 @@ public class Accel_GY521 implements Accelerometer {
         ctrl4 |= getSettingFromRange(range) << 3; // this sets only the FS1 and FS0
 
         accel.write(ACCEL_RANGE, ctrl4);
+
         this.currRange = range;
     }
 
@@ -89,6 +91,7 @@ public class Accel_GY521 implements Accelerometer {
     }
 
     //gets the range requested
+
     private int getSettingFromRange(Range range) {
         switch (range) {
             case k2G:

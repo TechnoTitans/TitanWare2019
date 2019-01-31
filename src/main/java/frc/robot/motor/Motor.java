@@ -1,6 +1,6 @@
 package frc.robot.motor;
 
-import frc.robot.sensors.Encoder;;
+import frc.robot.sensors.Encoder;
 
 public interface Motor {
 
