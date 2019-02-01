@@ -2,8 +2,10 @@ package frc.robot.sensors.gy521;
 
 public class GY521_Constants {
     public static final int WHO_AM_I = 0x75;
+    // https://www.invensense.com/wp-content/uploads/2015/02/MPU-6000-Register-Map1.pdf
     public static final byte[] WHO_AM_I_DEFAULT = new byte[] {
-      0b01101000
+//      0b01101000
+      0x68 // page 45
     };
     public static final byte RESET_DEVICE = 0b00000111;
     public static final double STANDARD_GRAVITY = 9.806;

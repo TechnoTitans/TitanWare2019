@@ -11,6 +11,7 @@ import java.util.Arrays;
 import static java.util.Objects.requireNonNull;
 import static frc.robot.sensors.gy521.GY521_Constants.*;
 
+@SuppressWarnings("Duplicates")
 public class Accel_GY521 implements Accelerometer {
     private static I2C accel;
     private double x_accel, y_accel, z_accel;
@@ -57,9 +58,9 @@ public class Accel_GY521 implements Accelerometer {
     private void updateAllValues() {
         double currentResolution = getCurrentResolution();
         ByteBuffer rawBuffer = ByteBuffer.allocate(6);
-        accel.read(OUT_X_H, 6, rawBuffer);
+        accel.read(OUT_X_H | 0x80, 6, rawBuffer);
 
-        rawBuffer.order(ByteOrder.LITTLE_ENDIAN); // Low, High ordering means that LSB is first, so this is necessary
+        rawBuffer.order(ByteOrder.BIG_ENDIAN); // Low, High ordering means that LSB is first, so this is necessary
         System.out.println("The buffer is " + Arrays.toString(rawBuffer.array()));
 
         //  X_H  X_L  Y_H  Y_L  Z_H  Z_L

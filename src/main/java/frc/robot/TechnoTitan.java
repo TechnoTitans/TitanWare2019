@@ -81,12 +81,14 @@ public class TechnoTitan extends TimedRobot {
 
 
     // MARK - accelerometer setup
-    elbowAngleSensor = new Accel_LIS3DH(RobotMap.ELBOW_ACCEL_ADDR);
-    wristAngleSensor = new Accel_LIS3DH(RobotMap.WRIST_ACCEL_ADDR);
 
-    movingAverageFilter = LinearDigitalFilter.movingAverage(elbowAngleSensor, MVA_TAPS);
-    singlePoleIIRFilter = LinearDigitalFilter.singlePoleIIR(elbowAngleSensor, TIME_CONSTANT, 0.01);
 
+//    elbowAngleSensor = new Accel_LIS3DH(RobotMap.ELBOW_ACCEL_ADDR);
+//    wristAngleSensor = new Accel_LIS3DH(RobotMap.WRIST_ACCEL_ADDR);
+
+//    movingAverageFilter = LinearDigitalFilter.movingAverage(elbowAngleSensor, MVA_TAPS);
+//    singlePoleIIRFilter = LinearDigitalFilter.singlePoleIIR(elbowAngleSensor, TIME_CONSTANT, 0.01);
+    accelGyro = new Accel_GY521(RobotMap.ACCEL_ADDRESS);
     arm = new Arm(elbow, wrist, new Solenoid(RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
 
 
@@ -134,14 +136,21 @@ public class TechnoTitan extends TimedRobot {
   public void robotPeriodic() {
     SmartDashboard.putNumber("Gyro", navx.getAngle());
 
-    SmartDashboard.putBoolean("Accel Test Success", elbowAngleSensor.isConnected());
-    SmartDashboard.putNumber("X", elbowAngleSensor.getX());
-    SmartDashboard.putNumber("Y", elbowAngleSensor.getY());
-    SmartDashboard.putNumber("Z", elbowAngleSensor.getZ());
+//    SmartDashboard.putBoolean("Accel Test Success", elbowAngleSensor.isConnected());
+    SmartDashboard.putBoolean("Accel Gyro Test Success", accelGyro.isConnected());
+    SmartDashboard.putNumber("X", accelGyro.getX());
+    SmartDashboard.putNumber("Y", accelGyro.getY());
+    SmartDashboard.putNumber("Z", accelGyro.getZ());
 
-    SmartDashboard.putNumber("Raw Calculated Angle", elbowAngleSensor.getAngleXY());
-    SmartDashboard.putNumber("Moving Average Filtered Angle", movingAverageFilter.pidGet());
-    SmartDashboard.putNumber("Single Pole IIR Filtered Angle", singlePoleIIRFilter.pidGet());
+
+
+//    SmartDashboard.putNumber("X", elbowAngleSensor.getX());
+//    SmartDashboard.putNumber("Y", elbowAngleSensor.getY());
+//    SmartDashboard.putNumber("Z", elbowAngleSensor.getZ());
+
+//    SmartDashboard.putNumber("Raw Calculated Angle", elbowAngleSensor.getAngleXY());
+//    SmartDashboard.putNumber("Moving Average Filtered Angle", movingAverageFilter.pidGet());
+//    SmartDashboard.putNumber("Single Pole IIR Filtered Angle", singlePoleIIRFilter.pidGet());
 
     // time of flight
     SmartDashboard.putNumber("Encoder left", drive.getLeftEncoder().getDistance());

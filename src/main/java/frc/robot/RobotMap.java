@@ -46,5 +46,5 @@ public class RobotMap {
   public static final int WRIST_ACCEL_ADDR = 0x19; // todo setup the second accelerometer to use the secondary addr if its the same
 
   // address of the accelerometer
-  public static final int ACCEL_ADDRESS = 0xAD;
+  public static final int ACCEL_ADDRESS = 0x68;
 }
