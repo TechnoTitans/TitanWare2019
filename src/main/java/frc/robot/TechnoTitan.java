@@ -8,25 +8,16 @@
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.hal.util.UncleanStatusException;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.filters.LinearDigitalFilter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
+import frc.robot.sensors.*;
 import frc.robot.sensors.lis3dh.Accel_LIS3DH;
-import frc.robot.sensors.Accel_GY521;
-import frc.robot.sensors.QuadEncoder;
-import frc.robot.sensors.TimeOfFlight;
-import frc.robot.sensors.VisionSensor;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveTrain;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.I2C;
 import frc.robot.subsystems.TankDrive;
 
 
@@ -54,6 +45,8 @@ public class TechnoTitan extends TimedRobot {
   public static AnalogInput ai;
   public static I2C icu;
 
+  public static VisionKalmanFilter visionKalmanFilter;
+
   private static final boolean LEFT_REVERSE = false,
                                RIGHT_REVERSE = true;
 
@@ -76,6 +69,7 @@ public class TechnoTitan extends TimedRobot {
     navx.reset();
 
     vision = new VisionSensor();
+    visionKalmanFilter = new VisionKalmanFilter();
     tfDistance = new TimeOfFlight();
 
     // Arm setup

@@ -10,14 +10,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.movements.ArmPosition;
-import frc.robot.movements.AutoAlign;
-import frc.robot.movements.ControlArm;
-import frc.robot.movements.ControlArmPID;
-import frc.robot.movements.ControlDriveTrainStraight;
-import frc.robot.movements.ForwardAlign;
-import frc.robot.subsystems.Arm;
+import frc.robot.movements.*;
 
 
 /**
@@ -74,7 +67,7 @@ public class OI {
         Button btnArmLevel2 = new JoystickButton(aux2, 2);
         Button btnArmLevel3 = new JoystickButton(aux2, 3);
 
-        Button autoAlign = new JoystickButton(right, 3);
+        Button autoAlign = new JoystickButton(aux1, 3);
         Button forwardAlign = new JoystickButton(aux1, 1);
 
         driveTriggerLeft.whileHeld(new ControlDriveTrainStraight());
@@ -84,8 +77,7 @@ public class OI {
         btnArmLevel2.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_2));
         btnArmLevel3.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_3));
 
-        AutoAlign align = new AutoAlign();
-        autoAlign.toggleWhenPressed(align);
+        autoAlign.toggleWhenPressed(new AutoAlign(0.5, 20));
 
         forwardAlign.whenPressed(new ForwardAlign(ArmPosition.ROCKET_LEVEL_1, 60, 0.5));
     }
