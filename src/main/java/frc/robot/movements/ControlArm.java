@@ -1,13 +1,13 @@
 package frc.robot.movements;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.PIDCommand;
-import frc.robot.OI;
 import frc.robot.TechnoTitan;
 import frc.robot.motor.Filter;
 
 public class ControlArm extends Command {
     private Filter elbowFilter, wristFilter;
+
+    private static final double MAX_ELBOW_SPEED = 0.5;
 
     public ControlArm() {
         requires(TechnoTitan.arm);
@@ -21,7 +21,7 @@ public class ControlArm extends Command {
     public void execute() {
         elbowFilter.update(TechnoTitan.oi.getElbowMove());
         wristFilter.update(TechnoTitan.oi.getWristMove());
-        TechnoTitan.arm.moveElbow(elbowFilter.getValue());
+        TechnoTitan.arm.moveElbow(elbowFilter.getValue() * MAX_ELBOW_SPEED);
         // TechnoTitan.arm.moveWrist(elbowFilter.getValue());
         if (TechnoTitan.oi.toggleArmUp()) {
             TechnoTitan.arm.toggleUp();
