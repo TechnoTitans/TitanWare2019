@@ -31,6 +31,7 @@ import frc.robot.subsystems.TankDrive;
  * creating this project, you must also update the build.gradle file in the
  * project.
  */
+@SuppressWarnings("WeakerAccess")
 public class TechnoTitan extends TimedRobot {
   private static final double TIME_CONSTANT = (0.030); // seconds
   // 100 ms = 3t
@@ -134,15 +135,27 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    SmartDashboard.putNumber("Gyro", navx.getAngle());
+    // MARK - sensor updates
+    accelGyro.update();
+
+
+    // MARK - smart dashboard things
+    SmartDashboard.putNumber("NavX Gyro", navx.getAngle());
 
 //    SmartDashboard.putBoolean("Accel Test Success", elbowAngleSensor.isConnected());
+
+    // MARK - accelerometer testing
     SmartDashboard.putBoolean("Accel Gyro Test Success", accelGyro.isConnected());
     SmartDashboard.putNumber("X", accelGyro.getX());
     SmartDashboard.putNumber("Y", accelGyro.getY());
     SmartDashboard.putNumber("Z", accelGyro.getZ());
 
+    SmartDashboard.putNumber("Gyro Rate", accelGyro.getRate());
+    SmartDashboard.putNumber("Accel Angle", accelGyro.getAccelAngle());
+    SmartDashboard.putNumber("Complimented Angle", accelGyro.getAngle());
 
+//    SmartDashboard.putNumber("Gyro config", accelGyro.getGyroConfig());
+    SmartDashboard.putNumber("Accel config", accelGyro.getAccelConfig());
 
 //    SmartDashboard.putNumber("X", elbowAngleSensor.getX());
 //    SmartDashboard.putNumber("Y", elbowAngleSensor.getY());
@@ -163,7 +176,7 @@ public class TechnoTitan extends TimedRobot {
       // serial port not started yet
       System.out.println("Warning: " + e);
     }
-    SmartDashboard.putNumber("Angle", navx.getAngle());
+    SmartDashboard.putNumber("NavX Angle", navx.getAngle());
     SmartDashboard.putNumber("Distance", ai.getVoltage());
   }
 

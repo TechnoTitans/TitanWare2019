@@ -1,5 +1,6 @@
 package frc.robot.sensors.gy521;
 
+@SuppressWarnings("WeakerAccess")
 public class GY521_Constants {
     public static final int WHO_AM_I = 0x75;
     // https://www.invensense.com/wp-content/uploads/2015/02/MPU-6000-Register-Map1.pdf
@@ -30,10 +31,21 @@ public class GY521_Constants {
             GYRO_SETTING_1000 = 0b10,
             GYRO_SETTING_2000 = 0b11;
 
-    public static final int OUT_X_H = 0x3B,
-            OUT_X_L = 0x3C,
-            OUT_Y_H = 0x3D,
-            OUT_Y_L = 0x3E,
-            OUT_Z_H = 0x3F,
-            OUT_Z_L = 0x3F;
+    // MARK - accelerometer address values
+    public static final int ACCEL_XOUT_H = 0x3B,
+                            ACCEL_YOUT_H = 0x3D,
+                            ACCEL_ZOUT_H = 0x3F;
+
+    // MARK - gyroscope address values
+    // TODO implement x and y address
+    public static final int GYRO_ZOUT_H = 0x47;
+
+    // MARK - Gyro Scale Modifiers
+    public static final double GYRO_SCALE_MODIFIER_250DEG = 131.0,
+                               GYRO_SCALE_MODIFIER_500DEG = 65.5,
+                               GYRO_SCALE_MODIFIER_1000DEG = 32.8,
+                               GYRO_SCALE_MODIFIER_2000DEG = 16.4;
+
+
+    public static final int PWR_MGMT_1 = 0x6B;
 }
