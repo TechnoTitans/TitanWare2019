@@ -106,7 +106,7 @@ public class AutoAlign extends Command {
 
         kappa *= ROBOT_RADIUS;
 
-        double speed = (this.speed - minSpeed) * Math.min(1, (dy - TRUE_END_DIST) / slowDownDist) + minSpeed;
+        double speed = (this.speed - minSpeed) * Math.min(1, (-dy - TRUE_END_DIST) / slowDownDist) + minSpeed;
 
         double lSpeed = speed * (1 + kappa) / 2;
         double rSpeed = speed * (1 - kappa) / 2;
