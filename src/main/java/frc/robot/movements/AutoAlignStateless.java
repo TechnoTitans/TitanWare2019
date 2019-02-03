@@ -9,10 +9,9 @@ public class AutoAlignStateless extends Command {
     private Gyro gyro;
 
 
-    private static final double STRAIGHT_END_COEFF = 3,
-                                AVOID_TURN_COEFF = 1;
+    private static final double STRAIGHT_END_COEFF = 1;
 
-    private static final double ROBOT_RADIUS = 9;
+    private static final double ROBOT_RADIUS = 9;  // TODO: measure
 
     public AutoAlignStateless() {
         gyro = new NavXGyro();
@@ -27,7 +26,7 @@ public class AutoAlignStateless extends Command {
      * Calculates the curvature at which to drive
      * @param x  negative when robot is to the left of strips
      * @param y  always negative (since robot is behind strips)
-     * @param skew  clockwise is positive
+     * @param skew  clockwise is positive, in radians (not degrees!)
      * @return curvature, positive is move left side faster (i.e. turn rightwards)
      */
     private double calculateCurvature(double x, double y, double skew) {
@@ -40,14 +39,38 @@ public class AutoAlignStateless extends Command {
 
         double distance = Math.hypot(x, y);
 
-        // Coefficients of the x polynomial
-        // Ax^3 + Bx^2 + Cx + D
-        // px = h00 * dx + h10 * mx
-        // py = h00 * dy + h10 * my + h11 * distance
+        /*
+        A brief explanation of the math:
+        We are using a hermite cubic spline to connect the points (x, y) and (0, 0)
+        The formula is h00 * p0 + h10 * m0 + h01 * p1 + h11 * m1
+        Here, p0, m0, p1, and m1 are vectors representing
+          - The initial location (x, y)
+          - The initial direction (mx, my)
+          - The final location (0, 0)
+          - The final direction (0, -distance) * STRAIGHT_END_COEFF
+         The lengths of m0 and m1 control how strongly the tangent lines for the initial curves are pulled in
+         that direction. By default, when STRAIGHT_END_COEFF is 1, both have the same length as the distance left
+         to the target.
+
+         Then, to calculate curvature, we use the formula
+         K = (r'(t) x r''(t)) / |r'(t)|^3      (where x denotes the cross product)
+         where K is the curvature (the reciprocal of the radius of a circle touching the path)
+         This formula is derived from a = v^2 / r = v^2 * K where a is centripetal acceleration
+         Then, K = a / v^2, note that r'(t), the velocity, cross r''(t), the acceleration, is a * v
+         so K = |r'(t) x r''(t)| / |r'(t)|^3
+
+         Now, by construction, r'(t) = <mx, my> so we only need to find r''(t), for which we only need the
+         t^2 coefficient of the hermite polynomials.
+
+         Check out this desmos I made to play with the variables: https://www.desmos.com/calculator/lupevjbr8s
+         */
+
+        // px = h00 * x + h10 * mx
+        // py = h00 * y + h10 * my + h11 * distance
         double mx = distance * Math.sin(skew);
         double my = distance * Math.cos(skew);
-        double pxB = -3 * x - 2 * mx * AVOID_TURN_COEFF,
-                pyB = -3 * y - 2 * my * AVOID_TURN_COEFF - 1 * distance * STRAIGHT_END_COEFF;
+        double pxB = -3 * x - 2 * mx,
+                pyB = -3 * y - 2 * my - 1 * distance * STRAIGHT_END_COEFF;
         // K = <mx, my> cross <px''(0), py''(0)> / distance^3
         // px''(0) = 2 * pxB
         double kappa = (my * 2 * pxB - mx * 2 * pyB) / Math.pow(distance, 3);
@@ -72,7 +95,8 @@ public class AutoAlignStateless extends Command {
         if (lSpeed > 1 || lSpeed < -1) {
             lSpeed /= Math.abs(lSpeed);
             rSpeed /= Math.abs(lSpeed);
-        } else if (rSpeed > 1 | rSpeed < -1) {
+        }
+        if (rSpeed > 1 | rSpeed < -1) {
             rSpeed /= Math.abs(rSpeed);
             lSpeed /= Math.abs(rSpeed);
         }
