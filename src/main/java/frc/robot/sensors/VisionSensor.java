@@ -19,17 +19,17 @@ public class VisionSensor {
 
     /**
      * 
-     * @return the x offset to the vision targets in meters (not inches!), when the robot is left of the strips, it is negative
+     * @return the x offset to the vision targets in inches, when the robot is left of the strips, it is negative
      */
     public double getXOffset() {
         return SmartDashboard.getNumber("pi-x-offset", 0.0);
     }
 
     /**
-     * @return the y distance from the tarrgets in meters (not inches!)
+     * @return the y distance from the tarrgets in inches
      */
     public double getYDistance() {
-        return SmartDashboard.getNumber("piDistance", 600);
+        return SmartDashboard.getNumber("pi-distance", 600);
     }
 
     /**
@@ -37,7 +37,7 @@ public class VisionSensor {
      * @return the angle of the robot relative to the strips in degrees, with clockwise being positive
      */
     public double getSkew() {
-        return SmartDashboard.getNumber("piAngle", 0.0);
+        return SmartDashboard.getNumber("pi-angle", 0.0);
     }
     
     public boolean canSeeTargets() {

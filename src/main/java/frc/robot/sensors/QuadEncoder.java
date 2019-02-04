@@ -46,6 +46,11 @@ public class QuadEncoder implements Encoder {
 	}
 
 	@Override
+	public double getSpeedInches() {
+		return talonSRX.getSelectedSensorVelocity(0) * 10 * inchesPerPulse;
+	}
+
+	@Override
 	public void reset() {
 		talonSRX.setSelectedSensorPosition(0, 0, 0);
 	}
