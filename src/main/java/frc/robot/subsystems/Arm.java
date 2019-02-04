@@ -4,15 +4,15 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.motor.Motor;
 import frc.robot.movements.ControlArm;
-import frc.robot.sensors.lis3dh.Accel_LIS3DH;
+import frc.robot.sensors.gy521.Accel_GY521;
 
 public class Arm extends Subsystem {
 
     private Motor elbow, wrist;
     private Solenoid armSolenoid;
 
-    public Accel_LIS3DH elbowSensor;
-    public Accel_LIS3DH wristSensor;
+    public Accel_GY521 elbowSensor;
+    public Accel_GY521 wristSensor;
 
 
 
@@ -31,7 +31,7 @@ public class Arm extends Subsystem {
         wrist.set(speed);
     }
 
-    public Arm(Motor elbow, Motor wrist, Solenoid armPiston, Accel_LIS3DH elbowSensor, Accel_LIS3DH wristSensor) {
+    public Arm(Motor elbow, Motor wrist, Solenoid armPiston, Accel_GY521 elbowSensor, Accel_GY521 wristSensor) {
         this.elbow = elbow;
         this.wrist = wrist;
         this.armSolenoid = armPiston;
