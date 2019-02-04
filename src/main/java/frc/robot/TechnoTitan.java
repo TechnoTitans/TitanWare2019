@@ -18,6 +18,7 @@ import frc.robot.sensors.*;
 import frc.robot.sensors.lis3dh.Accel_LIS3DH;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Grabber;
 import frc.robot.subsystems.TankDrive;
 
 
@@ -38,6 +39,7 @@ public class TechnoTitan extends TimedRobot {
   public static AHRS navx;
   public static VisionSensor vision;
   public static TimeOfFlight tfDistance;
+  public static Grabber grabber;
 
   private Accel_LIS3DH elbowAngleSensor;
   private Accel_LIS3DH wristAngleSensor;
@@ -86,7 +88,7 @@ public class TechnoTitan extends TimedRobot {
 
     arm = new Arm(elbow, wrist, new Solenoid(RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
 
-
+    grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false));
 
     // Drivetrain setup
     TalonSRX leftETalonSRX = new TalonSRX(RobotMap.LEFT_TALON_E, LEFT_REVERSE),

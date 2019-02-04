@@ -46,4 +46,6 @@ public class RobotMap {
 
   // address of the accelerometer
   public static final int ACCEL_ADDRESS = 0xAD;
+
+  public static final int GRABBER_MOTOR = 0;
 }

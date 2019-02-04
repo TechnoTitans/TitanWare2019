@@ -51,6 +51,8 @@ public class OI {
   // button.whenPressed(new ExampleCommand());
 
     private static final int TOGGLE_ARM_UP_BTN = 0;
+    private static final int GRABBER_EXPEL_BTN = 0;
+    private static final int GRABBER_INTAKE_BTN = 1;
 
     public OI() {
         initialize();
@@ -109,5 +111,13 @@ public class OI {
 
     public boolean toggleArmUp() {
         return aux1.getRawButtonPressed(TOGGLE_ARM_UP_BTN);
+    }
+
+    public boolean shouldExpelGrabber() {
+        return aux1.getRawButton(GRABBER_EXPEL_BTN);
+    }
+
+    public boolean shouldIntakeGrabber() {
+        return aux1.getRawButton(GRABBER_INTAKE_BTN);
     }
 }
