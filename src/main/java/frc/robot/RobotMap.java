@@ -13,6 +13,7 @@ package frc.robot;
  * the wiring easier and significantly reduces the number of magic numbers
  * floating around.
  */
+@SuppressWarnings("WeakerAccess")
 public class RobotMap {
     // For example to map the left and right motors, you could define the
   // following variables to use with your drivetrain subsystem.
@@ -45,7 +46,7 @@ public class RobotMap {
   public static final int WRIST_ACCEL_ADDR = 0x19; // todo setup the second accelerometer to use the secondary addr if its the same
 
   // address of the accelerometer
-  public static final int ACCEL_ADDRESS = 0xAD;
+  public static final int ACCEL_ADDRESS = 0x68;
 
   public static final int GRABBER_MOTOR = 0;
 }

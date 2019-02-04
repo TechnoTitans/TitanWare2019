@@ -4,25 +4,25 @@ import frc.robot.sensors.Encoder;
 
 public interface Motor {
 
-	public void set(double speed);
+	void set(double speed);
 
-	public double getPercentSpeed();
+	double getPercentSpeed();
 	
-	public double getSpeed();
+	double getSpeed();
 
-	public void stop();
+	void stop();
 
-	public void brake();
+	void brake();
 
-	public void coast();
+	void coast();
 
-	public boolean hasEncoder();
+	boolean hasEncoder();
 
-	public Encoder getEncoder();
+	Encoder getEncoder();
 
 	// public void setBrakeMode(boolean enable);
 
-	public int getChannel();
+	int getChannel();
 
-	public boolean isReversed();
+	boolean isReversed();
 }

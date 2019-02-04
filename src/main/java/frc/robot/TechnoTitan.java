@@ -8,17 +8,25 @@
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.hal.util.UncleanStatusException;
-import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.filters.LinearDigitalFilter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
-import frc.robot.sensors.*;
 import frc.robot.sensors.lis3dh.Accel_LIS3DH;
+import frc.robot.sensors.Accel_GY521;
+import frc.robot.sensors.QuadEncoder;
+import frc.robot.sensors.TimeOfFlight;
+import frc.robot.sensors.VisionSensor;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Grabber;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.I2C;
 import frc.robot.subsystems.TankDrive;
 
 
@@ -80,15 +88,16 @@ public class TechnoTitan extends TimedRobot {
 
 
     // MARK - accelerometer setup
-    elbowAngleSensor = new Accel_LIS3DH(RobotMap.ELBOW_ACCEL_ADDR);
-    wristAngleSensor = new Accel_LIS3DH(RobotMap.WRIST_ACCEL_ADDR);
 
-    movingAverageFilter = LinearDigitalFilter.movingAverage(elbowAngleSensor, MVA_TAPS);
-    singlePoleIIRFilter = LinearDigitalFilter.singlePoleIIR(elbowAngleSensor, TIME_CONSTANT, 0.01);
+//    elbowAngleSensor = new Accel_LIS3DH(RobotMap.ELBOW_ACCEL_ADDR);
+//    wristAngleSensor = new Accel_LIS3DH(RobotMap.WRIST_ACCEL_ADDR);
 
+//    movingAverageFilter = LinearDigitalFilter.movingAverage(elbowAngleSensor, MVA_TAPS);
+//    singlePoleIIRFilter = LinearDigitalFilter.singlePoleIIR(elbowAngleSensor, TIME_CONSTANT, 0.01);
+    accelGyro = new Accel_GY521(RobotMap.ACCEL_ADDRESS);
     arm = new Arm(elbow, wrist, new Solenoid(RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
 
-    grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false));
+
 
     // Drivetrain setup
     TalonSRX leftETalonSRX = new TalonSRX(RobotMap.LEFT_TALON_E, LEFT_REVERSE),
@@ -130,16 +139,24 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    SmartDashboard.putNumber("Gyro", navx.getAngle());
+    // MARK - sensor updates
+    accelGyro.update();
 
-    SmartDashboard.putBoolean("Accel Test Success", elbowAngleSensor.isConnected());
-    SmartDashboard.putNumber("X", elbowAngleSensor.getX());
-    SmartDashboard.putNumber("Y", elbowAngleSensor.getY());
-    SmartDashboard.putNumber("Z", elbowAngleSensor.getZ());
 
-    SmartDashboard.putNumber("Raw Calculated Angle", elbowAngleSensor.getAngleXY());
-    SmartDashboard.putNumber("Moving Average Filtered Angle", movingAverageFilter.pidGet());
-    SmartDashboard.putNumber("Single Pole IIR Filtered Angle", singlePoleIIRFilter.pidGet());
+    // MARK - smart dashboard things
+    SmartDashboard.putNumber("NavX Gyro", navx.getAngle());
+
+//    SmartDashboard.putBoolean("Accel Test Success", elbowAngleSensor.isConnected());
+
+    // MARK - accelerometer testing
+    SmartDashboard.putBoolean("Accel Gyro Test Success", accelGyro.isConnected());
+    SmartDashboard.putNumber("X", accelGyro.getX());
+    SmartDashboard.putNumber("Y", accelGyro.getY());
+    SmartDashboard.putNumber("Z", accelGyro.getZ());
+
+    SmartDashboard.putNumber("Gyro Rate", accelGyro.getRate());
+    SmartDashboard.putNumber("Accel Angle", accelGyro.getAccelAngle());
+    SmartDashboard.putNumber("Complimented Angle", accelGyro.getAngle());
 
     // time of flight
     SmartDashboard.putNumber("Encoder left", drive.getLeftEncoder().getDistance());
@@ -152,7 +169,7 @@ public class TechnoTitan extends TimedRobot {
       // serial port not started yet
       System.out.println("Warning: " + e);
     }
-    SmartDashboard.putNumber("Angle", navx.getAngle());
+    SmartDashboard.putNumber("NavX Angle", navx.getAngle());
     SmartDashboard.putNumber("Distance", ai.getVoltage());
   }
 

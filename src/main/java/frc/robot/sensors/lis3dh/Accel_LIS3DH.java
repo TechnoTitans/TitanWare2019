@@ -52,7 +52,7 @@ public class Accel_LIS3DH implements Accelerometer, PIDSource {
         // 0b0100 means HR / Normal / Low-power mode (50 Hz)
         // 0b0111 means enable axis x, y, and z respectively
         // consult pg 35
-        i2c_conn.write(CTRL_REG1, 0x47);
+        i2c_conn.write(CTRL_REG1, 0x47); // TODO refactor out the magic number
     }
 
     /**
