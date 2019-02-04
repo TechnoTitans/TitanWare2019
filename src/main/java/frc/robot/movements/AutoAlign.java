@@ -1,25 +1,25 @@
 package frc.robot.movements;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import frc.robot.TechnoTitan;
 import frc.robot.sensors.NavXGyro;
 
 public class AutoAlign extends Command {
-    private Gyro gyro;
+    private NavXGyro gyro;
 
     private final double minSpeed = 0.2;
     private double slowDownDist;
 
-    // Would not recommend higher than 2
-    private static final double STRAIGHT_END_COEFF = 1.5;
+    private static final double STRAIGHT_END_COEFF = 2.5;
 
     private static final double ROBOT_RADIUS = 15;  // TODO: measure
 
-    private static final double TARGET_END_DIST = 12,
-                                TRUE_END_DIST = 18;
+    private static final double TARGET_Y_OFFSET = 20,
+                                NO_SENSOR_DIST = 10;
 
     private double speed;
+
+    private double lDist, rDist;
 
     public AutoAlign(double speed, double slowDownDist) {
         gyro = new NavXGyro();
@@ -96,36 +96,48 @@ public class AutoAlign extends Command {
 
     @Override
     protected void execute() {
-        TechnoTitan.visionKalmanFilter.update();
+        double lSpeed, rSpeed;
 
-        double dx = TechnoTitan.visionKalmanFilter.getX(),
-                dy = TechnoTitan.visionKalmanFilter.getY(),
-                skew = TechnoTitan.visionKalmanFilter.getAngle();
+        if (-TechnoTitan.visionKalmanFilter.getY() > TARGET_Y_OFFSET + NO_SENSOR_DIST) {
+            TechnoTitan.visionKalmanFilter.update();
 
-        double kappa = calculateCurvature(dx, dy + TARGET_END_DIST, skew);
+            double dx = TechnoTitan.visionKalmanFilter.getX(),
+                    dy = TechnoTitan.visionKalmanFilter.getY(),
+                    skew = TechnoTitan.visionKalmanFilter.getAngle();
 
-        kappa *= ROBOT_RADIUS;
+            double kappa = calculateCurvature(dx, dy + TARGET_Y_OFFSET, skew);
 
-        double speed = (this.speed - minSpeed) * Math.min(1, (-dy - TRUE_END_DIST) / slowDownDist) + minSpeed;
+            kappa *= ROBOT_RADIUS;
 
-        double lSpeed = speed * (1 + kappa) / 2;
-        double rSpeed = speed * (1 - kappa) / 2;
+            double speed = (this.speed - minSpeed) * Math.min(1, (-dy - TARGET_Y_OFFSET - NO_SENSOR_DIST) / slowDownDist) + minSpeed;
 
-        if (lSpeed > 1 || lSpeed < -1) {
-            lSpeed /= Math.abs(lSpeed);
-            rSpeed /= Math.abs(lSpeed);
+            lSpeed = speed * (1 + kappa) / 2;
+            rSpeed = speed * (1 - kappa) / 2;
+
+            if (lSpeed > 1 || lSpeed < -1) {
+                lSpeed /= Math.abs(lSpeed);
+                rSpeed /= Math.abs(lSpeed);
+            }
+            if (rSpeed > 1 | rSpeed < -1) {
+                rSpeed /= Math.abs(rSpeed);
+                lSpeed /= Math.abs(rSpeed);
+            }
+            gyro.resetTo(Math.toDegrees(skew));
+            lDist = TechnoTitan.drive.getLeftEncoder().getDistance();
+            rDist = TechnoTitan.drive.getRightEncoder().getDistance();
+        } else {
+            double error = gyro.getAngle() * 0.05;
+            lSpeed = minSpeed - error;
+            rSpeed = minSpeed + error;
         }
-        if (rSpeed > 1 | rSpeed < -1) {
-            rSpeed /= Math.abs(rSpeed);
-            lSpeed /= Math.abs(rSpeed);
-        }
-
         TechnoTitan.drive.set(lSpeed, rSpeed);
     }
 
     @Override
     protected boolean isFinished() {
-        return TechnoTitan.visionKalmanFilter.getY() <= TRUE_END_DIST;
+        if (-TechnoTitan.visionKalmanFilter.getY() > TARGET_Y_OFFSET + NO_SENSOR_DIST) return false;
+        double dist = (TechnoTitan.drive.getLeftEncoder().getDistance() - lDist) / 2 + (TechnoTitan.drive.getRightEncoder().getDistance() - rDist) / 2;
+        return dist >= NO_SENSOR_DIST;
     }
 
     @Override

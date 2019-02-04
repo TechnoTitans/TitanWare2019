@@ -188,10 +188,6 @@ public class VisionKalmanFilter {
 
     private double angle;
 
-    private static final double MAX_DRIVE_SPEED = 20;
-    private static final double ROBOT_RADIUS = 18;
-
-
     private Matrix covMatrix;
 
     private Timer lastTime;
