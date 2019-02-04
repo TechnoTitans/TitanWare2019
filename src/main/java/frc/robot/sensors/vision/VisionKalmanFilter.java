@@ -1,7 +1,8 @@
-package frc.robot.sensors;
+package frc.robot.sensors.vision;
 
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.TechnoTitan;
+import frc.robot.sensors.NavXGyro;
 
 import java.util.Arrays;
 

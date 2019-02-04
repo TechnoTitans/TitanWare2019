@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.motor.Motor;
-import frc.robot.movements.ControlArm;
+import frc.robot.movements.arm.ControlArm;
 import frc.robot.sensors.gy521.Accel_GY521;
 
 public class Arm extends Subsystem {

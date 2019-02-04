@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.movements.*;
+import frc.robot.movements.arm.ArmPosition;
+import frc.robot.movements.arm.ControlArmPID;
 
 
 /**
@@ -18,8 +20,9 @@ import frc.robot.movements.*;
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
+    // TODO: change to one joystick
     private Joystick left, right, aux1, aux2;
-    public static final double percentDeadbandThreshold = 0.01;
+    private static final double percentDeadbandThreshold = 0.01;
 
 
     //// CREATING BUTTONS
@@ -50,6 +53,7 @@ public class OI {
   // until it is finished as determined by it's isFinished method.
   // button.whenPressed(new ExampleCommand());
 
+    // TODO: assign buttons
     private static final int TOGGLE_ARM_UP_BTN = 0;
     private static final int GRABBER_EXPEL_BTN = 0;
     private static final int GRABBER_INTAKE_BTN = 1;

@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.sensors;
+package frc.robot.sensors.vision;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 

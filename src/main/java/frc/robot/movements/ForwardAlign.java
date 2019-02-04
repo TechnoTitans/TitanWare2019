@@ -2,6 +2,7 @@ package frc.robot.movements;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.TechnoTitan;
+import frc.robot.movements.arm.ArmPosition;
 import frc.robot.sensors.NavXGyro;
 
 

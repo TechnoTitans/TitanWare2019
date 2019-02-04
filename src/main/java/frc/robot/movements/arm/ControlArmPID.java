@@ -1,4 +1,4 @@
-package frc.robot.movements;
+package frc.robot.movements.arm;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;

@@ -1,4 +1,4 @@
-package frc.robot.movements;
+package frc.robot.movements.arm;
 
 
 import frc.robot.subsystems.Arm;
