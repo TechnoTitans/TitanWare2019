@@ -13,7 +13,7 @@ public enum ArmPosition {
     private double horizontalArmLength;
 
     ArmPosition(double elbowAngle, double wristAngle, boolean solenoidEnabled) {
-        this(elbowAngle, wristAngle, solenoidEnabled,  Arm.ELBOW_LENGTH * Math.sin(Math.toRadians(elbowAngle)) + Arm.WRIST_LENGTH * Math.cos(Math.toRadians(wristAngle)));
+        this(elbowAngle, wristAngle, solenoidEnabled,  Arm.getCalculatedDistance(elbowAngle, wristAngle));
     }
 
     ArmPosition(double elbowAngle, double wristAngle, boolean solenoidEnabled, double horizontalArmLength) {

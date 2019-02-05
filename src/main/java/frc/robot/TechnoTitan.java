@@ -45,8 +45,6 @@ public class TechnoTitan extends TimedRobot {
 
   private Accel_GY521 elbowAngleSensor;
   private Accel_GY521 wristAngleSensor;
-  public static AnalogInput ai;
-  public static I2C icu;
 
   public static VisionKalmanFilter visionKalmanFilter;
 
@@ -82,9 +80,10 @@ public class TechnoTitan extends TimedRobot {
 
 //    movingAverageFilter = LinearDigitalFilter.movingAverage(elbowAngleSensor, MVA_TAPS);
 //    singlePoleIIRFilter = LinearDigitalFilter.singlePoleIIR(elbowAngleSensor, TIME_CONSTANT, 0.01);
-    elbowAngleSensor = new Accel_GY521(RobotMap.ACCEL_ADDRESS);
+    elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR);
+    wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR);
     arm = new Arm(elbow, wrist, new Solenoid(RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
-
+    grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false));
 
 
     // Drivetrain setup
@@ -114,7 +113,6 @@ public class TechnoTitan extends TimedRobot {
     oi = new OI(); // must initializae oi after drive because it requires it as a a subsystem
 
     drive.resetEncoders();
-    ai = new AnalogInput(0);
   }
 
   /**

@@ -42,11 +42,12 @@ public class RobotMap {
   public static final int LEFT_TALON_2 = 4, LEFT_TALON_3 = 3, RIGHT_TALON_2 = 12, RIGHT_TALON_3 = 13;
 
   // accelerometers
-  public static final int ELBOW_ACCEL_ADDR = 0x18;
-  public static final int WRIST_ACCEL_ADDR = 0x19; // todo setup the second accelerometer to use the secondary addr if its the same
+//  public static final int ELBOW_ACCEL_ADDR = 0x18;
+//  public static final int WRIST_ACCEL_ADDR = 0x19; // todo setup the second accelerometer to use the secondary addr if its the same
 
   // address of the accelerometer
-  public static final int ACCEL_ADDRESS = 0x68;
+  public static final int ELBOW_ANGLE_ADDR = 0x68;
+  public static final int WRIST_ANGLE_ADDR = 0x69;
 
   public static final int GRABBER_MOTOR = 0;
 }
