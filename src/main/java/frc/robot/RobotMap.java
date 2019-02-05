@@ -29,8 +29,6 @@ public class RobotMap {
   public static final int AUX_JOYSTICK_1 = 2,
                           AUX_JOYSTICK_2 = 3;
 
-  public static final int ARM_PISTON = 0;
-
 
   public static final int WRIST_MOTOR = 1;
   public static final int ELBOW_MOTOR = 3;
@@ -40,6 +38,7 @@ public class RobotMap {
 
   // Other talons
   public static final int LEFT_TALON_2 = 5, LEFT_TALON_3 = 4, RIGHT_TALON_2 = 8, RIGHT_TALON_3 = 7;
+  public static final int GRABBER_MOTOR = 2;
 
   // accelerometers
   public static final int ELBOW_ACCEL_ADDR = 0x18;
@@ -48,6 +47,8 @@ public class RobotMap {
   // address of the accelerometer
   public static final int ACCEL_ADDRESS = 0x68;
 
-  public static final int GRABBER_MOTOR = 2;
   public static final int PCM_ADDR = 15;
+  public static final int ARM_PISTON = 0;
+  public static final int HATCH_PANEL_PISTON = 1;
+
 }
