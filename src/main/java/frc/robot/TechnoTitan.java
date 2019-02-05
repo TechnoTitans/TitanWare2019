@@ -32,9 +32,6 @@ import frc.robot.subsystems.TankDrive;
  * project.
  */
 public class TechnoTitan extends TimedRobot {
-  private static final double TIME_CONSTANT = (0.030); // seconds
-  // 100 ms = 3t
-  // t = 100/3 ms, 33 ms.
   public static OI oi;
   public static DriveTrain drive;
   public static Arm arm;
@@ -82,7 +79,7 @@ public class TechnoTitan extends TimedRobot {
 //    singlePoleIIRFilter = LinearDigitalFilter.singlePoleIIR(elbowAngleSensor, TIME_CONSTANT, 0.01);
     elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR);
     wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR);
-    arm = new Arm(elbow, wrist, new Solenoid(RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
+    arm = new Arm(elbow, wrist, new Solenoid(RobotMap.PCM_ADDR, RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
     grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false));
 
 
