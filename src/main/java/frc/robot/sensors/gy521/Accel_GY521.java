@@ -3,6 +3,7 @@ package frc.robot.sensors.gy521;
 
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
@@ -14,44 +15,44 @@ import static java.util.Objects.requireNonNull;
 @SuppressWarnings({"Duplicates", "UnnecessaryLocalVariable", "SameParameterValue"})
 public class Accel_GY521 implements Accelerometer, Gyro {
 
-    // MARK - complimentary config
+    // MARK - complimentary filter initialization
     private static final double kGyroInfluence = 0.98;
-
-
-
-    private static I2C accel;
-    private Range currRange;
     private double previousAngle = 0.0;
-    private Timer time;
+    private Timer timer;
+
+    private static I2C i2c_conn;
+    private Range currRange;
+    private int deviceAddr;
+
+    // MARK - watchdog config
+    private Watchdog watchdog;
+    private static final double kSensorDisconnectTimeout = 3; // sec // todo better name?
+    private boolean watchdogEnabled;
+
 
     // TODO get link to manual
-    // TODO Create an init sen
+    // TODO Create an init sendable
 
     //initializes all values
-    public Accel_GY521(int address) {
-        accel = new I2C(I2C.Port.kOnboard, address);
+    public Accel_GY521(int address, boolean watchdogEnabled) {
+        // device setup
+        this.deviceAddr = address;
+        this.watchdogEnabled = watchdogEnabled;
+        i2c_conn = new I2C(I2C.Port.kOnboard, address);
         currRange = Range.k2G;
-        this.time = new Timer();
         this.resetDevice();
         this.setSleepMode(false);
+
+        this.timer = new Timer();
+
+        // watchdog setup
+        this.watchdog = new Watchdog(kSensorDisconnectTimeout, this::reconnectDevice);
+        this.initWatchdog();
+
     }
 
-    private void setSleepMode(boolean activate) {
-        int setting = activate ?
-                0b0100_0000  // sleep bit on
-              : 0b0000_0000; // otherwise set everything to 0 and enable
-            // ref pg 40
-        accel.write(PWR_MGMT_1, setting);
-    }
 
-    private void resetDevice() {
-        accel.write(RESET_ADDRESS, RESET_VAL);
-    }
-
-    //checks whether the sensor is connected
-    public boolean isConnected() {
-        return accel.verifySensor(WHO_AM_I, 1, WHO_AM_I_DEFAULT);
-    }
+    // MARK - instance configuration methods
 
     @Override
     //sets the range for the accelerometer
@@ -60,43 +61,15 @@ public class Accel_GY521 implements Accelerometer, Gyro {
         requireNonNull(range, "The range that has been entered is invalid");
 
         ByteBuffer ctrl4Buffer = ByteBuffer.allocate(1);
-        accel.read(ACCEL_RANGE, 1, ctrl4Buffer);
+        i2c_conn.read(ACCEL_RANGE, 1, ctrl4Buffer);
 
         byte ctrl4 = ctrl4Buffer.get();
         ctrl4 &= ~0x18; // this basically resets only the FS1 and FS0 bits
         ctrl4 |= getSettingFromRange(range) << 3; // this sets only the FS1 and FS0
 
-        accel.write(ACCEL_RANGE, ctrl4);
+        i2c_conn.write(ACCEL_RANGE, ctrl4);
 
         this.currRange = range;
-    }
-
-    private int readWord(int address) {
-        // todo check endianness/order of reading
-//        ByteBuffer rawBuffer = ByteBuffer.allocate(2);
-        // TODO Refactor this
-        byte[] highByte = new byte[1];
-        byte[] lowByte = new byte[1];
-        accel.read(address, 1, highByte);
-        accel.read(address + 1, 1, lowByte);
-
-//        rawBuffer.order(ByteOrder.BIG_ENDIAN); // High, Low ordering means that MSB is first
-//        System.out.println("The buffer is " + Arrays.toString(rawBuffer.array()));
-
-        int high = highByte[0] & 0xFF; // (<byte> & 0xFF) converts a signed byte into an unsigned byte
-        int low = lowByte[0] & 0xFF;
-        int value = (high << 8) + low; // todo explain this
-
-        return value;
-        //  X_H  X_L  Y_H  Y_L  Z_H  Z_L
-        //  0    1    2    3    4    5
-//        double rawX = rawBuffer.getShort(0); // creates a short from [0,1] (Short.BYTES == 2)
-//        double rawY = rawBuffer.getShort(2); // creates a short from [2,3]
-//        double rawZ = rawBuffer.getShort(4);
-
-//        this.x_accel = (rawX / currentResolution) /* * STANDARD_GRAVITY*/;
-//        this.y_accel = (rawY / currentResolution) /* * STANDARD_GRAVITY*/;
-//        this.z_accel = (rawZ / currentResolution) /* * STANDARD_GRAVITY*/;
     }
 
     //gets the resolution
@@ -132,6 +105,90 @@ public class Accel_GY521 implements Accelerometer, Gyro {
         }
     }
 
+
+    // MARK - device config methods
+
+    private void setSleepMode(boolean activate) {
+        int setting = activate ?
+                0b0100_0000  // sleep bit on
+                : 0b0000_0000; // otherwise set everything to 0 and enable
+        // ref pg 40
+        i2c_conn.write(PWR_MGMT_1, setting);
+    }
+
+    private void resetDevice() {
+        i2c_conn.write(RESET_ADDRESS, RESET_VAL);
+    }
+
+    // MARK - device misc methods
+
+    /**
+     * This method checks whether the sensor is connected
+     * @return  whether or not the sensor is connected
+     */
+    public boolean isConnected() {
+        return i2c_conn.verifySensor(WHO_AM_I, 1, WHO_AM_I_DEFAULT);
+    }
+
+    private int readWord(int address) {
+        // todo check endianness/order of reading
+//        ByteBuffer rawBuffer = ByteBuffer.allocate(2);
+        // TODO Refactor this
+        byte[] highByte = new byte[1];
+        byte[] lowByte = new byte[1];
+        i2c_conn.read(address, 1, highByte);
+        i2c_conn.read(address + 1, 1, lowByte);
+
+//        rawBuffer.order(ByteOrder.BIG_ENDIAN); // High, Low ordering means that MSB is first
+//        System.out.println("The buffer is " + Arrays.toString(rawBuffer.array()));
+
+        int high = highByte[0] & 0xFF; // (<byte> & 0xFF) converts a signed byte into an unsigned byte
+        int low = lowByte[0] & 0xFF;
+        int value = (high << 8) + low; // todo explain this
+
+        return value;
+        //  X_H  X_L  Y_H  Y_L  Z_H  Z_L
+        //  0    1    2    3    4    5
+//        double rawX = rawBuffer.getShort(0); // creates a short from [0,1] (Short.BYTES == 2)
+//        double rawY = rawBuffer.getShort(2); // creates a short from [2,3]
+//        double rawZ = rawBuffer.getShort(4);
+
+//        this.x_accel = (rawX / currentResolution) /* * STANDARD_GRAVITY*/;
+//        this.y_accel = (rawY / currentResolution) /* * STANDARD_GRAVITY*/;
+//        this.z_accel = (rawZ / currentResolution) /* * STANDARD_GRAVITY*/;
+    }
+
+    // MARK - Sensor Robustness / Watchdog Methods
+    private void reconnectDevice() {
+        System.out.println("Resetting " + this.toString());
+        this.resetDevice();
+        this.watchdog.reset();
+    }
+
+    private void updateWatchdog() {
+        // only feed watchdog if the sensor is connected. otherwise don't
+        if (this.isConnected()) {
+            this.watchdog.reset();
+        } else {
+            System.err.println("WARNING: Accel GY521 has been disconnected/put into an error state. Attempting to ");
+        }
+    }
+
+    private void initWatchdog() {
+        if (this.watchdogEnabled) {
+            this.watchdog.enable();
+        } else {
+            this.watchdog.disable();
+        }
+    }
+
+
+    // MARK - Accelerometer Methods
+
+    // The reason we cast the word to short is because
+    // the MPU6050 returns all values in two's complement.
+    // Casting to short tells java to interpret the number as such,
+    // giving us the actual value.
     @Override
     public double getX() {
         short rawX = (short) this.readWord(ACCEL_XOUT_H);
@@ -163,23 +220,32 @@ public class Accel_GY521 implements Accelerometer, Gyro {
         this.resetDevice();
     }
 
-    // Complimentary
+
+    // MARK - Complimentary filter methods
+
     @Override
     public double getAngle() {
         return previousAngle;
     }
 
+    /**
+     * This method is responsible for updating the sensor readings,
+     * as well as keeping the watchdog fed
+     */
     public void update() {
-        // todo add math and stuff
-        // todo explain this magic
+        this.updateWatchdog();
+
+        // This is an implementation of a complementary filter
+        // at a high level, it combines the gyro and accelerometer readings to get
+        // an accurate reading of the angle
         previousAngle = (previousAngle + this.getRate() * getElapsedTime()) * kGyroInfluence
                 + (this.getAccelAngle()) * (1 - kGyroInfluence);
     }
 
     private double getElapsedTime() {
-        double timeElapsed = time.get();
-        time.reset();
-        time.start();
+        double timeElapsed = timer.get();
+        timer.reset();
+        timer.start();
         return timeElapsed;
     }
 
@@ -211,7 +277,12 @@ public class Accel_GY521 implements Accelerometer, Gyro {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws Exception{
         // do nothing
+    }
+
+    @Override
+    public String toString() {
+        return "AccelGY521@" + this.deviceAddr;
     }
 }
