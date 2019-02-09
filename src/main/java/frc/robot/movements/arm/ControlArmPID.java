@@ -41,6 +41,7 @@ public class ControlArmPID extends Command {
 
     @Override
     protected void initialize() {
+        if (TechnoTitan.arm.areSensorsOverriden()) return;
         this.elbowController.enable();
         this.wristController.enable();
         TechnoTitan.arm.setArmSolenoid(this.positionInfo.isSolenoidEnabled());
@@ -54,6 +55,6 @@ public class ControlArmPID extends Command {
 
     @Override
     protected boolean isFinished() {
-        return this.elbowController.onTarget() && this.wristController.onTarget();
+        return TechnoTitan.arm.areSensorsOverriden() || (this.elbowController.onTarget() && this.wristController.onTarget());
     }
 }

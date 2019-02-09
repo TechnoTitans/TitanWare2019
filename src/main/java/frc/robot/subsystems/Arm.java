@@ -177,4 +177,12 @@ public class Arm extends Subsystem {
     protected void initDefaultCommand() {
         setDefaultCommand(new ControlArm());
     }
+
+    public boolean areSensorsOverriden() {
+        return overrideSensors;
+    }
+
+    public void toggleOverrideSensors() {
+        overrideSensors = !overrideSensors;
+    }
 }

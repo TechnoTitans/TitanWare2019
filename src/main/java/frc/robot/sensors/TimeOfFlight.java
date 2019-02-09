@@ -57,7 +57,6 @@ public class TimeOfFlight {
     private void parse() {
         if (!aligned) {
             align();
-            aligned = true;
             return;
         }
         byte[] data = new byte[9];
@@ -91,5 +90,6 @@ public class TimeOfFlight {
         while (buffer.available() > 1 && (buffer.peek() != 0x59 || buffer.peekSecond() != 0x59)) {
             buffer.skip(1);
         }
+        if (buffer.available() > 1) aligned = true;
     }
 }

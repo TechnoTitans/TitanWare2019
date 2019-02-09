@@ -61,7 +61,10 @@ public class OI {
 
     private Btn btnToggleArmUp,
                     btnGrabberExpel,
-                    btnGrabberIntake;
+                    btnGrabberIntake,
+                    btnOverrideSensors,
+                    btnResetCommands;
+
     public OI() {
         initialize();
     }
@@ -111,6 +114,8 @@ public class OI {
         Button btnHatch2 = new Btn(aux2, 3);
         Button btnHatch3 = new Btn(aux2, 4);
         btnToggleArmUp = new Btn(aux2, 5);
+        btnOverrideSensors = new Btn(aux2, 6);
+        btnResetCommands = new Btn(aux2, 7);
 
         Button autoAlign = new Btn(right, 2);
         Button forwardAlign = new Btn(right, 3);
@@ -170,5 +175,13 @@ public class OI {
 
     public boolean shouldIntakeGrabber() {
         return btnGrabberIntake.isHeld();
+    }
+
+    public boolean toggleOverrideSensors() {
+        return btnOverrideSensors.isPressed();
+    }
+
+    public boolean shouldResetCommands() {
+        return btnResetCommands.isPressed();
     }
 }

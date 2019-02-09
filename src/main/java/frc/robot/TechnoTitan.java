@@ -121,6 +121,7 @@ public class TechnoTitan extends TimedRobot {
   @Override
   public void robotPeriodic() {
     // MARK - sensor updates
+    // TODO: update wrist angle sensor
     elbowAngleSensor.update();
 
 
@@ -142,6 +143,11 @@ public class TechnoTitan extends TimedRobot {
       System.out.println("Warning: " + e);
     }
     SmartDashboard.putNumber("NavX Angle", navx.getAngle());
+    SmartDashboard.putBoolean("Override arm sensors", arm.areSensorsOverriden());
+
+    if (oi.shouldResetCommands()) {
+      Scheduler.getInstance().removeAll();
+    }
   }
 
   /**
