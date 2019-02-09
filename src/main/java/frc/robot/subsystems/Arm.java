@@ -10,6 +10,8 @@ import frc.robot.sensors.gy521.Accel_GY521;
 
 public class Arm extends Subsystem {
 
+    // TODO: find value
+    private static final double ROBOT_FRAME_WIDTH = 23.3;  // Distance in inches from arm pivot to distance sensor
     private Motor elbow, wrist;
     private Solenoid armSolenoid;
 
@@ -32,7 +34,8 @@ public class Arm extends Subsystem {
 
     private static final double MAX_ELBOW_ANGLE = 70,
                                 MIN_ELBOW_ANGLE = -70,
-                                MAX_WRIST_ANGLE = 110;
+                                MAX_WRIST_ANGLE = 95,
+                                MIN_WRIST_ANGLE = -110;
 
     private static final double RAMP_ELBOW = 20,
                                 RAMP_WRIST = 20;
@@ -45,7 +48,7 @@ public class Arm extends Subsystem {
                 rElbow = 90 + Math.asin((WRIST_LENGTH / Math.cos(thetaB) * 1 - ELBOW_HEIGHT) / ELBOW_LENGTH) * 180 / Math.PI,
                 rWrist = 90 + Math.asin((-ELBOW_HEIGHT + ELBOW_LENGTH) / WRIST_LENGTH * Math.cos(thetaB)) * 180 / Math.PI;
         double d = getEllipseDist(cElbow, cWrist, rElbow, rWrist, isElbow);
-        return d >= 0 ? d : Double.POSITIVE_INFINITY;
+        return  (getWristAngle() <= cWrist && !isElbow) ? Double.POSITIVE_INFINITY : d;
     }
 
     private double getEllipseDist(double cElbow, double cWrist, double rElbow, double rWrist, boolean returnElbow) {
@@ -56,7 +59,7 @@ public class Arm extends Subsystem {
 //        double nearElbow = cElbow + diffElbow * t, nearWrist = cWrist + diffWrist * t;
         double slopeElbow = 2 * diffElbow * t / (rElbow * rElbow),
                 slopeWrist = 2 * diffWrist * t / (rWrist * rWrist);
-            return returnElbow ? slopeWrist / slopeElbow * diffWrist * (1 - t) + diffElbow * (1 - t) : slopeElbow / slopeWrist * diffElbow * (1 - t) + diffWrist * (1 - t);
+        return returnElbow ? slopeWrist / slopeElbow * diffWrist * (1 - t) + diffElbow * (1 - t) : slopeElbow / slopeWrist * diffElbow * (1 - t) + diffWrist * (1 - t);
     }
 
     public void moveElbow(double speed) {
@@ -79,7 +82,7 @@ public class Arm extends Subsystem {
             if (angle > MAX_WRIST_ANGLE + RAMP_WRIST) {
                 speed = Math.min(speed, (MAX_WRIST_ANGLE - angle) / RAMP_WRIST);
             }
-            double minAngle = angle - getDist(false);
+            double minAngle = Math.max(angle - getDist(false), MIN_WRIST_ANGLE);
             if (angle < minAngle + RAMP_WRIST) {
                 speed = Math.max(speed, -(angle - minAngle) / RAMP_WRIST);
             }
@@ -110,6 +113,7 @@ public class Arm extends Subsystem {
      */
     public static double getCalculatedDistance(double elbowAngle, double wristAngle) {
         return ELBOW_LENGTH * Math.cos(Math.toRadians(elbowAngle))
+                - ROBOT_FRAME_WIDTH
                 + WRIST_LENGTH * Math.cos(Math.toRadians(wristAngle))
                 + wristAngle < 0 ? WRIST_TOP_HEIGHT * Math.sin(Math.toRadians(wristAngle))
                     : WRIST_BOTTOM_HEIGHT * Math.sin(Math.toRadians(-wristAngle));
