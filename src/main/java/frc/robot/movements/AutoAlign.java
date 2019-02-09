@@ -3,6 +3,7 @@ package frc.robot.movements;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.TechnoTitan;
 import frc.robot.sensors.NavXGyro;
+import frc.robot.sensors.vision.VisionKalmanFilter;
 
 public class AutoAlign extends Command {
     private NavXGyro gyro;
@@ -21,17 +22,20 @@ public class AutoAlign extends Command {
 
     private double lDist, rDist;
 
+    private static VisionKalmanFilter visionKalmanFilter;
+
     public AutoAlign(double speed, double slowDownDist) {
         gyro = new NavXGyro();
         this.speed = speed;
         this.slowDownDist = slowDownDist;
+        visionKalmanFilter = new VisionKalmanFilter();
     }
 
     @Override
     protected void initialize() {
         gyro.reset();
         if (TechnoTitan.vision.canSeeTargets()) {
-            TechnoTitan.visionKalmanFilter.start();
+            visionKalmanFilter.start();
         } else {
             if (this.getGroup() != null) this.getGroup().cancel();
             else this.cancel();
@@ -94,16 +98,20 @@ public class AutoAlign extends Command {
         return kappa;
     }
 
+    private boolean isPastSensorRange() {
+        return -visionKalmanFilter.getY() > TARGET_Y_OFFSET + NO_SENSOR_DIST;
+    }
+
     @Override
     protected void execute() {
         double lSpeed, rSpeed;
 
-        if (-TechnoTitan.visionKalmanFilter.getY() > TARGET_Y_OFFSET + NO_SENSOR_DIST) {
-            TechnoTitan.visionKalmanFilter.update();
+        if (isPastSensorRange()) {
+            visionKalmanFilter.update();
 
-            double dx = TechnoTitan.visionKalmanFilter.getX(),
-                    dy = TechnoTitan.visionKalmanFilter.getY(),
-                    skew = TechnoTitan.visionKalmanFilter.getAngle();
+            double dx = visionKalmanFilter.getX(),
+                    dy = visionKalmanFilter.getY(),
+                    skew = visionKalmanFilter.getAngle();
 
             double kappa = calculateCurvature(dx, dy + TARGET_Y_OFFSET, skew);
 
@@ -135,7 +143,7 @@ public class AutoAlign extends Command {
 
     @Override
     protected boolean isFinished() {
-        if (-TechnoTitan.visionKalmanFilter.getY() > TARGET_Y_OFFSET + NO_SENSOR_DIST) return false;
+        if (isPastSensorRange()) return false;
         double dist = (TechnoTitan.drive.getLeftEncoder().getDistance() - lDist) / 2 + (TechnoTitan.drive.getRightEncoder().getDistance() - rDist) / 2;
         return dist >= NO_SENSOR_DIST;
     }

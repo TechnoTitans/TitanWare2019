@@ -9,15 +9,16 @@ package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.hal.util.UncleanStatusException;
-import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
 import frc.robot.sensors.QuadEncoder;
 import frc.robot.sensors.TimeOfFlight;
-import frc.robot.sensors.vision.VisionKalmanFilter;
-import frc.robot.sensors.vision.VisionSensor;
 import frc.robot.sensors.gy521.Accel_GY521;
+import frc.robot.sensors.vision.VisionSensor;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Grabber;
@@ -43,8 +44,6 @@ public class TechnoTitan extends TimedRobot {
   private Accel_GY521 elbowAngleSensor;
   private Accel_GY521 wristAngleSensor;
 
-  public static VisionKalmanFilter visionKalmanFilter;
-
   private static final boolean LEFT_REVERSE = false,
                                RIGHT_REVERSE = true;
 
@@ -62,7 +61,6 @@ public class TechnoTitan extends TimedRobot {
     navx.reset();
 
     vision = new VisionSensor();
-    visionKalmanFilter = new VisionKalmanFilter();
     tfDistance = new TimeOfFlight();
 
     // Arm setup
@@ -77,8 +75,8 @@ public class TechnoTitan extends TimedRobot {
 
 //    movingAverageFilter = LinearDigitalFilter.movingAverage(elbowAngleSensor, MVA_TAPS);
 //    singlePoleIIRFilter = LinearDigitalFilter.singlePoleIIR(elbowAngleSensor, TIME_CONSTANT, 0.01);
-    elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR);
-    wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR);
+    elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR, true);
+    wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR, true);
     arm = new Arm(elbow, wrist, new Solenoid(RobotMap.PCM_ADDR, RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
     grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false));
 

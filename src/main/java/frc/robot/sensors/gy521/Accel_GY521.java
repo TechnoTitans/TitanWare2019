@@ -170,7 +170,7 @@ public class Accel_GY521 implements Accelerometer, Gyro {
         if (this.isConnected()) {
             this.watchdog.reset();
         } else {
-            System.err.println("WARNING: Accel GY521 has been disconnected/put into an error state. Attempting to ");
+            System.err.println("WARNING: Accel GY521 has been disconnected/put into an error state. An attempt to reconnect will be made");
         }
     }
 

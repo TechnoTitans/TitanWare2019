@@ -97,8 +97,7 @@ public class OI {
     }
 
     public double getLeft() {
-        return -left.getRawAxis(1);
-        // return clampInput(-left.getY());
+        return clampInput(-left.getRawAxis(1));
     }
 
     public double getRight() {

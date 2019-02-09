@@ -7,6 +7,7 @@ import frc.robot.sensors.NavXGyro;
 
 
 public class ForwardAlign extends Command {
+	private static final double MIN_READABLE_DISTANCE = 11.9;
 	private double slowdownDist;
 	private double distEnd;
 	
@@ -23,13 +24,13 @@ public class ForwardAlign extends Command {
 		requires(TechnoTitan.drive);
 		this.slowdownDist = slowdownDist;
 		this.distEnd = stage.getHorizontalArmLength();
-		distEnd = Math.max(distEnd, 11.9); // the sensor can't read closer than 11.9 in
+		distEnd = Math.max(distEnd, MIN_READABLE_DISTANCE); // the sensor can't read closer than 11.9 in
 		this.speed = speed;
 		gyro = new NavXGyro();
 	}
 
 	protected void initialize() {
-		gyro.resetTo(TechnoTitan.visionKalmanFilter.getAngle());
+		gyro.reset();
 	}
 
 	protected void execute() {
