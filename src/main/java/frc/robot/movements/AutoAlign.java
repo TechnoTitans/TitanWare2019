@@ -143,7 +143,7 @@ public class AutoAlign extends Command {
 
     @Override
     protected boolean isFinished() {
-        if (isPastSensorRange()) return false;
+        if (!isPastSensorRange()) return false;
         double dist = (TechnoTitan.drive.getLeftEncoder().getDistance() - lDist) / 2 + (TechnoTitan.drive.getRightEncoder().getDistance() - rDist) / 2;
         return dist >= NO_SENSOR_DIST;
     }

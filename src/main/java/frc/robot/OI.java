@@ -7,10 +7,13 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import frc.robot.movements.*;
+import frc.robot.movements.AutoAlign;
+import frc.robot.movements.ControlDriveTrainStraight;
+import frc.robot.movements.ForwardAlign;
 import frc.robot.movements.arm.ArmPosition;
 import frc.robot.movements.arm.ControlArmPID;
 
