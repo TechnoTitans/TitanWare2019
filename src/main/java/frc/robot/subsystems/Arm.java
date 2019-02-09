@@ -48,18 +48,21 @@ public class Arm extends Subsystem {
                 rElbow = 90 + Math.asin((WRIST_LENGTH / Math.cos(thetaB) * 1 - ELBOW_HEIGHT) / ELBOW_LENGTH) * 180 / Math.PI,
                 rWrist = 90 + Math.asin((-ELBOW_HEIGHT + ELBOW_LENGTH) / WRIST_LENGTH * Math.cos(thetaB)) * 180 / Math.PI;
         double d = getEllipseDist(cElbow, cWrist, rElbow, rWrist, isElbow);
-        return  (getWristAngle() <= cWrist && !isElbow) ? Double.POSITIVE_INFINITY : d;
+        return  d;
     }
 
     private double getEllipseDist(double cElbow, double cWrist, double rElbow, double rWrist, boolean returnElbow) {
         double elbow = getElbowAngle(), wrist = getWristAngle();
         double diffElbow = elbow - cElbow, diffWrist = wrist - cWrist;
-        // (diffElbow * t)^2 / rElbow^2 + (diffWrist * t)^2 / rWrist^2 = 1
-        double t = 1 / Math.hypot(diffElbow / rElbow, diffWrist / rWrist);
-//        double nearElbow = cElbow + diffElbow * t, nearWrist = cWrist + diffWrist * t;
-        double slopeElbow = 2 * diffElbow * t / (rElbow * rElbow),
-                slopeWrist = 2 * diffWrist * t / (rWrist * rWrist);
-        return returnElbow ? slopeWrist / slopeElbow * diffWrist * (1 - t) + diffElbow * (1 - t) : slopeElbow / slopeWrist * diffElbow * (1 - t) + diffWrist * (1 - t);
+//        // (diffElbow * t)^2 / rElbow^2 + (diffWrist * t)^2 / rWrist^2 = 1
+//        double t = 1 / Math.hypot(diffElbow / rElbow, diffWrist / rWrist);
+//        double slopeElbow = 2 * diffElbow * t / (rElbow * rElbow),
+//                slopeWrist = 2 * diffWrist * t / (rWrist * rWrist);
+//        return returnElbow ? slopeWrist / slopeElbow * diffWrist * (1 - t) + diffElbow * (1 - t) : slopeElbow / slopeWrist * diffElbow * (1 - t) + diffWrist * (1 - t);
+        // (x)^2 / rElbow^2 + (y)^2 / rWrist^2 = 1
+        double x = returnElbow ? (1 - diffWrist * diffWrist / (rWrist * rWrist)) : (1 - diffElbow * diffElbow / (rElbow * rElbow));
+        if (x < 0) return Double.POSITIVE_INFINITY;
+        return (returnElbow ? diffElbow : diffWrist) - Math.sqrt(x) * (returnElbow ? rElbow : rWrist);
     }
 
     public void moveElbow(double speed) {
