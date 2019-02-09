@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -58,8 +59,35 @@ public class OI {
     private static final int GRABBER_EXPEL_BTN = 0;
     private static final int GRABBER_INTAKE_BTN = 1;
 
+    private Btn btnToggleArmUp,
+                    btnGrabberExpel,
+                    btnGrabberIntake;
     public OI() {
         initialize();
+    }
+
+    // Joystick button with some extended features
+    private static class Btn extends JoystickButton {
+        private GenericHID hid;
+        private int buttonNumber;
+
+        public Btn(GenericHID hid, int buttonNumber) {
+            super(hid, buttonNumber);
+            this.hid = hid;
+            this.buttonNumber = buttonNumber;
+        }
+
+        public boolean isPressed() {
+            return hid.getRawButtonPressed(buttonNumber);
+        }
+
+        public boolean isReleased() {
+            return hid.getRawButtonReleased(buttonNumber);
+        }
+
+        public boolean isHeld() {
+            return get();
+        }
     }
 
     private void initialize() {
@@ -68,24 +96,44 @@ public class OI {
         aux1 = new Joystick(RobotMap.AUX_JOYSTICK_1);
         aux2 = new Joystick(RobotMap.AUX_JOYSTICK_2);
 
+        // TODO: assign buttons
         Button driveTriggerLeft = new JoystickButton(left, 1);
-        Button btnArmLevel1 = new JoystickButton(aux2, 1);
-        Button btnArmLevel2 = new JoystickButton(aux2, 2);
-        Button btnArmLevel3 = new JoystickButton(aux2, 3);
 
-        Button autoAlign = new JoystickButton(aux1, 3);
-        Button forwardAlign = new JoystickButton(aux1, 1);
+        btnGrabberExpel = new Btn(aux1, 1);
+        Button btnRocketBall1 = new Btn(aux1, 2);
+        Button btnRocketBall2 = new Btn(aux1, 3);
+        Button btnRocketBall3 = new Btn(aux1, 4);
+        Button btnRocketBallCargo = new Btn(aux1, 5);
+        Button btnRocketBallPickup = new Btn(aux1, 6);
+
+        btnGrabberIntake = new Btn(aux2, 1);
+        Button btnHatch1 = new Btn(aux2, 2);
+        Button btnHatch2 = new Btn(aux2, 3);
+        Button btnHatch3 = new Btn(aux2, 4);
+        btnToggleArmUp = new Btn(aux2, 5);
+
+        Button autoAlign = new Btn(right, 2);
+        Button forwardAlign = new Btn(right, 3);
+
 
         driveTriggerLeft.whileHeld(new ControlDriveTrainStraight());
 
         // arm controls
-        btnArmLevel1.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_1));
-        btnArmLevel2.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_2));
-        btnArmLevel3.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_3));
+        btnRocketBall1.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_1_BALL));
+        btnRocketBall2.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_2_BALL));
+        btnRocketBall3.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_3_BALL));
+
+        btnRocketBallCargo.whenPressed(new ControlArmPID(ArmPosition.CARGO_SHIP_BALL));
+        btnRocketBallPickup.whenPressed(new ControlArmPID(ArmPosition.BALL_PICKUP));
+
+        btnHatch1.whenPressed(new ControlArmPID(ArmPosition.LOW_HATCH));
+        btnHatch2.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_2_HATCH));
+        btnHatch3.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_3_HATCH));
+
 
         autoAlign.toggleWhenPressed(new AutoAlign(0.5, 20));
 
-        forwardAlign.whenPressed(new ForwardAlign(ArmPosition.ROCKET_LEVEL_1, 60, 0.5));
+        forwardAlign.whenPressed(new ForwardAlign(ArmPosition.ROCKET_LEVEL_1_BALL, 60, 0.5));
     }
 
     public double clampInput(double input) {
@@ -113,14 +161,14 @@ public class OI {
     }
 
     public boolean toggleArmUp() {
-        return aux1.getRawButtonPressed(TOGGLE_ARM_UP_BTN);
+        return btnToggleArmUp.isPressed();
     }
 
     public boolean shouldExpelGrabber() {
-        return aux1.getRawButton(GRABBER_EXPEL_BTN);
+        return btnGrabberExpel.isHeld();
     }
 
     public boolean shouldIntakeGrabber() {
-        return aux1.getRawButton(GRABBER_INTAKE_BTN);
+        return btnGrabberIntake.isHeld();
     }
 }

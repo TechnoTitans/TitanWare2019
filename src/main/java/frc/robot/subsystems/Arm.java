@@ -10,6 +10,8 @@ import frc.robot.sensors.gy521.Accel_GY521;
 
 public class Arm extends Subsystem {
 
+    // TODO: find value
+    private static final double ROBOT_FRAME_WIDTH = 23.3;  // Distance in inches from arm pivot to distance sensor
     private Motor elbow, wrist;
     private Solenoid armSolenoid;
 
@@ -111,6 +113,7 @@ public class Arm extends Subsystem {
      */
     public static double getCalculatedDistance(double elbowAngle, double wristAngle) {
         return ELBOW_LENGTH * Math.cos(Math.toRadians(elbowAngle))
+                - ROBOT_FRAME_WIDTH
                 + WRIST_LENGTH * Math.cos(Math.toRadians(wristAngle))
                 + wristAngle < 0 ? WRIST_TOP_HEIGHT * Math.sin(Math.toRadians(wristAngle))
                     : WRIST_BOTTOM_HEIGHT * Math.sin(Math.toRadians(-wristAngle));
