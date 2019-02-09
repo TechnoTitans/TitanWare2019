@@ -77,8 +77,8 @@ public class TechnoTitan extends TimedRobot {
 
 //    movingAverageFilter = LinearDigitalFilter.movingAverage(elbowAngleSensor, MVA_TAPS);
 //    singlePoleIIRFilter = LinearDigitalFilter.singlePoleIIR(elbowAngleSensor, TIME_CONSTANT, 0.01);
-    elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR);
-    wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR);
+    elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR, false);
+    wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR, false);
     arm = new Arm(elbow, wrist, new Solenoid(RobotMap.PCM_ADDR, RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
     grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false));
 

@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
+import frc.robot.interfaces.sensor.WatchedSensor;
+import frc.robot.sensors.util.I2CUtils;
 
 import java.nio.ByteBuffer;
 
@@ -13,14 +15,14 @@ import static frc.robot.sensors.gy521.GY521_Constants.*;
 import static java.util.Objects.requireNonNull;
 
 @SuppressWarnings({"Duplicates", "UnnecessaryLocalVariable", "SameParameterValue"})
-public class Accel_GY521 implements Accelerometer, Gyro {
+public class Accel_GY521 extends WatchedSensor implements Accelerometer, Gyro {
 
     // MARK - complimentary filter initialization
     private static final double kGyroInfluence = 0.98;
     private double previousAngle = 0.0;
     private Timer timer;
 
-    private static I2C i2c_conn;
+    private I2C i2c_conn;
     private Range currRange;
     private int deviceAddr;
 
@@ -130,42 +132,17 @@ public class Accel_GY521 implements Accelerometer, Gyro {
         return i2c_conn.verifySensor(WHO_AM_I, 1, WHO_AM_I_DEFAULT);
     }
 
-    private int readWord(int address) {
-        // todo check endianness/order of reading
-//        ByteBuffer rawBuffer = ByteBuffer.allocate(2);
-        // TODO Refactor this
-        byte[] highByte = new byte[1];
-        byte[] lowByte = new byte[1];
-        i2c_conn.read(address, 1, highByte);
-        i2c_conn.read(address + 1, 1, lowByte);
 
-//        rawBuffer.order(ByteOrder.BIG_ENDIAN); // High, Low ordering means that MSB is first
-//        System.out.println("The buffer is " + Arrays.toString(rawBuffer.array()));
-
-        int high = highByte[0] & 0xFF; // (<byte> & 0xFF) converts a signed byte into an unsigned byte
-        int low = lowByte[0] & 0xFF;
-        int value = (high << 8) + low; // todo explain this
-
-        return value;
-        //  X_H  X_L  Y_H  Y_L  Z_H  Z_L
-        //  0    1    2    3    4    5
-//        double rawX = rawBuffer.getShort(0); // creates a short from [0,1] (Short.BYTES == 2)
-//        double rawY = rawBuffer.getShort(2); // creates a short from [2,3]
-//        double rawZ = rawBuffer.getShort(4);
-
-//        this.x_accel = (rawX / currentResolution) /* * STANDARD_GRAVITY*/;
-//        this.y_accel = (rawY / currentResolution) /* * STANDARD_GRAVITY*/;
-//        this.z_accel = (rawZ / currentResolution) /* * STANDARD_GRAVITY*/;
-    }
 
     // MARK - Sensor Robustness / Watchdog Methods
     private void reconnectDevice() {
         System.out.println("Resetting " + this.toString());
         this.resetDevice();
-        this.watchdog.reset();
+        this.watchdog.reset(); // assume that the sensor recovered
     }
 
-    private void updateWatchdog() {
+
+    protected void updateWatchdog() {
         // only feed watchdog if the sensor is connected. otherwise don't
         if (this.isConnected()) {
             this.watchdog.reset();
@@ -174,7 +151,7 @@ public class Accel_GY521 implements Accelerometer, Gyro {
         }
     }
 
-    private void initWatchdog() {
+    protected void initWatchdog() {
         if (this.watchdogEnabled) {
             this.watchdog.enable();
         } else {
@@ -191,21 +168,21 @@ public class Accel_GY521 implements Accelerometer, Gyro {
     // giving us the actual value.
     @Override
     public double getX() {
-        short rawX = (short) this.readWord(ACCEL_XOUT_H);
+        short rawX = (short) I2CUtils.readWord(i2c_conn, ACCEL_XOUT_H);
         double xVal =  (double) rawX / this.getCurrentResolution();
         return xVal;
     }
 
     @Override
     public double getY() {
-        short rawY = (short) this.readWord(ACCEL_YOUT_H);
+        short rawY = (short) I2CUtils.readWord(i2c_conn, ACCEL_YOUT_H);
         double yVal = (double) rawY / this.getCurrentResolution();
         return yVal;
     }
 
     @Override
     public double getZ() {
-        short rawZ = (short) this.readWord(ACCEL_ZOUT_H);
+        short rawZ = (short) I2CUtils.readWord(i2c_conn, ACCEL_ZOUT_H);
         double zVal = (double) rawZ / this.getCurrentResolution();
         return zVal;
     }
@@ -255,16 +232,16 @@ public class Accel_GY521 implements Accelerometer, Gyro {
 
     @Override
     public double getRate() {
-        short val = (short) readWord(GYRO_ZOUT_H);
+        short val = (short) I2CUtils.readWord(i2c_conn, GYRO_ZOUT_H);
         return -1 * (double) val / GYRO_SCALE_MODIFIER_250DEG;
     }
 
     public int getGyroConfig() {
-        return readWord(0x1B); // GYRO_CFNGI
+        return I2CUtils.readWord(i2c_conn, 0x1B); // GYRO_CFNGI
     }
 
     public int getAccelConfig() {
-        return readWord(0x1c);
+        return I2CUtils.readWord(i2c_conn, 0x1c);
     }
 
     @Override
