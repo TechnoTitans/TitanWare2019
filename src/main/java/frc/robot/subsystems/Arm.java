@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.motor.Motor;
-import frc.robot.movements.arm.ControlArm;
 import frc.robot.sensors.gy521.Accel_GY521;
 
 public class Arm extends Subsystem {
@@ -30,7 +29,9 @@ public class Arm extends Subsystem {
 
     private static final double ELBOW_HEIGHT = 33.5;
 
-    private static final double ELBOW_SENSOR_ANGLE_OFFSET = 17.16;
+    private static final double ELBOW_SENSOR_ANGLE_OFFSET = 17.16,
+                                WRIST_ANGLE_ERROR = 2.5,
+                                ELBOW_ANGLE_ERROR = 0;
 
     private static final double MAX_ELBOW_ANGLE = 70,
                                 MIN_ELBOW_ANGLE = -70,
@@ -40,7 +41,7 @@ public class Arm extends Subsystem {
     private static final double RAMP_ELBOW = 20,
                                 RAMP_WRIST = 20;
 
-    private boolean overrideSensors = false;
+    private boolean overrideSensors = true;
 
     private double getDist(boolean isElbow) {
         double thetaB = Math.atan(WRIST_BOTTOM_HEIGHT / WRIST_LENGTH);
@@ -168,17 +169,17 @@ public class Arm extends Subsystem {
     };
 
     public double getElbowAngle() {
-        return elbowSensor.getAngle() + ELBOW_SENSOR_ANGLE_OFFSET;
+        return elbowSensor.getAngle() + ELBOW_SENSOR_ANGLE_OFFSET + ELBOW_ANGLE_ERROR;
     }
 
     public double getWristAngle() {
-        return wristSensor.getAngle();
+        return wristSensor.getAngle() + WRIST_ANGLE_ERROR;
     }
 
 
     @Override
     protected void initDefaultCommand() {
-        setDefaultCommand(new ControlArm());
+//        setDefaultCommand(new ControlArm());
     }
 
     public boolean areSensorsOverriden() {

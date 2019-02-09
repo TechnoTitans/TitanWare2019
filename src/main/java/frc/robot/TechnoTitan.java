@@ -64,7 +64,7 @@ public class TechnoTitan extends TimedRobot {
 
     // Arm setup
     TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
-            elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, false);
+            elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, true);
 
 
     // MARK - accelerometer setup
@@ -74,10 +74,10 @@ public class TechnoTitan extends TimedRobot {
 
 //    movingAverageFilter = LinearDigitalFilter.movingAverage(elbowAngleSensor, MVA_TAPS);
 //    singlePoleIIRFilter = LinearDigitalFilter.singlePoleIIR(elbowAngleSensor, TIME_CONSTANT, 0.01);
-    elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR, false);
-    wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR, false);
+    elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR, true);
+    wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR, true);
     arm = new Arm(elbow, wrist, new Solenoid(RobotMap.PCM_ADDR, RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
-    grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false));
+    grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_PANEL_PISTON));
 
 
     // Drivetrain setup
@@ -107,6 +107,8 @@ public class TechnoTitan extends TimedRobot {
     oi = new OI(); // must initializae oi after drive because it requires it as a a subsystem
 
     drive.resetEncoders();
+
+    vision.startRecording();
   }
 
   /**
@@ -120,15 +122,18 @@ public class TechnoTitan extends TimedRobot {
   @Override
   public void robotPeriodic() {
     // MARK - sensor updates
-    // TODO: update wrist angle sensor
     elbowAngleSensor.update();
+    wristAngleSensor.update();
 
 
     // MARK - smart dashboard things
     SmartDashboard.putNumber("NavX Gyro", navx.getAngle());
 
-    SmartDashboard.putBoolean("Accel Gyro Test Success", elbowAngleSensor.isConnected());
-    SmartDashboard.putNumber("Elbow angle", elbowAngleSensor.getAngle());
+    SmartDashboard.putBoolean("Elbow sensor connected", elbowAngleSensor.isConnected());
+    SmartDashboard.putNumber("Elbow angle", arm.getElbowAngle());
+
+    SmartDashboard.putBoolean("Wrist sensor connected", wristAngleSensor.isConnected());
+    SmartDashboard.putNumber("Wrist angle", arm.getWristAngle());
 
     // time of flight
     SmartDashboard.putNumber("Encoder left", drive.getLeftEncoder().getDistance());
@@ -139,9 +144,8 @@ public class TechnoTitan extends TimedRobot {
       tfDistance.update();
     } catch (UncleanStatusException e) {
       // serial port not started yet
-      System.out.println("Warning: " + e);
+      System.err.println("Warning: " + e);
     }
-    SmartDashboard.putNumber("NavX Angle", navx.getAngle());
     SmartDashboard.putBoolean("Override arm sensors", arm.areSensorsOverriden());
 
     if (oi.shouldResetCommands()) {
@@ -197,7 +201,9 @@ public class TechnoTitan extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
-
+    if (DriverStation.getInstance().getMatchTime() < 5) {
+      vision.stopRecording();
+    }
   }
 
   /**

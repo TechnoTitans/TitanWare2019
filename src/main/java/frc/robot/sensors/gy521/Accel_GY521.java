@@ -144,9 +144,9 @@ public class Accel_GY521 extends WatchedSensor implements Accelerometer, Gyro {
 
     protected void updateWatchdog() {
         // only feed watchdog if the sensor is connected. otherwise don't
-        if (this.isConnected()) {
+        if (this.isConnected() && this.watchdogEnabled) {
             this.watchdog.reset();
-        } else {
+        } else if (this.watchdogEnabled) {
             System.err.println("WARNING: Accel GY521 has been disconnected/put into an error state. An attempt to reconnect will be made");
         }
     }

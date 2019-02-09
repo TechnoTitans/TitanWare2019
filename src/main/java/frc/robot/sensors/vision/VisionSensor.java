@@ -17,6 +17,14 @@ public class VisionSensor {
 
     }
 
+    public void startRecording() {
+        SmartDashboard.putBoolean("pi-record", true);
+    }
+
+    public void stopRecording() {
+        SmartDashboard.putBoolean("pi-record", false);
+    }
+
     /**
      * 
      * @return the x offset to the vision targets in inches, when the robot is left of the strips, it is negative

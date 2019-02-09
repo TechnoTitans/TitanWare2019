@@ -17,6 +17,11 @@ public class ControlGrabber extends Command {
         } else {
             TechnoTitan.grabber.stop();
         }
+
+        if (TechnoTitan.oi.shouldExpelHatch()) {
+            TechnoTitan.grabber.expelHatch();
+        }
+        TechnoTitan.grabber.updatePistons();
     }
 
     @Override

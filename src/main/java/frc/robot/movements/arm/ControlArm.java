@@ -27,8 +27,9 @@ public class ControlArm extends Command {
         if (TechnoTitan.oi.toggleArmUp()) {
             TechnoTitan.arm.toggleUp();
         }
-        if (TechnoTitan.oi.toggleOverrideSensors()) {
+        if (TechnoTitan.oi.shouldToggleOverrideSensors()) {
             TechnoTitan.arm.toggleOverrideSensors();
+            System.out.println("Overriding");
         }
     }
 

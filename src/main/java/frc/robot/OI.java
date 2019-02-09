@@ -65,7 +65,8 @@ public class OI {
                     btnGrabberExpel,
                     btnGrabberIntake,
                     btnOverrideSensors,
-                    btnResetCommands;
+                    btnResetCommands,
+                    btnHatchEject;
 
     public OI() {
         initialize();
@@ -110,6 +111,7 @@ public class OI {
         Button btnRocketBall3 = new Btn(aux1, 4);
         Button btnRocketBallCargo = new Btn(aux1, 5);
         Button btnRocketBallPickup = new Btn(aux1, 6);
+        btnHatchEject = new Btn(aux1, 7);
 
         btnGrabberIntake = new Btn(aux2, 1);
         Button btnHatch1 = new Btn(aux2, 2);
@@ -179,11 +181,15 @@ public class OI {
         return btnGrabberIntake.isHeld();
     }
 
-    public boolean toggleOverrideSensors() {
+    public boolean shouldToggleOverrideSensors() {
         return btnOverrideSensors.isPressed();
     }
 
     public boolean shouldResetCommands() {
         return btnResetCommands.isPressed();
+    }
+
+    public boolean shouldExpelHatch() {
+        return btnHatchEject.isPressed();
     }
 }
