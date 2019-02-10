@@ -1,12 +1,11 @@
 package frc.robot.sensors.gy521;
 
 
-import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.Watchdog;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
-import frc.robot.interfaces.sensor.WatchedSensor;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import frc.robot.sensors.util.I2CUtils;
 
 import java.nio.ByteBuffer;
@@ -15,12 +14,12 @@ import static frc.robot.sensors.gy521.GY521_Constants.*;
 import static java.util.Objects.requireNonNull;
 
 @SuppressWarnings({"Duplicates", "UnnecessaryLocalVariable", "SameParameterValue"})
-public class Accel_GY521 extends WatchedSensor implements Accelerometer, Gyro {
+public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
 
     // MARK - complimentary filter initialization
     private static final double kGyroInfluence = 0.98;
     private double previousAngle = 0.0;
-    private Timer timer;
+    private Timer filterTimer;
 
     private I2C i2c_conn;
     private Range currRange;
@@ -31,11 +30,14 @@ public class Accel_GY521 extends WatchedSensor implements Accelerometer, Gyro {
     private static final double kSensorDisconnectTimeout = 3; // sec // todo better name?
     private boolean watchdogEnabled;
 
+    // MARK  - sendable config
+    private String sendableName;
+    private String subsystemName;
+
 
     // TODO get link to manual
-    // TODO Create an init sendable
 
-    //initializes all values
+
     public Accel_GY521(int address, boolean watchdogEnabled) {
         // device setup
         this.deviceAddr = address;
@@ -45,12 +47,15 @@ public class Accel_GY521 extends WatchedSensor implements Accelerometer, Gyro {
         this.resetDevice();
         this.setSleepMode(false);
 
-        this.timer = new Timer();
+        // complimentary filter setup
+        this.filterTimer = new Timer();
 
         // watchdog setup
         this.watchdog = new Watchdog(kSensorDisconnectTimeout, this::reconnectDevice);
         this.initWatchdog();
 
+        // sendable setup
+        this.sendableName = this.toString(); // default name
     }
 
 
@@ -133,7 +138,6 @@ public class Accel_GY521 extends WatchedSensor implements Accelerometer, Gyro {
     }
 
 
-
     // MARK - Sensor Robustness / Watchdog Methods
     private void reconnectDevice() {
         System.out.println("Resetting " + this.toString());
@@ -142,16 +146,18 @@ public class Accel_GY521 extends WatchedSensor implements Accelerometer, Gyro {
     }
 
 
-    protected void updateWatchdog() {
-        // only feed watchdog if the sensor is connected. otherwise don't
-        if (this.isConnected() && this.watchdogEnabled) {
-            this.watchdog.reset();
-        } else if (this.watchdogEnabled) {
-            System.err.println("WARNING: Accel GY521 has been disconnected/put into an error state. An attempt to reconnect will be made");
+    private void updateWatchdog() {
+        // only feed watchdog if the sensor is connected, meaning that it is operational.
+        if (this.watchdogEnabled) {
+            if (this.isConnected()) {
+                this.watchdog.reset();
+            } else {
+                System.err.println("WARNING: Accel GY521 has been disconnected/put into an error state. An attempt to reconnect will be made");
+            }
         }
     }
 
-    protected void initWatchdog() {
+    private void initWatchdog() {
         if (this.watchdogEnabled) {
             this.watchdog.enable();
         } else {
@@ -206,25 +212,39 @@ public class Accel_GY521 extends WatchedSensor implements Accelerometer, Gyro {
     }
 
     /**
-     * This method is responsible for updating the sensor readings,
-     * as well as keeping the watchdog fed
+     * This method is responsible for updating the sensor readings based on the complimentary filter,
+     * as well as keeping the watchdog fed.
      */
     public void update() {
         this.updateWatchdog();
 
+        // Assumptions:
+        // The apparatus that this device is mounted on will be at a steady-state (not shaking around)
+        // at startup.
+
         // This is an implementation of a complementary filter
         // at a high level, it combines the gyro and accelerometer readings to get
-        // an accurate reading of the angle
+        // an accurate reading of the angle.
+
+        // The filter does this by using the accelerometer to get initial reading of the angle, then
+        // since the accelerometer gives a more trust worthy absolute measure of angle
+        // when it is not subject to acceleration. This is in contrast to the gyro, which gives
+        // very accurate angular acceleration readings, but not good steady-state angle readings.
+
+
+
+
         previousAngle = (previousAngle + this.getRate() * getElapsedTime()) * kGyroInfluence
-                + (this.getAccelAngle()) * (1 - kGyroInfluence);
+                      + (this.getAccelAngle()) * (1 - kGyroInfluence);
     }
 
     private double getElapsedTime() {
-        double timeElapsed = timer.get();
-        timer.reset();
-        timer.start();
+        double timeElapsed = filterTimer.get();
+        filterTimer.reset();
+        filterTimer.start();
         return timeElapsed;
     }
+
 
     public double getAccelAngle() {
         return Math.toDegrees(Math.atan2(this.getY(), this.getX()));
@@ -236,6 +256,7 @@ public class Accel_GY521 extends WatchedSensor implements Accelerometer, Gyro {
         return -1 * (double) val / GYRO_SCALE_MODIFIER_250DEG;
     }
 
+    // TODO impelment gyro and accel config modification
     public int getGyroConfig() {
         return I2CUtils.readWord(i2c_conn, 0x1B); // GYRO_CFNGI
     }
@@ -254,12 +275,46 @@ public class Accel_GY521 extends WatchedSensor implements Accelerometer, Gyro {
     }
 
     @Override
-    public void close() throws Exception{
+    public void close() throws Exception {
         // do nothing
     }
 
     @Override
     public String toString() {
         return "AccelGY521@" + this.deviceAddr;
+    }
+
+
+    @Override
+    public String getName() {
+        return this.sendableName; // todo something better?
+    }
+
+    @Override
+    public void setName(String name) {
+        this.sendableName = name;
+    }
+
+    @Override
+    public String getSubsystem() {
+        return this.subsystemName;
+    }
+
+    @Override
+    public void setSubsystem(String subsystem) {
+        this.subsystemName = subsystem;
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType("3AxisAccelerometer");
+        NetworkTableEntry entryX = builder.getEntry("X");
+        NetworkTableEntry entryY = builder.getEntry("Y");
+        NetworkTableEntry entryZ = builder.getEntry("Z");
+        builder.setUpdateTable(() -> {
+            entryX.setDouble(this.getX());
+            entryY.setDouble(this.getY());
+            entryZ.setDouble(this.getZ());
+        });
     }
 }
