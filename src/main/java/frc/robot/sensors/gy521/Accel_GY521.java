@@ -217,7 +217,8 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
      */
     public void update() {
         this.updateWatchdog();
-
+        previousAngle = (previousAngle + this.getRate() * getElapsedTime()) * kGyroInfluence
+                + (this.getAccelAngle()) * (1 - kGyroInfluence);
         // Assumptions:
         // The apparatus that this device is mounted on will be at a steady-state (not shaking around)
         // at startup.
@@ -230,12 +231,6 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
         // since the accelerometer gives a more trust worthy absolute measure of angle
         // when it is not subject to acceleration. This is in contrast to the gyro, which gives
         // very accurate angular acceleration readings, but not good steady-state angle readings.
-
-
-
-
-        previousAngle = (previousAngle + this.getRate() * getElapsedTime()) * kGyroInfluence
-                      + (this.getAccelAngle()) * (1 - kGyroInfluence);
     }
 
     private double getElapsedTime() {
