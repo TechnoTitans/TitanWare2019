@@ -151,6 +151,8 @@ public class TechnoTitan extends TimedRobot {
     arm.elbowController.updateSmartdashboard();
     arm.wristController.updateSmartdashboard();
 
+    arm.updateElbowWristSetpoints();
+
     if (oi.shouldResetCommands()) {
       Scheduler.getInstance().removeAll();
     }

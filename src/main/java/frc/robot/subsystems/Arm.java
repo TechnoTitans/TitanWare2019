@@ -46,14 +46,14 @@ public class Arm extends Subsystem {
 
     // PID Loop tuning
     private static final double kWristP = 0.02;
-    private static final double kWristI = 0.004;
+    private static final double kWristI = 0.000;
     private static final double kWristD = 0;
 
     private static final double kElbowP = 0.05;
-    private static final double kElbowI = 0.005;
+    private static final double kElbowI = 0.000;
     private static final double kElbowD = 0;
-    private static final double MAX_STEADY_VOLTAGE_ELBOW = 0.1;
-    private static final double MAX_STEADY_VOLTAGE_WRIST = 0.1;
+    private static final double MAX_STEADY_VOLTAGE_ELBOW = 0.15;
+    private static final double MAX_STEADY_VOLTAGE_WRIST = 0.05;
 
     public PIDAngleController wristController, elbowController;
 
@@ -218,5 +218,10 @@ public class Arm extends Subsystem {
 
     public void toggleOverrideSensors() {
         overrideSensors = !overrideSensors;
+    }
+
+    public void updateElbowWristSetpoints() {
+        this.wristController.updateSetpoint();
+        this.elbowController.updateSetpoint();
     }
 }
