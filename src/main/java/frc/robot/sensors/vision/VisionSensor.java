@@ -10,7 +10,7 @@ package frc.robot.sensors.vision;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * Add your docs here.
+ * This class is a sort of wrapper class that simply communicates with the rpi, which is the real "Vision Sensor".
  */
 public class VisionSensor {
     public VisionSensor() {
