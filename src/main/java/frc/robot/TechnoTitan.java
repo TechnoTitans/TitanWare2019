@@ -148,6 +148,9 @@ public class TechnoTitan extends TimedRobot {
     }
     SmartDashboard.putBoolean("Override arm sensors", arm.areSensorsOverriden());
 
+    arm.elbowController.updateSmartdashboard();
+    arm.wristController.updateSmartdashboard();
+
     if (oi.shouldResetCommands()) {
       Scheduler.getInstance().removeAll();
     }

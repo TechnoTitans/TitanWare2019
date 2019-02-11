@@ -2,7 +2,6 @@ package frc.robot.movements.arm;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.TechnoTitan;
 import frc.robot.motor.Filter;
 
@@ -26,7 +25,7 @@ public class ControlArmPID extends Command {
 
     public ControlArmPID(ArmPosition positionInfo) {
         requires(TechnoTitan.arm);
-
+        /*
         elbowFilter = new Filter(0.5);
         wristFilter = new Filter(0.5);
 
@@ -49,32 +48,34 @@ public class ControlArmPID extends Command {
          });
          this.wristController.setOutputRange(-0.5, 0.5);
 //         this.wristController.setAbsoluteTolerance(1);
-         this.wristController.setSetpoint(positionInfo.getWristAngle());
+         this.wristController.setSetpoint(positionInfo.getWristAngle());*/
 
         this.positionInfo = positionInfo;
 
-        SmartDashboard.putData("Elbow at " + positionInfo, elbowController);
-        SmartDashboard.putData("Wrist at " + positionInfo, wristController);
-
+//        SmartDashboard.putData("Elbow at " + positionInfo, elbowController);
+//        SmartDashboard.putData("Wrist at " + positionInfo, wristController);
     }
 
 
     @Override
     protected void initialize() {
         if (TechnoTitan.arm.areSensorsOverriden()) return;
-        this.elbowController.enable();
-        this.wristController.enable();
+        TechnoTitan.arm.elbowController.setSetpoint(positionInfo.getElbowAngle());
+        TechnoTitan.arm.wristController.setSetpoint(positionInfo.getWristAngle());
+        TechnoTitan.arm.elbowController.enable();
+        TechnoTitan.arm.wristController.enable();
         TechnoTitan.arm.setArmSolenoid(this.positionInfo.isSolenoidEnabled());
     }
 
     @Override
     protected void end() {
-        this.elbowController.disable();
-        this.wristController.disable();
+        TechnoTitan.arm.elbowController.disable();
+        TechnoTitan.arm.wristController.disable();
     }
 
     @Override
     protected boolean isFinished() {
-        return TechnoTitan.arm.areSensorsOverriden() || (this.elbowController.onTarget() && this.wristController.onTarget());
+//        return TechnoTitan.arm.areSensorsOverriden() || (this.elbowController.onTarget() && this.wristController.onTarget());
+        return TechnoTitan.arm.areSensorsOverriden();
     }
 }
