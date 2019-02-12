@@ -46,13 +46,13 @@ public class Arm extends Subsystem {
 
     // PID Loop tuning
     private static final double kWristP = 0.02;
-    private static final double kWristI = 0.000;
+    private static final double kWristI = 0.001;
     private static final double kWristD = 0;
 
-    private static final double kElbowP = 0.05;
-    private static final double kElbowI = 0.000;
+    private static final double kElbowP = 0.03;
+    private static final double kElbowI = 0.003;
     private static final double kElbowD = 0;
-    private static final double MAX_STEADY_VOLTAGE_ELBOW = 0.15;
+    private static final double MAX_STEADY_VOLTAGE_ELBOW = 0.22;
     private static final double MAX_STEADY_VOLTAGE_WRIST = 0.05;
 
     public PIDAngleController wristController, elbowController;
@@ -126,7 +126,7 @@ public class Arm extends Subsystem {
 
         elbowController = new PIDAngleController("Elbow", kElbowP, kElbowI, kElbowD, MAX_STEADY_VOLTAGE_ELBOW, elbowAngleSensor, this::moveElbow);
         wristController = new PIDAngleController("Wrist", kWristP, kWristI, kWristD, MAX_STEADY_VOLTAGE_WRIST, wristAngleSensor, this::moveWrist);
-        elbowController.setOutputRange(-0.5, 0.5);
+        elbowController.setOutputRange(-0.5, 0.8);
         wristController.setOutputRange(-0.5, 0.5);
 
         SmartDashboard.putData("Elbow", elbowController);
