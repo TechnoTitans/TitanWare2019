@@ -45,13 +45,13 @@ public class Arm extends Subsystem {
                                 RAMP_WRIST = 20;
 
     // PID Loop tuning
-    private static final double kWristP = 0.02;
+    private static final double kWristP = 0.015;
     private static final double kWristI = 0.001;
-    private static final double kWristD = 0;
+    private static final double kWristD = 0.0;
 
     private static final double kElbowP = 0.03;
     private static final double kElbowI = 0.003;
-    private static final double kElbowD = 0;
+    private static final double kElbowD = 0.0;
     private static final double MAX_STEADY_VOLTAGE_ELBOW = 0.22;
     private static final double MAX_STEADY_VOLTAGE_WRIST = 0.05;
 

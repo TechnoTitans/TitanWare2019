@@ -60,8 +60,8 @@ public class ControlArmPID extends Command {
     @Override
     protected void initialize() {
         if (TechnoTitan.arm.areSensorsOverriden()) return;
-        TechnoTitan.arm.elbowController.setSetpoint(positionInfo.getElbowAngle());
-        TechnoTitan.arm.wristController.setSetpoint(positionInfo.getWristAngle());
+        TechnoTitan.arm.elbowController.setUnfilteredSetpoint(positionInfo.getElbowAngle());
+        TechnoTitan.arm.wristController.setUnfilteredSetpoint(positionInfo.getWristAngle());
         TechnoTitan.arm.elbowController.enable();
         TechnoTitan.arm.wristController.enable();
         TechnoTitan.arm.setArmSolenoid(this.positionInfo.isSolenoidEnabled());

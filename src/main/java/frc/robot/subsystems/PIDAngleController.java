@@ -45,6 +45,7 @@ public class PIDAngleController extends PIDController {
             double angle = m_pidInput.pidGet();
             this.setSetpoint(angle);
             setpointFilter.setValue(angle);
+            reset();
         }
     }
 
