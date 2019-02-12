@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.Filter;
 import frc.robot.motor.Motor;
+import frc.robot.movements.arm.ControlArm;
 import frc.robot.sensors.gy521.Accel_GY521;
 
 public class Arm extends Subsystem {
@@ -93,6 +94,7 @@ public class Arm extends Subsystem {
             if (angle < minAngle + RAMP_ELBOW) {
                 speed = Math.max(speed, -(angle - minAngle) / RAMP_ELBOW);
             }
+            SmartDashboard.putNumber("Elbow limited speed", speed);
         }
         elbowFilter.update(speed);
         elbow.set(elbowFilter.getValue());
@@ -108,6 +110,7 @@ public class Arm extends Subsystem {
             if (angle < minAngle + RAMP_WRIST) {
                 speed = Math.max(speed, -(angle - minAngle) / RAMP_WRIST);
             }
+            SmartDashboard.putNumber("Wrist limited speed", speed);
         }
         wristFilter.update(speed);
         wrist.set(wristFilter.getValue());
@@ -209,7 +212,7 @@ public class Arm extends Subsystem {
 
     @Override
     protected void initDefaultCommand() {
-//        setDefaultCommand(new ControlArm());
+        setDefaultCommand(new ControlArm());
     }
 
     public boolean areSensorsOverriden() {

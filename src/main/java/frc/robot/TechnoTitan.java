@@ -46,7 +46,7 @@ public class TechnoTitan extends TimedRobot {
   private static final boolean LEFT_REVERSE = false,
                                RIGHT_REVERSE = true;
 
-  private static final double INCHES_PER_PULSE = 0.0045;
+  private static final double INCHES_PER_PULSE = 0.00570;
 
 //  private static final int MVA_TAPS = 25;
 
@@ -127,10 +127,18 @@ public class TechnoTitan extends TimedRobot {
 
 
     // MARK - smart dashboard things
+//    SmartDashboard.putNumber("NavX Velocity", navx);
     SmartDashboard.putNumber("NavX Gyro", navx.getAngle());
 
     SmartDashboard.putBoolean("Elbow sensor connected", elbowAngleSensor.isConnected());
     SmartDashboard.putNumber("Elbow angle", arm.getElbowAngle());
+
+    SmartDashboard.putNumber("Raw Accel Angle (Elbow)", elbowAngleSensor.getAccelAngle());
+    SmartDashboard.putNumber("Gyro Rate (Elbow)", elbowAngleSensor.getRate());
+
+
+    SmartDashboard.putNumber("Raw Accel Angle (Wrist)", wristAngleSensor.getAccelAngle());
+    SmartDashboard.putNumber("Gyro Rate (Wrist)", wristAngleSensor.getRate());
 
     SmartDashboard.putBoolean("Wrist sensor connected", wristAngleSensor.isConnected());
     SmartDashboard.putNumber("Wrist angle", arm.getWristAngle());

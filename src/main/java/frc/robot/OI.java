@@ -106,7 +106,7 @@ public class OI {
         Button autoAlign = new Btn(left, 3);
         Button forwardAlign = new Btn(left, 2);
 
-        btnHatchEject = new Btn(right, 1);
+        btnHatchEject = new Btn(right, 10); // by default is 1 (trigger)
         btnGrabberIntake = new Btn(right, 2);
         btnGrabberExpel = new Btn(right, 3);
 
@@ -221,7 +221,7 @@ public class OI {
     }
 
     public double getElbowMove() {
-        return clampInput(xbox.getY(GenericHID.Hand.kLeft));
+        return -clampInput(xbox.getY(GenericHID.Hand.kLeft));
     }
 
     public double getWristMove() {

@@ -50,7 +50,7 @@ public class PIDAngleController extends PIDController {
     }
 
     @Override
-    protected double calculateFeedForward() {
+    public double calculateFeedForward() {
         return maxSteadyVoltage * Math.cos(Math.toRadians(m_pidInput.pidGet()));
     }
 

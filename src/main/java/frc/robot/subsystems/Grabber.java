@@ -9,7 +9,7 @@ import frc.robot.movements.ControlGrabber;
 public class Grabber extends Subsystem {
     private Motor grabberMotor;
     private Timer pancakeTimer;
-    private static final double EXPEL_SPEED = 0.8;
+    private static final double EXPEL_SPEED = 1;
     private static final double INTAKE_SPEED = -0.4;
 
     private Solenoid pancakePistons;
