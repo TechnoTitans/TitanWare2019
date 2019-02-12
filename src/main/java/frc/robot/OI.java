@@ -16,6 +16,7 @@ import frc.robot.movements.AutoAlign;
 import frc.robot.movements.ControlDriveTrainStraight;
 import frc.robot.movements.ForwardAlign;
 import frc.robot.movements.arm.ArmPosition;
+import frc.robot.movements.arm.ControlArmPID;
 
 
 /**
@@ -23,7 +24,6 @@ import frc.robot.movements.arm.ArmPosition;
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
-    // TODO: change to one joystick
     private Joystick left, right;
     private XboxController xbox;
     private static final double percentDeadbandThreshold = 0.01;
@@ -57,12 +57,13 @@ public class OI {
   // until it is finished as determined by it's isFinished method.
   // button.whenPressed(new ExampleCommand());
 
-    private Btn btnToggleArmUp,
+    private Button btnToggleArmUp,
                     btnGrabberExpel,
                     btnGrabberIntake,
                     btnOverrideSensors,
-                    btnResetCommands,
-                    btnHatchEject;
+                    btnResetCommands;
+
+    private Btn btnHatchEject;
 
     public OI() {
         initialize();
@@ -92,64 +93,118 @@ public class OI {
         }
     }
 
+    private boolean isXboxOnRocket() {
+        return xbox.getTriggerAxis(GenericHID.Hand.kLeft) < 0.5;
+    }
+
     private void initialize() {
         left = new Joystick(RobotMap.LEFT_JOYSTICK);
         right = new Joystick(RobotMap.RIGHT_JOYSTICK);
         xbox = new XboxController(RobotMap.AUX_JOYSTICK_1);
 
-        // TODO: assign buttons
         Button driveTriggerLeft = new JoystickButton(left, 1);
+        Button autoAlign = new Btn(left, 3);
+        Button forwardAlign = new Btn(left, 2);
 
+        btnHatchEject = new Btn(right, 1);
+        btnGrabberIntake = new Btn(right, 2);
         btnGrabberExpel = new Btn(right, 3);
+
         Button btnRocketBall1 = new Button() {
             @Override
             public boolean get() {
-                return xbox.getAButton();
+                return xbox.getXButton() && isXboxOnRocket();
             }
         };
+
         Button btnRocketBall2 = new Button() {
             @Override
             public boolean get() {
-                return xbox.getBButton();
+                return xbox.getYButton() && isXboxOnRocket();
             }
         };
-//        Button btnRocketBallCargo = new Btn(aux1, 5);
-//        Button btnRocketBallPickup = new Btn(aux1, 6);
-//        btnHatchEject = new Btn(aux1, 7);
-//
-//        Button btnRocketBall3 = new Btn(aux1, 4);
-//        btnGrabberIntake = new Btn(aux2, 1);
-//        Button btnHatch1 = new Btn(aux2, 2);
-//        Button btnHatch2 = new Btn(aux2, 3);
-//        Button btnHatch3 = new Btn(aux2, 4);
-//        btnToggleArmUp = new Btn(aux2, 5);
-//        btnOverrideSensors = new Btn(aux2, 6);
-//        btnResetCommands = new Btn(aux2, 7);
 
-        Button autoAlign = new Btn(left, 3);
-        Button forwardAlign = new Btn(left, 2);
+        Button btnRocketBallCargo = new Button() {
+            @Override
+            public boolean get() {
+                return xbox.getBButton() && isXboxOnRocket();
+            }
+        };
+
+        Button btnRocketBallPickup = new Button() {
+            @Override
+            public boolean get() {
+                return xbox.getAButton() && isXboxOnRocket();
+            }
+        };
+
+        Button btnRocketBall3 = new Button() {
+            @Override
+            public boolean get() { return xbox.getBumper(GenericHID.Hand.kRight);
+            }
+        };
+
+        Button btnHatch1 = new Button() {
+            @Override
+            public boolean get() {
+                return xbox.getAButton() && !isXboxOnRocket();
+            }
+        };
+        Button btnHatch2 = new Button() {
+            @Override
+            public boolean get() { return (xbox.getBButton() || xbox.getXButton()) && !isXboxOnRocket();
+            }
+        };
+
+        Button btnHatch3 = new Button() {
+            @Override
+            public boolean get() {
+                return xbox.getYButton() && !isXboxOnRocket();
+            }
+        };
+
+        btnToggleArmUp = new Button() {
+            @Override
+            public boolean get() {
+                return xbox.getBumperPressed(GenericHID.Hand.kLeft);
+            }
+        };
+
+        btnOverrideSensors = new Button() {
+            @Override
+            public boolean get() {
+                return xbox.getStickButtonPressed(GenericHID.Hand.kRight) || xbox.getStickButtonPressed(GenericHID.Hand.kLeft);
+            }
+        };
+
+        btnResetCommands = new Button() {
+            @Override
+            public boolean get() {
+                return xbox.getStartButtonPressed() || xbox.getBackButtonPressed();  // todo: see if these work
+            }
+        };
 
 
         driveTriggerLeft.whileHeld(new ControlDriveTrainStraight());
 
         // arm controls
-//        btnRocketBall1.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_1_BALL));
-//        btnRocketBall2.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_2_BALL));
-//        btnRocketBall3.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_3_BALL));
-//        btnRocketBallCargo.whenPressed(new ControlArmPID(ArmPosition.CARGO_SHIP_BALL));
-//        btnRocketBallPickup.whenPressed(new ControlArmPID(ArmPosition.BALL_PICKUP));
-//
-//        btnHatch1.whenPressed(new ControlArmPID(ArmPosition.LOW_HATCH));
-//        btnHatch2.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_2_HATCH));
-//        btnHatch3.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_3_HATCH));
-//
+        btnRocketBall1.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_1_BALL));
+        btnRocketBall2.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_2_BALL));
+        btnRocketBall3.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_3_BALL));
+        btnRocketBallCargo.whenPressed(new ControlArmPID(ArmPosition.CARGO_SHIP_BALL));
+        btnRocketBallPickup.whenPressed(new ControlArmPID(ArmPosition.BALL_PICKUP));
+
+        btnHatch1.whenPressed(new ControlArmPID(ArmPosition.LOW_HATCH));
+        btnHatch2.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_2_HATCH));
+        btnHatch3.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_3_HATCH));
+
 
         autoAlign.toggleWhenPressed(new AutoAlign(0.5, 20));
 
         forwardAlign.whenPressed(new ForwardAlign(ArmPosition.ROCKET_LEVEL_1_BALL, 60, 0.5));
     }
 
-    public double clampInput(double input) {
+    private double clampInput(double input) {
         if (input > percentDeadbandThreshold || input < -percentDeadbandThreshold) {
             return input;
         } else {
@@ -166,31 +221,31 @@ public class OI {
     }
 
     public double getElbowMove() {
-        return 0; //clampInput(-aux1.getY());
+        return clampInput(xbox.getY(GenericHID.Hand.kLeft));
     }
 
     public double getWristMove() {
-        return 0; //clampInput(-aux2.getY());
+        return clampInput(xbox.getY(GenericHID.Hand.kRight));
     }
 
     public boolean toggleArmUp() {
-        return false; //btnToggleArmUp.isPressed();
+        return btnToggleArmUp.get();
     }
 
     public boolean shouldExpelGrabber() {
-        return btnGrabberExpel.isHeld();
+        return btnGrabberExpel.get();
     }
 
     public boolean shouldIntakeGrabber() {
-        return btnGrabberIntake.isHeld();
+        return btnGrabberIntake.get();
     }
 
     public boolean shouldToggleOverrideSensors() {
-        return false; //btnOverrideSensors.isPressed();
+        return btnOverrideSensors.get();
     }
 
     public boolean shouldResetCommands() {
-        return fasle; //btnResetCommands.isPressed();
+        return btnResetCommands.get();
     }
 
     public boolean shouldExpelHatch() {
