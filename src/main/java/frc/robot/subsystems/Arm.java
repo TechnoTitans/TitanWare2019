@@ -96,8 +96,8 @@ public class Arm extends Subsystem {
             }
             SmartDashboard.putNumber("Elbow limited speed", speed);
         }
-        elbowFilter.update(speed);
-        elbow.set(elbowFilter.getValue());
+//        elbowFilter.update(speed);
+        elbow.set(speed);
     }
 
     public void moveWrist(double speed) {
@@ -112,8 +112,8 @@ public class Arm extends Subsystem {
             }
             SmartDashboard.putNumber("Wrist limited speed", speed);
         }
-        wristFilter.update(speed);
-        wrist.set(wristFilter.getValue());
+//        wristFilter.update(speed);
+        wrist.set(speed);
     }
 
     public Arm(Motor elbow, Motor wrist, Solenoid armPiston, Accel_GY521 elbowSensor, Accel_GY521 wristSensor) {
@@ -226,5 +226,13 @@ public class Arm extends Subsystem {
     public void updateElbowWristSetpoints() {
         this.wristController.updateSetpoint();
         this.elbowController.updateSetpoint();
+    }
+
+    public double getElbowOutput() {
+        return elbow.getPercentSpeed();
+    }
+
+    public double getWristOutput() {
+        return wrist.getPercentSpeed();
     }
 }

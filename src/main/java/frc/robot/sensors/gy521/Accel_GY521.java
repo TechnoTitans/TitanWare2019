@@ -34,6 +34,8 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
     private String sendableName;
     private String subsystemName;
 
+    private boolean isSensorConnected = false;
+
 
     // TODO get link to manual
 
@@ -133,8 +135,12 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
      * This method checks whether the sensor is connected
      * @return  whether or not the sensor is connected
      */
-    public boolean isConnected() {
+    private boolean isConnected() {
         return i2c_conn.verifySensor(WHO_AM_I, 1, WHO_AM_I_DEFAULT);
+    }
+
+    public boolean isSensorConnected() {
+        return isSensorConnected;
     }
 
 
@@ -148,8 +154,9 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
 
     private void updateWatchdog() {
         // only feed watchdog if the sensor is connected, meaning that it is operational.
+        isSensorConnected = this.isConnected();
         if (this.watchdogEnabled) {
-            if (this.isConnected()) {
+            if (isSensorConnected) {
                 this.watchdog.reset();
             } else {
                 System.err.println("WARNING: Accel GY521 has been disconnected/put into an error state. An attempt to reconnect will be made");

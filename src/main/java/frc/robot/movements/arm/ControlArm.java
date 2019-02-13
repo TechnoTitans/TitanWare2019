@@ -8,7 +8,7 @@ import frc.robot.motor.Filter;
 public class ControlArm extends Command {
     private Filter elbowFilter, wristFilter;
 
-    private static final double MAX_ELBOW_SPEED = 0.9;
+    private static final double MAX_ELBOW_SPEED = 1;
     private static final double MAX_WRIST_SPEED = 0.5;
 
     public ControlArm() {
@@ -24,7 +24,7 @@ public class ControlArm extends Command {
         elbowFilter.update(TechnoTitan.oi.getElbowMove());
         wristFilter.update(TechnoTitan.oi.getWristMove());
         TechnoTitan.arm.moveElbow(elbowFilter.getValue() * MAX_ELBOW_SPEED);
-         TechnoTitan.arm.moveWrist(wristFilter.getValue() * MAX_WRIST_SPEED);
+        TechnoTitan.arm.moveWrist(wristFilter.getValue() * MAX_WRIST_SPEED);
         if (TechnoTitan.oi.toggleArmUp()) {
             TechnoTitan.arm.toggleUp();
         }
@@ -32,8 +32,6 @@ public class ControlArm extends Command {
             TechnoTitan.arm.toggleOverrideSensors();
             System.out.println("Overriding");
         }
-        SmartDashboard.putNumber("Elbow speed", elbowFilter.getValue() * MAX_ELBOW_SPEED);
-        SmartDashboard.putNumber("Wrist speed", wristFilter.getValue() * MAX_WRIST_SPEED);
     }
 
     @Override

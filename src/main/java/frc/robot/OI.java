@@ -221,11 +221,11 @@ public class OI {
     }
 
     public double getElbowMove() {
-        return -clampInput(xbox.getY(GenericHID.Hand.kLeft));
+        return -clampInput(xbox.getY(GenericHID.Hand.kLeft) * 2);
     }
 
     public double getWristMove() {
-        return clampInput(xbox.getY(GenericHID.Hand.kRight));
+        return clampInput(xbox.getY(GenericHID.Hand.kRight) * 2);
     }
 
     public boolean toggleArmUp() {
