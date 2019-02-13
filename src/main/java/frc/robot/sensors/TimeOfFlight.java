@@ -27,7 +27,7 @@ public class TimeOfFlight {
     public TimeOfFlight() {
         serial = new SerialPort(115200, SerialPort.Port.kMXP);
         buffer = new CircularByteBuffer(50);
-        serial.setTimeout(0.005);
+//        serial.setTimeout(0.005);
     }
 
     /**

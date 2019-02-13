@@ -132,11 +132,6 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    // MARK - sensor updates
-//    elbowAngleSensor.update();
-//    wristAngleSensor.update();
-
-
     // MARK - smart dashboard things
 //    SmartDashboard.putNumber("NavX Gyro", navx.getAngle());
 //
