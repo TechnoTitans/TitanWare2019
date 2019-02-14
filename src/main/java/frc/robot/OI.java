@@ -16,7 +16,7 @@ import frc.robot.movements.AutoAlign;
 import frc.robot.movements.ControlDriveTrainStraight;
 import frc.robot.movements.ForwardAlign;
 import frc.robot.movements.arm.ArmPosition;
-import frc.robot.movements.arm.ControlArmPID;
+import frc.robot.movements.arm.MoveArmToPosition;
 
 
 /**
@@ -188,15 +188,15 @@ public class OI {
         driveTriggerLeft.whileHeld(new ControlDriveTrainStraight());
 
         // arm controls
-        btnRocketBall1.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_1_BALL));
-        btnRocketBall2.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_2_BALL));
-        btnRocketBall3.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_3_BALL));
-        btnRocketBallCargo.whenPressed(new ControlArmPID(ArmPosition.CARGO_SHIP_BALL));
-        btnRocketBallPickup.whenPressed(new ControlArmPID(ArmPosition.BALL_PICKUP));
+        btnRocketBall1.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_1_BALL));
+        btnRocketBall2.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_2_BALL));
+        btnRocketBall3.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_3_BALL));
+        btnRocketBallCargo.whenPressed(new MoveArmToPosition(ArmPosition.CARGO_SHIP_BALL));
+        btnRocketBallPickup.whenPressed(new MoveArmToPosition(ArmPosition.BALL_PICKUP));
 
-        btnHatch1.whenPressed(new ControlArmPID(ArmPosition.LOW_HATCH));
-        btnHatch2.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_2_HATCH));
-        btnHatch3.whenPressed(new ControlArmPID(ArmPosition.ROCKET_LEVEL_3_HATCH));
+        btnHatch1.whenPressed(new MoveArmToPosition(ArmPosition.LOW_HATCH));
+        btnHatch2.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_2_HATCH));
+        btnHatch3.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_3_HATCH));
 
 
         autoAlign.toggleWhenPressed(new AutoAlign(0.5, 20));
