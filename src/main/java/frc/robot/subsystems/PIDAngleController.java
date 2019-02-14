@@ -25,6 +25,13 @@ public class PIDAngleController extends PIDController {
      */
     public PIDAngleController(String name, double Kp, double Ki, double Kd, double maxSteadyVoltage, PIDSource sensor, PIDOutput output, double setpointFilterConstant) {
         super(Kp, Ki, Kd, sensor, output);
+        setTolerance(new Tolerance() {
+            private static final double TOLERANCE = 2;
+            @Override
+            public boolean onTarget() {
+                return (Math.abs(getUnfilteredSetpoint() - m_pidInput.pidGet()) < TOLERANCE);
+            }
+        });
         setName("PID " + name);
         this.maxSteadyVoltage = maxSteadyVoltage;
         unfilteredSetpoint = 0;

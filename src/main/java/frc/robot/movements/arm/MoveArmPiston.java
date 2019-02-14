@@ -17,6 +17,8 @@ public class MoveArmPiston extends Command {
         if (up == solenoidEnabled) waitTime = 0;
         else if (up && !solenoidEnabled) waitTime = 1;
         else if (!up && solenoidEnabled) waitTime = 1;
+
+        TechnoTitan.arm.setArmSolenoid(solenoidEnabled);
     }
 
     @Override

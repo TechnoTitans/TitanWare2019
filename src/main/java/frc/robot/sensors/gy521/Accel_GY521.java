@@ -2,7 +2,10 @@ package frc.robot.sensors.gy521;
 
 
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
@@ -224,8 +227,10 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
      */
     public void update() {
         this.updateWatchdog();
-        previousAngle = (previousAngle + this.getRate() * getElapsedTime()) * kGyroInfluence
-                + (this.getAccelAngle()) * (1 - kGyroInfluence);
+        double accelAngle = this.getAccelAngle();
+        double gyroRate = this.getRate();
+        previousAngle = (previousAngle + gyroRate * getElapsedTime()) * kGyroInfluence
+                + (accelAngle) * (1 - kGyroInfluence);
         // Assumptions:
         // The apparatus that this device is mounted on will be at a steady-state (not shaking around)
         // at startup.

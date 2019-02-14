@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.TechnoTitan;
 
 public class MoveWristUp extends Command {
-    private final double setpoint = 110;
+    private final double setpoint = 90;
 
     public MoveWristUp() {
         requires(TechnoTitan.arm);
@@ -12,22 +12,17 @@ public class MoveWristUp extends Command {
 
     @Override
     protected void initialize() {
-        if (!isFinished()) {
-            TechnoTitan.arm.wristController.setUnfilteredSetpoint(setpoint);
-            TechnoTitan.arm.wristController.enable();
+        TechnoTitan.arm.wristController.setUnfilteredSetpoint(setpoint);
+        TechnoTitan.arm.wristController.enable();
+        if (!TechnoTitan.arm.elbowController.isEnabled()) {
+            TechnoTitan.arm.elbowController.setUnfilteredSetpoint(TechnoTitan.arm.getElbowAngle());
+            TechnoTitan.arm.elbowController.enable();  // hold whatever position it had
         }
-        TechnoTitan.arm.elbowController.enable();  // hold whatever position it had
     }
 
 
     @Override
     protected boolean isFinished() {
-        double angle = TechnoTitan.arm.getWristAngle();
-        return angle > setpoint - 5;
-    }
-
-    @Override
-    protected void end() {
-        TechnoTitan.arm.wristController.disable();
+        return TechnoTitan.arm.wristController.onTarget();
     }
 }

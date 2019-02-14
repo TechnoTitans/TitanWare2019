@@ -69,7 +69,6 @@ public class TechnoTitan extends TimedRobot {
     TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
             elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, true);
 
-
     // MARK - accelerometer setup
 
 //    elbowAngleSensor = new Accel_LIS3DH(RobotMap.ELBOW_ACCEL_ADDR);
@@ -77,6 +76,7 @@ public class TechnoTitan extends TimedRobot {
 
 //    movingAverageFilter = LinearDigitalFilter.movingAverage(elbowAngleSensor, MVA_TAPS);
 //    singlePoleIIRFilter = LinearDigitalFilter.singlePoleIIR(elbowAngleSensor, TIME_CONSTANT, 0.01);
+
     elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR, false);
     wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR, false);
     arm = new Arm(elbow, wrist, new Solenoid(RobotMap.PCM_ADDR, RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
@@ -151,16 +151,13 @@ public class TechnoTitan extends TimedRobot {
     SmartDashboard.putBoolean("Elbow sensor connected", elbowAngleSensor.isSensorConnected());
     SmartDashboard.putNumber("Elbow angle", arm.getElbowAngle());
 
-
-
-
     SmartDashboard.putBoolean("Wrist sensor connected", wristAngleSensor.isSensorConnected());
     SmartDashboard.putNumber("Wrist angle", arm.getWristAngle());
 
     SmartDashboard.putNumber("Encoder left", drive.getLeftEncoder().getDistance());
     SmartDashboard.putNumber("Encoder right", drive.getRightEncoder().getDistance());
-    SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
-    SmartDashboard.putBoolean("TF is valid?", tfDistance.isValid());
+//    SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
+//    SmartDashboard.putBoolean("TF is valid?", tfDistance.isValid());
     SmartDashboard.putBoolean("Override arm sensors", arm.areSensorsOverriden());
     SmartDashboard.putNumber("Elbow output", arm.getElbowOutput());
     SmartDashboard.putNumber("Wrist output", arm.getWristOutput());

@@ -67,12 +67,10 @@ public class ControlArmPID extends Command {
         if (moveElbow) {
             TechnoTitan.arm.elbowController.setUnfilteredSetpoint(positionInfo.getElbowAngle());
             TechnoTitan.arm.elbowController.enable();
-            TechnoTitan.arm.elbowController.setAbsoluteTolerance(2);
         }
         if (moveWrist) {
             TechnoTitan.arm.wristController.setUnfilteredSetpoint(positionInfo.getWristAngle());
             TechnoTitan.arm.wristController.enable();
-            TechnoTitan.arm.wristController.setAbsoluteTolerance(2);
         }
 //        TechnoTitan.arm.setArmSolenoid(this.positionInfo.isSolenoidEnabled());
     }
