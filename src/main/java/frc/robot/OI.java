@@ -93,7 +93,7 @@ public class OI {
         }
     }
 
-    private boolean isXboxOnRocket() {
+    public boolean isXboxOnRocket() {
         return xbox.getTriggerAxis(GenericHID.Hand.kLeft) < 0.5;
     }
 

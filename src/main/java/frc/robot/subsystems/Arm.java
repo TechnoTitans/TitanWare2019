@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.Filter;
 import frc.robot.motor.Motor;
-import frc.robot.movements.arm.ControlArm;
 import frc.robot.sensors.gy521.Accel_GY521;
 
 public class Arm extends Subsystem {
@@ -47,14 +46,14 @@ public class Arm extends Subsystem {
 
     // PID Loop tuning
     private static final double kWristP = 0.015;
-    private static final double kWristI = 0.001;
+    private static final double kWristI = 0.0004;
     private static final double kWristD = 0.0;
 
     private static final double kElbowP = 0.03;
-    private static final double kElbowI = 0.003;
+    private static final double kElbowI = 0.001;
     private static final double kElbowD = 0.0;
     private static final double MAX_STEADY_VOLTAGE_ELBOW = 0.22;
-    private static final double MAX_STEADY_VOLTAGE_WRIST = 0.05;
+    private static final double MAX_STEADY_VOLTAGE_WRIST = 0.08;
 
     public PIDAngleController wristController, elbowController;
 
@@ -127,8 +126,8 @@ public class Arm extends Subsystem {
         wristFilter = new Filter(0.5);
         elbowFilter = new Filter(0.5);
 
-        elbowController = new PIDAngleController("Elbow", kElbowP, kElbowI, kElbowD, MAX_STEADY_VOLTAGE_ELBOW, elbowAngleSensor, this::moveElbow);
-        wristController = new PIDAngleController("Wrist", kWristP, kWristI, kWristD, MAX_STEADY_VOLTAGE_WRIST, wristAngleSensor, this::moveWrist);
+        elbowController = new PIDAngleController("Elbow", kElbowP, kElbowI, kElbowD, MAX_STEADY_VOLTAGE_ELBOW, elbowAngleSensor, this::moveElbow, 0.035);
+        wristController = new PIDAngleController("Wrist", kWristP, kWristI, kWristD, MAX_STEADY_VOLTAGE_WRIST, wristAngleSensor, this::moveWrist, 0.02);
         elbowController.setOutputRange(-0.5, 0.8);
         wristController.setOutputRange(-0.5, 0.5);
 
@@ -212,7 +211,7 @@ public class Arm extends Subsystem {
 
     @Override
     protected void initDefaultCommand() {
-        setDefaultCommand(new ControlArm());
+//        setDefaultCommand(new ControlArm());
     }
 
     public boolean areSensorsOverriden() {
@@ -229,10 +228,10 @@ public class Arm extends Subsystem {
     }
 
     public double getElbowOutput() {
-        return elbow.getPercentSpeed();
+        return elbow.getCurrent();
     }
 
     public double getWristOutput() {
-        return wrist.getPercentSpeed();
+        return wrist.getCurrent();
     }
 }

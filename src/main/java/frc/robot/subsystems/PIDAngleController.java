@@ -23,12 +23,12 @@ public class PIDAngleController extends PIDController {
      * @param sensor
      * @param output
      */
-    public PIDAngleController(String name, double Kp, double Ki, double Kd, double maxSteadyVoltage, PIDSource sensor, PIDOutput output) {
+    public PIDAngleController(String name, double Kp, double Ki, double Kd, double maxSteadyVoltage, PIDSource sensor, PIDOutput output, double setpointFilterConstant) {
         super(Kp, Ki, Kd, sensor, output);
         setName("PID " + name);
         this.maxSteadyVoltage = maxSteadyVoltage;
         unfilteredSetpoint = 0;
-        setpointFilter = new Filter(0.05);
+        setpointFilter = new Filter(setpointFilterConstant);
     }
 
     public void updateSmartdashboard() {
@@ -45,7 +45,6 @@ public class PIDAngleController extends PIDController {
             double angle = m_pidInput.pidGet();
             this.setSetpoint(angle);
             setpointFilter.setValue(angle);
-            reset();
         }
     }
 
