@@ -45,15 +45,15 @@ public class Arm extends Subsystem {
                                 RAMP_WRIST = 20;
 
     // PID Loop tuning
-    private static final double kWristP = 0.02;
-    private static final double kWristI = 0.004;
-    private static final double kWristD = 0;
+    private static final double kWristP = 0.012;
+    private static final double kWristI = 0.0004;
+    private static final double kWristD = 0.0;
 
-    private static final double kElbowP = 0.05;
-    private static final double kElbowI = 0.005;
-    private static final double kElbowD = 0;
-    private static final double MAX_STEADY_VOLTAGE_ELBOW = 0.1;
-    private static final double MAX_STEADY_VOLTAGE_WRIST = 0.1;
+    private static final double kElbowP = 0.03;
+    private static final double kElbowI = 0.001;
+    private static final double kElbowD = 0.0;
+    private static final double MAX_STEADY_VOLTAGE_ELBOW = 0.22;
+    private static final double MAX_STEADY_VOLTAGE_WRIST = 0.08;
 
     public PIDAngleController wristController, elbowController;
 
@@ -93,9 +93,10 @@ public class Arm extends Subsystem {
             if (angle < minAngle + RAMP_ELBOW) {
                 speed = Math.max(speed, -(angle - minAngle) / RAMP_ELBOW);
             }
+            SmartDashboard.putNumber("Elbow limited speed", speed);
         }
-        elbowFilter.update(speed);
-        elbow.set(elbowFilter.getValue());
+//        elbowFilter.update(speed);
+        elbow.set(speed);
     }
 
     public void moveWrist(double speed) {
@@ -108,9 +109,10 @@ public class Arm extends Subsystem {
             if (angle < minAngle + RAMP_WRIST) {
                 speed = Math.max(speed, -(angle - minAngle) / RAMP_WRIST);
             }
+            SmartDashboard.putNumber("Wrist limited speed", speed);
         }
-        wristFilter.update(speed);
-        wrist.set(wristFilter.getValue());
+//        wristFilter.update(speed);
+        wrist.set(speed);
     }
 
     public Arm(Motor elbow, Motor wrist, Solenoid armPiston, Accel_GY521 elbowSensor, Accel_GY521 wristSensor) {
@@ -124,9 +126,9 @@ public class Arm extends Subsystem {
         wristFilter = new Filter(0.5);
         elbowFilter = new Filter(0.5);
 
-        elbowController = new PIDAngleController("Elbow", kElbowP, kElbowI, kElbowD, MAX_STEADY_VOLTAGE_ELBOW, elbowAngleSensor, this::moveElbow);
-        wristController = new PIDAngleController("Wrist", kWristP, kWristI, kWristD, MAX_STEADY_VOLTAGE_WRIST, wristAngleSensor, this::moveWrist);
-        elbowController.setOutputRange(-0.5, 0.5);
+        elbowController = new PIDAngleController("Elbow", kElbowP, kElbowI, kElbowD, MAX_STEADY_VOLTAGE_ELBOW, elbowAngleSensor, this::moveElbow, 0.035);
+        wristController = new PIDAngleController("Wrist", kWristP, kWristI, kWristD, MAX_STEADY_VOLTAGE_WRIST, wristAngleSensor, this::moveWrist, 0.02);
+        elbowController.setOutputRange(0.05, 0.5);
         wristController.setOutputRange(-0.5, 0.5);
 
         SmartDashboard.putData("Elbow", elbowController);
@@ -218,5 +220,18 @@ public class Arm extends Subsystem {
 
     public void toggleOverrideSensors() {
         overrideSensors = !overrideSensors;
+    }
+
+    public void updateElbowWristSetpoints() {
+        this.wristController.updateSetpoint();
+        this.elbowController.updateSetpoint();
+    }
+
+    public double getElbowOutput() {
+        return elbow.getCurrent();
+    }
+
+    public double getWristOutput() {
+        return wrist.getCurrent();
     }
 }

@@ -25,4 +25,6 @@ public interface Motor {
 	int getChannel();
 
 	boolean isReversed();
+
+    double getCurrent();
 }

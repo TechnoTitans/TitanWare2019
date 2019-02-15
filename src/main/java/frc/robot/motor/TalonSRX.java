@@ -103,6 +103,11 @@ public class TalonSRX extends com.ctre.phoenix.motorcontrol.can.TalonSRX impleme
 	public double getPercentSpeed() {
 		return super.getMotorOutputPercent();
 	}
+
+	@Override
+	public double getCurrent() {
+		return super.getOutputCurrent();
+	}
 	
 	@Override
 	public double getSpeed() {

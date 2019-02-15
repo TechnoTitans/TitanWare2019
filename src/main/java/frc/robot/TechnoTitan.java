@@ -9,14 +9,17 @@ package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.hal.util.UncleanStatusException;
-import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
 import frc.robot.sensors.QuadEncoder;
 import frc.robot.sensors.TimeOfFlight;
-import frc.robot.sensors.vision.VisionSensor;
 import frc.robot.sensors.gy521.Accel_GY521;
+import frc.robot.sensors.vision.VisionSensor;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Grabber;
@@ -46,7 +49,7 @@ public class TechnoTitan extends TimedRobot {
   private static final boolean LEFT_REVERSE = false,
                                RIGHT_REVERSE = true;
 
-  private static final double INCHES_PER_PULSE = 0.0045;
+  private static final double INCHES_PER_PULSE = 0.00570;
 
 //  private static final int MVA_TAPS = 25;
 
@@ -66,7 +69,6 @@ public class TechnoTitan extends TimedRobot {
     TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
             elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, true);
 
-
     // MARK - accelerometer setup
 
 //    elbowAngleSensor = new Accel_LIS3DH(RobotMap.ELBOW_ACCEL_ADDR);
@@ -74,8 +76,9 @@ public class TechnoTitan extends TimedRobot {
 
 //    movingAverageFilter = LinearDigitalFilter.movingAverage(elbowAngleSensor, MVA_TAPS);
 //    singlePoleIIRFilter = LinearDigitalFilter.singlePoleIIR(elbowAngleSensor, TIME_CONSTANT, 0.01);
-    elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR, true);
-    wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR, true);
+
+    elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR, false);
+    wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR, false);
     arm = new Arm(elbow, wrist, new Solenoid(RobotMap.PCM_ADDR, RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
     grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_PANEL_PISTON));
 
@@ -109,6 +112,27 @@ public class TechnoTitan extends TimedRobot {
     drive.resetEncoders();
 
     vision.startRecording();
+
+    Thread updateI2CSensors = new Thread(() -> {
+      while (!Thread.interrupted()) {
+        wristAngleSensor.update();
+        elbowAngleSensor.update();
+      }
+    });
+    updateI2CSensors.setDaemon(true);
+    updateI2CSensors.start();
+
+    Thread updateToF = new Thread(() -> {
+      while (!Thread.interrupted()) {
+        try {
+          tfDistance.update();
+        } catch (UncleanStatusException e) {
+          System.err.println("Warning: " + e);
+        }
+      }
+    });
+    updateToF.setDaemon(true);
+//    updateToF.start();
   }
 
   /**
@@ -121,36 +145,35 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    // MARK - sensor updates
-    elbowAngleSensor.update();
-    wristAngleSensor.update();
-
-
     // MARK - smart dashboard things
     SmartDashboard.putNumber("NavX Gyro", navx.getAngle());
 
-    SmartDashboard.putBoolean("Elbow sensor connected", elbowAngleSensor.isConnected());
+    SmartDashboard.putBoolean("Elbow sensor connected", elbowAngleSensor.isSensorConnected());
     SmartDashboard.putNumber("Elbow angle", arm.getElbowAngle());
 
-    SmartDashboard.putBoolean("Wrist sensor connected", wristAngleSensor.isConnected());
+    SmartDashboard.putBoolean("Wrist sensor connected", wristAngleSensor.isSensorConnected());
     SmartDashboard.putNumber("Wrist angle", arm.getWristAngle());
 
-    // time of flight
     SmartDashboard.putNumber("Encoder left", drive.getLeftEncoder().getDistance());
     SmartDashboard.putNumber("Encoder right", drive.getRightEncoder().getDistance());
-    SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
-    SmartDashboard.putBoolean("TF is valid?", tfDistance.isValid());
-    try {
-      tfDistance.update();
-    } catch (UncleanStatusException e) {
-      // serial port not started yet
-      System.err.println("Warning: " + e);
-    }
+//    SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
+//    SmartDashboard.putBoolean("TF is valid?", tfDistance.isValid());
     SmartDashboard.putBoolean("Override arm sensors", arm.areSensorsOverriden());
+    SmartDashboard.putNumber("Elbow output", arm.getElbowOutput());
+    SmartDashboard.putNumber("Wrist output", arm.getWristOutput());
+
+    SmartDashboard.putBoolean("Is xbox on rocket", oi.isXboxOnRocket());
 
     arm.elbowController.updateSmartdashboard();
     arm.wristController.updateSmartdashboard();
 
+    arm.updateElbowWristSetpoints();
+
+//    try {
+//      tfDistance.update();
+//    } catch (UncleanStatusException e) {
+//      System.err.println("Warning: " + e);
+//    }
     if (oi.shouldResetCommands()) {
       Scheduler.getInstance().removeAll();
     }

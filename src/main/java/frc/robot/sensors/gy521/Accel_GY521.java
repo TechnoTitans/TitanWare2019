@@ -2,7 +2,10 @@ package frc.robot.sensors.gy521;
 
 
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
@@ -33,6 +36,8 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
     // MARK  - sendable config
     private String sendableName;
     private String subsystemName;
+
+    private boolean isSensorConnected = false;
 
 
     // TODO get link to manual
@@ -133,8 +138,12 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
      * This method checks whether the sensor is connected
      * @return  whether or not the sensor is connected
      */
-    public boolean isConnected() {
+    private boolean isConnected() {
         return i2c_conn.verifySensor(WHO_AM_I, 1, WHO_AM_I_DEFAULT);
+    }
+
+    public boolean isSensorConnected() {
+        return isSensorConnected;
     }
 
 
@@ -148,8 +157,9 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
 
     private void updateWatchdog() {
         // only feed watchdog if the sensor is connected, meaning that it is operational.
+        isSensorConnected = this.isConnected();
         if (this.watchdogEnabled) {
-            if (this.isConnected()) {
+            if (isSensorConnected) {
                 this.watchdog.reset();
             } else {
                 System.err.println("WARNING: Accel GY521 has been disconnected/put into an error state. An attempt to reconnect will be made");
@@ -217,8 +227,10 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
      */
     public void update() {
         this.updateWatchdog();
-        previousAngle = (previousAngle + this.getRate() * getElapsedTime()) * kGyroInfluence
-                + (this.getAccelAngle()) * (1 - kGyroInfluence);
+        double accelAngle = this.getAccelAngle();
+        double gyroRate = this.getRate();
+        previousAngle = (previousAngle + gyroRate * getElapsedTime()) * kGyroInfluence
+                + (accelAngle) * (1 - kGyroInfluence);
         // Assumptions:
         // The apparatus that this device is mounted on will be at a steady-state (not shaking around)
         // at startup.
