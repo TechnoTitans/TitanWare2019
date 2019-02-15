@@ -251,7 +251,8 @@ public class VisionKalmanFilter {
         if (TechnoTitan.vision.canSeeTargets()) {
             double xResidual = TechnoTitan.vision.getXOffset() - predictedX;
             double yResidual = -TechnoTitan.vision.getYDistance() - predictedY;
-            double angleResidual = Math.toRadians(TechnoTitan.vision.getSkew()) - predictedAngle;
+            double skew = TechnoTitan.vision.getSkew();
+            double angleResidual = Math.toRadians(skew) - predictedAngle;
 
 
             Matrix H = new Matrix(new double[][]{
@@ -260,10 +261,11 @@ public class VisionKalmanFilter {
                     {0, 0, 1}
             });
 
+            double skewVar = (-1 < skew && skew < 1) ? 50 : Math.max(50, 250 / (Math.abs(skew) - 15));
             Matrix R = new Matrix(new double[][]{
                     {25, 0, 0},
                     {0, 9, 0},
-                    {0, 0, 25}
+                    {0, 0, skewVar}
             });
 
 //            Matrix S = H.multiply(covMatrix).multiply(H.transpose());

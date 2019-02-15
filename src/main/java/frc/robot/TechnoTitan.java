@@ -8,7 +8,6 @@
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.hal.util.UncleanStatusException;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -34,6 +33,7 @@ import frc.robot.subsystems.TankDrive;
  * project.
  */
 public class TechnoTitan extends TimedRobot {
+
   public static OI oi;
   public static DriveTrain drive;
   public static Arm arm;
@@ -70,12 +70,6 @@ public class TechnoTitan extends TimedRobot {
             elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, true);
 
     // MARK - accelerometer setup
-
-//    elbowAngleSensor = new Accel_LIS3DH(RobotMap.ELBOW_ACCEL_ADDR);
-//    wristAngleSensor = new Accel_LIS3DH(RobotMap.WRIST_ACCEL_ADDR);
-
-//    movingAverageFilter = LinearDigitalFilter.movingAverage(elbowAngleSensor, MVA_TAPS);
-//    singlePoleIIRFilter = LinearDigitalFilter.singlePoleIIR(elbowAngleSensor, TIME_CONSTANT, 0.01);
 
     elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR, false);
     wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR, false);
@@ -122,16 +116,16 @@ public class TechnoTitan extends TimedRobot {
     updateI2CSensors.setDaemon(true);
     updateI2CSensors.start();
 
-    Thread updateToF = new Thread(() -> {
-      while (!Thread.interrupted()) {
-        try {
-          tfDistance.update();
-        } catch (UncleanStatusException e) {
-          System.err.println("Warning: " + e);
-        }
-      }
-    });
-    updateToF.setDaemon(true);
+//    Thread updateToF = new Thread(() -> {
+//      while (!Thread.interrupted()) {
+//        try {
+//          tfDistance.update();
+//        } catch (UncleanStatusException e) {
+//          System.err.println("Warning: " + e);
+//        }
+//      }
+//    });
+//    updateToF.setDaemon(true);
 //    updateToF.start();
   }
 
@@ -175,6 +169,7 @@ public class TechnoTitan extends TimedRobot {
 //      System.err.println("Warning: " + e);
 //    }
     if (oi.shouldResetCommands()) {
+      SmartDashboard.putNumber("Removing commands", Math.random());
       Scheduler.getInstance().removeAll();
     }
   }
