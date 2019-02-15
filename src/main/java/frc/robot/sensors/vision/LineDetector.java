@@ -18,8 +18,9 @@ public class LineDetector {
     // MARK - OpenCV Config
     private static final double kBackgroundThreshold = 50;
     private static final int kKernelSize = 3;
-    private double kCannyLowerThreshold = -999;
-    private double kCannyUpperThreshold = kCannyLowerThreshold * 3;
+    private static final double kGaussianSigma = 20.0;
+    private static final double kCannyLowerThreshold = -999;
+    private static final double kCannyUpperThreshold = kCannyLowerThreshold * 3;
 
     // MARK - OpenCV obj
     private CvSink cvSink;
@@ -52,9 +53,9 @@ public class LineDetector {
         Mat result = new Mat();
         cvSink.grabFrame(result);
         Imgproc.cvtColor(result, result, Imgproc.COLOR_BGR2GRAY);
-        Imgproc.blur(result, result, new Size(kKernelSize, kKernelSize));
+        Imgproc.GaussianBlur(result, result, new Size(kKernelSize, kKernelSize), kGaussianSigma);
         Imgproc.Canny(result, result, kCannyLowerThreshold, kCannyUpperThreshold, kKernelSize);
-        Imgproc.contourArea(result);
+            Imgproc.contourArea(result);
 //       outputStream.putFrame(outputMat);
     }
 
