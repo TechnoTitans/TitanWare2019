@@ -175,7 +175,10 @@ public class TechnoTitan extends TimedRobot {
 //      System.err.println("Warning: " + e);
 //    }
     if (oi.shouldResetCommands()) {
-      Scheduler.getInstance().removeAll();
+      // TODO Uncomment out the removeall
+      elbowAngleSensor.emergencySensorReset();
+      wristAngleSensor.emergencySensorReset();
+//      Scheduler.getInstance().removeAll();
     }
   }
 

@@ -132,6 +132,9 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
         i2c_conn.write(RESET_ADDRESS, RESET_VAL);
     }
 
+    private void setDataRate() {
+
+    }
     // MARK - device misc methods
 
     /**
@@ -152,6 +155,16 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
         System.out.println("Resetting " + this.toString());
         this.resetDevice();
         this.watchdog.reset(); // assume that the sensor recovered
+    }
+
+    /**
+     * This method explicitly writes our configuration after resetting.
+     */
+    public void emergencySensorReset() {
+        System.out.println("Initializing emergency procedures for GY521 sensor");
+        this.resetDevice();
+        this.setSleepMode(false);
+
     }
 
 
@@ -265,11 +278,11 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
 
     // TODO impelment gyro and accel config modification
     public int getGyroConfig() {
-        return I2CUtils.readWord(i2c_conn, 0x1B); // GYRO_CFNGI
+        return I2CUtils.readWord(i2c_conn, GYRO_CONFIG); // GYRO_CFNGI
     }
 
     public int getAccelConfig() {
-        return I2CUtils.readWord(i2c_conn, 0x1c);
+        return I2CUtils.readWord(i2c_conn, ACCEL_CONFIG);
     }
 
     @Override
