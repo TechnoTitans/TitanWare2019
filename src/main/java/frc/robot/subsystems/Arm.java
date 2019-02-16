@@ -49,10 +49,10 @@ public class Arm extends Subsystem {
     private static final double kWristI = 0.0004;
     private static final double kWristD = 0.0;
 
-    private static final double kElbowP = 0.03;
-    private static final double kElbowI = 0.001;
+    private static final double kElbowP = 0.007;
+    private static final double kElbowI = 0.0005;
     private static final double kElbowD = 0.0;
-    private static final double MAX_STEADY_VOLTAGE_ELBOW = 0.22;
+    private static final double MAX_STEADY_VOLTAGE_ELBOW = 0.24;
     private static final double MAX_STEADY_VOLTAGE_WRIST = 0.08;
 
     public PIDAngleController wristController, elbowController;

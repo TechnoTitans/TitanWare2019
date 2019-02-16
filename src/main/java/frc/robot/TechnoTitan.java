@@ -170,10 +170,12 @@ public class TechnoTitan extends TimedRobot {
 //    }
     if (oi.shouldResetCommands()) {
       // TODO Uncomment out the removeall
-      elbowAngleSensor.emergencySensorReset();
-      wristAngleSensor.emergencySensorReset();
-      SmartDashboard.putNumber("Resetting sensors", Math.random());
-//      Scheduler.getInstance().removeAll();
+//      elbowAngleSensor.emergencySensorReset();
+//      wristAngleSensor.emergencySensorReset();
+      SmartDashboard.putNumber("Resetting", Math.random());
+      Scheduler.getInstance().removeAll();
+      TechnoTitan.arm.elbowController.disable();
+      TechnoTitan.arm.wristController.disable();
     }
   }
 
