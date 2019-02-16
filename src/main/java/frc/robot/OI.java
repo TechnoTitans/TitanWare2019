@@ -61,7 +61,8 @@ public class OI {
                     btnGrabberExpel,
                     btnGrabberIntake,
                     btnOverrideSensors,
-                    btnResetCommands;
+                    btnResetCommands,
+                    btnEmergencyResetSensors;
 
     private Btn btnHatchEject;
 

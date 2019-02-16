@@ -261,11 +261,10 @@ public class VisionKalmanFilter {
                     {0, 0, 1}
             });
 
-            double skewVar = (-1 < skew && skew < 1) ? 50 : Math.max(50, 250 / (Math.abs(skew) - 15));
             Matrix R = new Matrix(new double[][]{
-                    {25, 0, 0},
+                    {25, 0, 0},  // TODO: add value
                     {0, 9, 0},
-                    {0, 0, skewVar}
+                    {0, 0, 36}
             });
 
 //            Matrix S = H.multiply(covMatrix).multiply(H.transpose());

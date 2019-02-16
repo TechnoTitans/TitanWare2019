@@ -28,6 +28,14 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
     private Range currRange;
     private int deviceAddr;
 
+    private double xAccelOffset = 0, yAccelOffset = 0;
+    private double gyroOffset = 0;
+
+    private static class Calibrator {
+        private double[] vals;
+
+    }
+
     // MARK - watchdog config
     private Watchdog watchdog;
     private static final double kSensorDisconnectTimeout = 3; // sec // todo better name?
@@ -62,7 +70,6 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
         // sendable setup
         this.sendableName = this.toString(); // default name
     }
-
 
     // MARK - instance configuration methods
 
@@ -132,6 +139,9 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
         i2c_conn.write(RESET_ADDRESS, RESET_VAL);
     }
 
+    private void setDataRate() {
+
+    }
     // MARK - device misc methods
 
     /**
@@ -152,6 +162,25 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
         System.out.println("Resetting " + this.toString());
         this.resetDevice();
         this.watchdog.reset(); // assume that the sensor recovered
+    }
+
+    /**
+     * This method explicitly writes our configuration after resetting.
+     */
+    public void emergencySensorReset() {
+        System.out.println("Initializing emergency procedures for GY521 sensor");
+        this.resetDevice();
+        this.setSleepMode(false);
+        i2c_conn.write(0x77, 0x00); // XA offst high low
+        i2c_conn.write(0x78, 0x00);
+        i2c_conn.write(0x79, 0x00);
+        i2c_conn.write(0x80, 0x00);
+
+        // z
+        i2c_conn.write(0x81, 0x00);
+        i2c_conn.write(0x81, 0x00);
+
+
     }
 
 
@@ -254,7 +283,8 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
 
 
     public double getAccelAngle() {
-        return Math.toDegrees(Math.atan2(this.getY(), this.getX()));
+        double y = this.getY(), x = this.getX();
+        return Math.toDegrees(Math.atan2(y, x));
     }
 
     @Override
@@ -265,11 +295,11 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
 
     // TODO impelment gyro and accel config modification
     public int getGyroConfig() {
-        return I2CUtils.readWord(i2c_conn, 0x1B); // GYRO_CFNGI
+        return I2CUtils.readWord(i2c_conn, GYRO_CONFIG); // GYRO_CFNGI
     }
 
     public int getAccelConfig() {
-        return I2CUtils.readWord(i2c_conn, 0x1c);
+        return I2CUtils.readWord(i2c_conn, ACCEL_CONFIG);
     }
 
     @Override

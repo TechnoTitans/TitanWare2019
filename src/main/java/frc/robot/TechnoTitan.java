@@ -33,7 +33,6 @@ import frc.robot.subsystems.TankDrive;
  * project.
  */
 public class TechnoTitan extends TimedRobot {
-
   public static OI oi;
   public static DriveTrain drive;
   public static Arm arm;
@@ -70,6 +69,7 @@ public class TechnoTitan extends TimedRobot {
             elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, true);
 
     // MARK - accelerometer setup
+
 
     elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR, false);
     wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR, false);
@@ -169,8 +169,11 @@ public class TechnoTitan extends TimedRobot {
 //      System.err.println("Warning: " + e);
 //    }
     if (oi.shouldResetCommands()) {
-      SmartDashboard.putNumber("Removing commands", Math.random());
-      Scheduler.getInstance().removeAll();
+      // TODO Uncomment out the removeall
+      elbowAngleSensor.emergencySensorReset();
+      wristAngleSensor.emergencySensorReset();
+      SmartDashboard.putNumber("Resetting sensors", Math.random());
+//      Scheduler.getInstance().removeAll();
     }
   }
 
