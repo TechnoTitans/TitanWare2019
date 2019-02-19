@@ -114,14 +114,14 @@ public class OI {
         Button btnRocketBall1 = new Button() {
             @Override
             public boolean get() {
-                return xbox.getXButton() && isXboxOnRocket();
+                return xbox.getAButton() && isXboxOnRocket();
             }
         };
 
         Button btnRocketBall2 = new Button() {
             @Override
             public boolean get() {
-                return xbox.getYButton() && isXboxOnRocket();
+                return xbox.getXButton() && isXboxOnRocket();
             }
         };
 
@@ -135,13 +135,20 @@ public class OI {
         Button btnRocketBallPickup = new Button() {
             @Override
             public boolean get() {
-                return xbox.getAButton() && isXboxOnRocket();
+                return xbox.getBumper(GenericHID.Hand.kRight);
+            }
+        };
+
+        Button hatchPickup = new Button() {
+            @Override
+            public boolean get() {
+                return xbox.getTriggerAxis(GenericHID.Hand.kRight) > 0.5;
             }
         };
 
         Button btnRocketBall3 = new Button() {
             @Override
-            public boolean get() { return xbox.getBumper(GenericHID.Hand.kRight);
+            public boolean get() { return xbox.getYButton() && isXboxOnRocket();
             }
         };
 
@@ -153,7 +160,14 @@ public class OI {
         };
         Button btnHatch2 = new Button() {
             @Override
-            public boolean get() { return (xbox.getBButton() || xbox.getXButton()) && !isXboxOnRocket();
+            public boolean get() { return xbox.getXButton() && !isXboxOnRocket();
+            }
+        };
+
+        Button btnStow = new Button() {
+            @Override
+            public boolean get() {
+                return xbox.getBButton() && !isXboxOnRocket();
             }
         };
 
@@ -198,6 +212,10 @@ public class OI {
         btnHatch1.whenPressed(new MoveArmToPosition(ArmPosition.LOW_HATCH));
         btnHatch2.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_2_HATCH));
         btnHatch3.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_3_HATCH));
+
+        hatchPickup.whenPressed(new MoveArmToPosition(ArmPosition.HATCH_PICKUP));
+
+        btnStow.whenPressed(new MoveArmToPosition(ArmPosition.STOW_POSITION));
 
 
         autoAlign.toggleWhenPressed(new AutoAlign(0.5, 20));

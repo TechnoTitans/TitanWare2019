@@ -10,9 +10,11 @@ public enum ArmPosition {
     ROCKET_LEVEL_3_BALL(51, 28.8, true),
     ROCKET_LEVEL_2_HATCH(8.6, 90, false),
     ROCKET_LEVEL_3_HATCH(33.6,90,true),
-    CARGO_SHIP_BALL(-28, 0, false),
+    CARGO_SHIP_BALL(10, 0, false),
     LOW_HATCH(-40, 90, false), // All hatch levels except higher hatches on rocket
-    BALL_PICKUP(-35.8, -20.6, false);
+    BALL_PICKUP(-39, -20, false),
+    HATCH_PICKUP(-55, 0, false),
+    STOW_POSITION(-55, 90, false);
 
 
     private double elbowAngle, wristAngle; // DEGREES

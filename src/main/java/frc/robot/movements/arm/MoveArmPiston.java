@@ -8,6 +8,7 @@ public class MoveArmPiston extends Command {
     private double waitTime = 1e10;
 
     public MoveArmPiston(boolean solenoidEnabled) {
+        requires(TechnoTitan.arm);
         this.solenoidEnabled = solenoidEnabled;
     }
 

@@ -25,6 +25,7 @@ public class MoveArmToPosition extends ConditionalCommand {
 
     public MoveArmToPosition(ArmPosition position) {
         super(new MoveArmToPositionSafe(position), new MoveArmToPositionFast(position));
+        requires(TechnoTitan.arm);
         this.position = position;
     }
 

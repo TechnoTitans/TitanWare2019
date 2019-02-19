@@ -19,7 +19,8 @@ public class Arm extends Subsystem {
     private Accel_GY521 elbowSensor;
     private Accel_GY521 wristSensor;
 
-    private Filter wristFilter, elbowFilter;
+    private Filter wristFilter;
+    private Filter elbowFilter;
 
 
 
@@ -126,13 +127,16 @@ public class Arm extends Subsystem {
         wristFilter = new Filter(0.5);
         elbowFilter = new Filter(0.5);
 
-        elbowController = new PIDAngleController("Elbow", kElbowP, kElbowI, kElbowD, MAX_STEADY_VOLTAGE_ELBOW, elbowAngleSensor, this::moveElbow, 0.035);
-        wristController = new PIDAngleController("Wrist", kWristP, kWristI, kWristD, MAX_STEADY_VOLTAGE_WRIST, wristAngleSensor, this::moveWrist, 0.02);
-        elbowController.setOutputRange(0.05, 0.5);
+        elbowController = new PIDAngleController("Elbow", kElbowP, kElbowI, kElbowD, MAX_STEADY_VOLTAGE_ELBOW, elbowAngleSensor, this::moveElbow, 0.45);
+        wristController = new PIDAngleController("Wrist", kWristP, kWristI, kWristD, MAX_STEADY_VOLTAGE_WRIST, wristAngleSensor, this::moveWrist, 0.45);
+        elbowController.setOutputRange(-0.1, 0.5);
         wristController.setOutputRange(-0.5, 0.5);
 
         SmartDashboard.putData("Elbow", elbowController);
         SmartDashboard.putData("Wrist", wristController);
+
+//        SmartDashboard.putData("Elbow sensor", elbowSensor);
+//        SmartDashboard.putData("Wrist sensor", wristSensor);
     }
 
 
@@ -208,7 +212,6 @@ public class Arm extends Subsystem {
         return wristSensor.getAngle() + WRIST_ANGLE_ERROR;
     }
 
-
     @Override
     protected void initDefaultCommand() {
 //        setDefaultCommand(new ControlArm());
@@ -223,8 +226,8 @@ public class Arm extends Subsystem {
     }
 
     public void updateElbowWristSetpoints() {
-        this.wristController.updateSetpoint();
-        this.elbowController.updateSetpoint();
+//        this.wristController.updateSetpoint();
+//        this.elbowController.updateSetpoint();
     }
 
     public double getElbowOutput() {
