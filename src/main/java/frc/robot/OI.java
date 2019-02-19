@@ -16,6 +16,7 @@ import frc.robot.movements.AutoAlign;
 import frc.robot.movements.ControlDriveTrainStraight;
 import frc.robot.movements.ForwardAlign;
 import frc.robot.movements.arm.ArmPosition;
+import frc.robot.movements.arm.ControlArm;
 import frc.robot.movements.arm.MoveArmToPosition;
 
 
@@ -216,6 +217,8 @@ public class OI {
         hatchPickup.whenPressed(new MoveArmToPosition(ArmPosition.HATCH_PICKUP));
 
         btnStow.whenPressed(new MoveArmToPosition(ArmPosition.STOW_POSITION));
+
+        btnOverrideSensors.whenPressed(new ControlArm());
 
 
         autoAlign.toggleWhenPressed(new AutoAlign(0.5, 20));
