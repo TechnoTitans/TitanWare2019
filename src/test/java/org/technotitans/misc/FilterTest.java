@@ -4,7 +4,8 @@ package org.technotitans.misc;
 import frc.robot.motor.Filter;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static junit.framework.TestCase.assertEquals;
+
 
 public class FilterTest {
 
