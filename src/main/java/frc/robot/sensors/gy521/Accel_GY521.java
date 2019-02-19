@@ -28,14 +28,6 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
     private Range currRange;
     private int deviceAddr;
 
-    private double xAccelOffset = 0, yAccelOffset = 0;
-    private double gyroOffset = 0;
-
-    private static class Calibrator {
-        private double[] vals;
-
-    }
-
     // MARK - watchdog config
     private Watchdog watchdog;
     private static final double kSensorDisconnectTimeout = 3; // sec // todo better name?
