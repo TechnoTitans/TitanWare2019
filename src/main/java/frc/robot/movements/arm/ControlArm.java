@@ -1,7 +1,6 @@
 package frc.robot.movements.arm;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.TechnoTitan;
 import frc.robot.motor.Filter;
 
@@ -18,6 +17,8 @@ public class ControlArm extends Command {
     public void initialize() {
         elbowFilter = new Filter(0.1);
         wristFilter = new Filter(0.1);
+        TechnoTitan.arm.elbowController.disable();
+        TechnoTitan.arm.wristController.disable();
     }
 
     public void execute() {

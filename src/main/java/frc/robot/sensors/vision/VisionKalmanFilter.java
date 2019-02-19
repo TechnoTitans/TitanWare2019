@@ -195,6 +195,7 @@ public class VisionKalmanFilter {
 
     public VisionKalmanFilter() {
         gyro = new NavXGyro();
+        lastTime = new Timer();
     }
 
     public void start() {
@@ -207,7 +208,8 @@ public class VisionKalmanFilter {
                 {0, 0, 25}
         });
 
-        lastTime = new Timer();
+        lastTime.reset();
+        lastTime.start();
         gyro.reset();
     }
 
