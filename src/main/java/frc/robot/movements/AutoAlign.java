@@ -1,6 +1,7 @@
 package frc.robot.movements;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.TechnoTitan;
 import frc.robot.sensors.NavXGyro;
 import frc.robot.sensors.vision.VisionKalmanFilter;
@@ -11,12 +12,11 @@ public class AutoAlign extends Command {
     private final double minSpeed = 0.2;
     private double slowDownDist;
 
-    private static final double STRAIGHT_END_COEFF = 2.5;
+    private static final double STRAIGHT_END_COEFF = 2;
+    private static final double ROBOT_RADIUS = 11;  // TODO: measure
 
-    private static final double ROBOT_RADIUS = 15;  // TODO: measure
-
-    private static final double TARGET_Y_OFFSET = 20,
-                                NO_SENSOR_DIST = 10;
+    private static final double TARGET_Y_OFFSET = 10,
+                                NO_SENSOR_DIST = 5;
 
     private double speed;
 
@@ -25,6 +25,7 @@ public class AutoAlign extends Command {
     private static VisionKalmanFilter visionKalmanFilter;
 
     public AutoAlign(double speed, double slowDownDist) {
+        requires(TechnoTitan.drive);
         gyro = new NavXGyro();
         this.speed = speed;
         this.slowDownDist = slowDownDist;
@@ -112,7 +113,6 @@ public class AutoAlign extends Command {
             double dx = visionKalmanFilter.getX(),
                     dy = visionKalmanFilter.getY(),
                     skew = visionKalmanFilter.getAngle();
-
             double kappa = calculateCurvature(dx, dy + TARGET_Y_OFFSET, skew);
 
             kappa *= ROBOT_RADIUS;
@@ -133,6 +133,13 @@ public class AutoAlign extends Command {
             gyro.resetTo(Math.toDegrees(skew));
             lDist = TechnoTitan.drive.getLeftEncoder().getDistance();
             rDist = TechnoTitan.drive.getRightEncoder().getDistance();
+
+            SmartDashboard.putNumber("Curvature", kappa);
+            SmartDashboard.putNumber("Angle", gyro.getAngle());
+            SmartDashboard.putNumber("Distance", dy);
+            SmartDashboard.putNumber("X", dx);
+            SmartDashboard.putNumber("lSpeed", lSpeed);
+            SmartDashboard.putNumber("rSpeed", rSpeed);
         } else {
             double error = gyro.getAngle() * 0.05;
             lSpeed = minSpeed - error;

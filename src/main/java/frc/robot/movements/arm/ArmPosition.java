@@ -5,16 +5,18 @@ import frc.robot.subsystems.Arm;
 
 public enum ArmPosition {
     // TODO: refine these
-    ROCKET_LEVEL_1_BALL(-10.3, 0, false),
-    ROCKET_LEVEL_2_BALL(42.2, 0, false),
-    ROCKET_LEVEL_3_BALL(51, 28.8, true),
+    ROCKET_LEVEL_1_BALL(-24, 15, false),
+//    ROCKET_LEVEL_1_BALL(-41, 20, false),
+    ROCKET_LEVEL_2_BALL(30, 18, false),
+//    ROCKET_LEVEL_2_BALL(13, 20, false),
+    ROCKET_LEVEL_3_BALL(46, 40, true),
     ROCKET_LEVEL_2_HATCH(8.6, 90, false),
     ROCKET_LEVEL_3_HATCH(33.6,90,true),
     CARGO_SHIP_BALL(10, 0, false),
     LOW_HATCH(-40, 90, false), // All hatch levels except higher hatches on rocket
     BALL_PICKUP(-39, -20, false),
-    HATCH_PICKUP(-55, 0, false),
-    STOW_POSITION(-55, 90, false);
+    HATCH_PICKUP(-56.0, 3, false),
+    STOW_POSITION(-56, 88, false);
 
 
     private double elbowAngle, wristAngle; // DEGREES

@@ -17,8 +17,8 @@ public class ControlArm extends Command {
     public void initialize() {
         elbowFilter = new Filter(0.1);
         wristFilter = new Filter(0.1);
-        TechnoTitan.arm.elbowController.disable();
-        TechnoTitan.arm.wristController.disable();
+        TechnoTitan.arm.elbowController.reset();
+        TechnoTitan.arm.wristController.reset();
     }
 
     public void execute() {

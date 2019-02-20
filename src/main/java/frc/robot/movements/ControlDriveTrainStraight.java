@@ -2,8 +2,6 @@ package frc.robot.movements;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.OI;
 import frc.robot.TechnoTitan;
 import frc.robot.motor.Filter;
 import frc.robot.sensors.NavXGyro;
@@ -12,6 +10,8 @@ public class ControlDriveTrainStraight extends Command  {
     private Gyro gyro;
 
     private final double kP = 0.05;
+
+    private static final double MAX_STRAIGHT_SPEED = 0.25;
 
     private Filter filter;
 
@@ -29,7 +29,7 @@ public class ControlDriveTrainStraight extends Command  {
     @Override
     public void execute() {
         double error = gyro.getAngle();
-        double speed = (TechnoTitan.oi.getLeft() + TechnoTitan.oi.getRight()) / 2;
+        double speed = MAX_STRAIGHT_SPEED * (TechnoTitan.oi.getLeft() + TechnoTitan.oi.getRight()) / 2;
         filter.update(speed);
         TechnoTitan.drive.set(filter.getValue() - error * kP, filter.getValue() + error * kP);
     }

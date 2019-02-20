@@ -27,7 +27,7 @@ import frc.robot.movements.arm.MoveArmToPosition;
 public class OI {
     private Joystick left, right;
     private XboxController xbox;
-    private static final double percentDeadbandThreshold = 0.01;
+    private static final double percentDeadbandThreshold = 0.1;
 
 
     //// CREATING BUTTONS

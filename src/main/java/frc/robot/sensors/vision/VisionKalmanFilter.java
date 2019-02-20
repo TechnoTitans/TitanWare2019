@@ -1,6 +1,7 @@
 package frc.robot.sensors.vision;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.TechnoTitan;
 import frc.robot.sensors.NavXGyro;
 
@@ -188,6 +189,7 @@ public class VisionKalmanFilter {
 
 
     private double angle;
+    private double prevGyroAngle = 0;
 
     private Matrix covMatrix;
 
@@ -203,14 +205,16 @@ public class VisionKalmanFilter {
         y = -TechnoTitan.vision.getYDistance();
         angle = Math.toRadians(TechnoTitan.vision.getSkew());
         covMatrix = new Matrix(new double[][] {
-                {25, 0, 0},
+                {100, 0, 0},
                 {0, 9, 0},
-                {0, 0, 25}
+                {0, 0, 100}
         });
 
         lastTime.reset();
         lastTime.start();
         gyro.reset();
+
+
     }
 
     public void update() {
@@ -218,15 +222,14 @@ public class VisionKalmanFilter {
 
         double lSpeed = TechnoTitan.drive.getLeftEncoder().getSpeedInches(),
                 rSpeed = TechnoTitan.drive.getRightEncoder().getSpeedInches();
-        if ((Math.abs(lSpeed) < 0.01 && Math.abs(rSpeed) < 0.01) || dt < 0.001) {
-            // almost no change
-            return;
-        }
         double averageSpeed = (lSpeed + rSpeed) / 2;
         double predictedX = x + averageSpeed * Math.sin(angle) * dt;
         double predictedY = y + averageSpeed * Math.cos(angle) * dt;
-        double angleChange = Math.toRadians(gyro.getRate()) * dt;
-        double predictedAngle = angle + angleChange;
+//        double rate = gyro.getRate();
+//        double angleChange = Math.toRadians(rate) * dt;
+//        SmartDashboard.putNumber("Gyro rate", rate);
+        double predictedAngle = angle + Math.toRadians(gyro.getAngle() - prevGyroAngle);
+        SmartDashboard.putNumber("Predicted angle (radians)", predictedAngle);
         /* (x, y, angle)
         F =
         1, 0, averageSpeed*dt*cos(angle)
@@ -250,7 +253,8 @@ public class VisionKalmanFilter {
         covMatrix = F.multiply(covMatrix).multiply(F.transpose());
         covMatrix.add(Q);
 
-        if (TechnoTitan.vision.canSeeTargets()) {
+//        if (TechnoTitan.vision.canSeeTargets()) {
+        if (false) {
             double xResidual = TechnoTitan.vision.getXOffset() - predictedX;
             double yResidual = -TechnoTitan.vision.getYDistance() - predictedY;
             double skew = TechnoTitan.vision.getSkew();
@@ -264,9 +268,9 @@ public class VisionKalmanFilter {
             });
 
             Matrix R = new Matrix(new double[][]{
-                    {25, 0, 0},  // TODO: add value
+                    {100, 0, 0},  // TODO: add value
                     {0, 9, 0},
-                    {0, 0, 36}
+                    {0, 0, 100}
             });
 
 //            Matrix S = H.multiply(covMatrix).multiply(H.transpose());
@@ -294,6 +298,7 @@ public class VisionKalmanFilter {
         this.angle = predictedAngle;
 
         lastTime.reset();
+        prevGyroAngle = gyro.getAngle();
     }
 
 

@@ -9,7 +9,10 @@ package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
@@ -120,7 +123,8 @@ public class TechnoTitan extends TimedRobot {
     updateI2CSensors.setDaemon(true);
     updateI2CSensors.start();
 
-    CameraServer.getInstance().startAutomaticCapture();
+    CameraServer.getInstance().startAutomaticCapture(0);
+    CameraServer.getInstance().startAutomaticCapture(1);
 
 //    Thread updateToF = new Thread(() -> {
 //      while (!Thread.interrupted()) {
@@ -168,7 +172,8 @@ public class TechnoTitan extends TimedRobot {
     arm.elbowController.updateSmartdashboard();
 
     SmartDashboard.putBoolean("Is xbox on rocket", oi.isXboxOnRocket());
-
+    SmartDashboard.putNumber("Joystick left", oi.getLeft());
+    SmartDashboard.putNumber("Joystick right", oi.getRight());
 //    try {
 //      tfDistance.update();
 //    } catch (UncleanStatusException e) {
@@ -180,8 +185,8 @@ public class TechnoTitan extends TimedRobot {
       wristAngleSensor.emergencySensorReset();
       SmartDashboard.putNumber("Resetting", Math.random());
       Scheduler.getInstance().removeAll();
-      TechnoTitan.arm.elbowController.disable();
-      TechnoTitan.arm.wristController.disable();
+      TechnoTitan.arm.elbowController.reset();
+      TechnoTitan.arm.wristController.reset();
     }
   }
 
@@ -192,6 +197,8 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void disabledInit() {
+    TechnoTitan.arm.elbowController.reset();
+    TechnoTitan.arm.wristController.reset();
   }
 
   @Override

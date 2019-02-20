@@ -2,6 +2,7 @@ package frc.robot.movements.arm;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.TechnoTitan;
 
 public class MoveArmToPosition extends ConditionalCommand {
@@ -13,6 +14,13 @@ public class MoveArmToPosition extends ConditionalCommand {
             addSequential(new MoveArmPiston(position.isSolenoidEnabled()));
             addSequential(new ControlArmPID(position, false, true));
             addSequential(new ControlArmPID(position, true, false));
+            if (position == ArmPosition.STOW_POSITION) {
+                // disable pid
+                addSequential(new InstantCommand(() -> TechnoTitan.arm.elbowController.disable()));
+            }
+            if (position == ArmPosition.HATCH_PICKUP) {
+                addSequential(new InstantCommand(() -> TechnoTitan.arm.wristController.disable()));
+            }
         }
     }
 
@@ -20,6 +28,13 @@ public class MoveArmToPosition extends ConditionalCommand {
         MoveArmToPositionFast(ArmPosition position) {
             addSequential(new MoveArmPiston(position.isSolenoidEnabled()));
             addSequential(new ControlArmPID(position, true, true));
+            if (position == ArmPosition.STOW_POSITION) {
+                // disable pid
+                addSequential(new InstantCommand(() -> TechnoTitan.arm.elbowController.disable()));
+            }
+            if (position == ArmPosition.HATCH_PICKUP) {
+                addSequential(new InstantCommand(() -> TechnoTitan.arm.wristController.disable()));
+            }
         }
     }
 
@@ -31,6 +46,6 @@ public class MoveArmToPosition extends ConditionalCommand {
 
     protected boolean condition() {
         double elbowAngle = TechnoTitan.arm.getElbowAngle();
-        return elbowAngle > -15 || position.getElbowAngle() > -15;
+        return elbowAngle > -5 || position.getElbowAngle() > -5;
     }
 }

@@ -23,7 +23,7 @@ public class PIDAngleController extends PIDController {
      * @param sensor
      * @param output
      */
-    public PIDAngleController(String name, double Kp, double Ki, double Kd, double maxSteadyVoltage, PIDSource sensor, PIDOutput output, double maxSetpointRate) {
+    public PIDAngleController(String name, double Kp, double Ki, double Kd, double maxSteadyVoltage, PIDSource sensor, PIDOutput output, double maxSetpointRateUp, double maxSetpointRateDown) {
         super(Kp, Ki, Kd, sensor, output);
         setTolerance(new Tolerance() {
             private static final double TOLERANCE = 2;
@@ -35,7 +35,7 @@ public class PIDAngleController extends PIDController {
         setName("PID " + name);
         this.maxSteadyVoltage = maxSteadyVoltage;
         unfilteredSetpoint = 0;
-        setpointFilter = new LinearFilter(maxSetpointRate);
+        setpointFilter = new LinearFilter(maxSetpointRateUp * kDefaultPeriod, maxSetpointRateDown * kDefaultPeriod);
     }
 
     public void updateSmartdashboard() {
