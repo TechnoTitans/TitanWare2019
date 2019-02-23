@@ -5,7 +5,6 @@ import frc.robot.TechnoTitan;
 import frc.robot.motor.TalonSRX;
 import frc.robot.movements.ControlDriveTrain;
 import frc.robot.sensors.Encoder;
-import frc.robot.sensors.NavXGyro;
 import frc.robot.sensors.TitanGyro;
 
 /*
