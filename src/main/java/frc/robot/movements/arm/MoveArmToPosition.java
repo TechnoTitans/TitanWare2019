@@ -8,19 +8,23 @@ import frc.robot.TechnoTitan;
 public class MoveArmToPosition extends ConditionalCommand {
     private ArmPosition position;
 
+    private static void disableNecessaryPIDs(ArmPosition position, CommandGroup command) {
+        if (position == ArmPosition.STOW_POSITION) {
+            // disable pid
+            command.addSequential(new InstantCommand(() -> TechnoTitan.arm.elbowController.disable()));
+        }
+        if (position == ArmPosition.HATCH_PICKUP) {
+            command.addSequential(new InstantCommand(() -> TechnoTitan.arm.wristController.disable()));
+        }
+    }
+
     private static class MoveArmToPositionSafe extends CommandGroup {
         MoveArmToPositionSafe(ArmPosition position) {
             addSequential(new MoveWristUp());
             addSequential(new MoveArmPiston(position.isSolenoidEnabled()));
             addSequential(new ControlArmPID(position, false, true));
             addSequential(new ControlArmPID(position, true, false));
-            if (position == ArmPosition.STOW_POSITION) {
-                // disable pid
-                addSequential(new InstantCommand(() -> TechnoTitan.arm.elbowController.disable()));
-            }
-            if (position == ArmPosition.HATCH_PICKUP) {
-                addSequential(new InstantCommand(() -> TechnoTitan.arm.wristController.disable()));
-            }
+            disableNecessaryPIDs(position, this);
         }
     }
 
@@ -28,13 +32,7 @@ public class MoveArmToPosition extends ConditionalCommand {
         MoveArmToPositionFast(ArmPosition position) {
             addSequential(new MoveArmPiston(position.isSolenoidEnabled()));
             addSequential(new ControlArmPID(position, true, true));
-            if (position == ArmPosition.STOW_POSITION) {
-                // disable pid
-                addSequential(new InstantCommand(() -> TechnoTitan.arm.elbowController.disable()));
-            }
-            if (position == ArmPosition.HATCH_PICKUP) {
-                addSequential(new InstantCommand(() -> TechnoTitan.arm.wristController.disable()));
-            }
+            disableNecessaryPIDs(position, this);
         }
     }
 

@@ -1,7 +1,6 @@
 package frc.robot.sensors.vision;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.TechnoTitan;
 import frc.robot.sensors.NavXGyro;
 import frc.robot.sensors.TitanGyro;
@@ -207,16 +206,14 @@ public class VisionKalmanFilter {
         y = -TechnoTitan.vision.getYDistance();
         angle = Math.toRadians(TechnoTitan.vision.getSkew());
         covMatrix = new Matrix(new double[][] {
-                {100, 0, 0},
+                {80, 0, 90},
                 {0, 9, 0},
-                {0, 0, 100}
+                {90, 0, 100}
         });
 
         lastTime.reset();
         lastTime.start();
         gyro.reset();
-
-
     }
 
     public void update() {
@@ -231,7 +228,6 @@ public class VisionKalmanFilter {
 //        double angleChange = Math.toRadians(rate) * dt;
 //        SmartDashboard.putNumber("Gyro rate", rate);
         double predictedAngle = angle + Math.toRadians(gyro.getAngle() - prevGyroAngle);
-        SmartDashboard.putNumber("Predicted angle (radians)", predictedAngle);
         /* (x, y, angle)
         F =
         1, 0, averageSpeed*dt*cos(angle)
@@ -255,8 +251,8 @@ public class VisionKalmanFilter {
         covMatrix = F.multiply(covMatrix).multiply(F.transpose());
         covMatrix.add(Q);
 
-//        if (TechnoTitan.vision.canSeeTargets()) {
-        if (false) {
+        if (TechnoTitan.vision.canSeeTargets()) {
+//        if (false) {
             double xResidual = TechnoTitan.vision.getXOffset() - predictedX;
             double yResidual = -TechnoTitan.vision.getYDistance() - predictedY;
             double skew = TechnoTitan.vision.getSkew();
@@ -269,10 +265,12 @@ public class VisionKalmanFilter {
                     {0, 0, 1}
             });
 
+            // x, y, angle
+            double angleVar = Math.max(30, -predictedY * 2);
             Matrix R = new Matrix(new double[][]{
-                    {100, 0, 0},  // TODO: add value
+                    {angleVar * 0.8, 0, angleVar * 0.9},  // TODO: add value
                     {0, 9, 0},
-                    {0, 0, 100}
+                    {angleVar * 0.9, 0, angleVar}
             });
 
 //            Matrix S = H.multiply(covMatrix).multiply(H.transpose());

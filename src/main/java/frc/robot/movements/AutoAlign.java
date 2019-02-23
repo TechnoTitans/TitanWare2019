@@ -25,12 +25,15 @@ public class AutoAlign extends Command {
 
     private static VisionKalmanFilter visionKalmanFilter;
 
-    public AutoAlign(double speed, double slowDownDist) {
+    private boolean isTest;
+
+    public AutoAlign(double speed, double slowDownDist, boolean isTest) {
         requires(TechnoTitan.drive);
         gyro = new TitanGyro(TechnoTitan.centralGyro);
         this.speed = speed;
         this.slowDownDist = slowDownDist;
         visionKalmanFilter = new VisionKalmanFilter();
+        this.isTest = isTest;
     }
 
     @Override
@@ -91,8 +94,21 @@ public class AutoAlign extends Command {
         // py = h00 * y + h10 * my + h11 * distance
         double mx = distance * Math.sin(skew);
         double my = distance * Math.cos(skew);
-        double pxB = -3 * x - 2 * mx,
-                pyB = -3 * y - 2 * my - 1 * distance * STRAIGHT_END_COEFF;
+//        double pxB = -3 * x - 2 * mx,
+//                pyB = -3 * y - 2 * my - 1 * distance * STRAIGHT_END_COEFF;
+
+        double pyA = 2 * y + 1 * my  + 1 * distance * STRAIGHT_END_COEFF,
+                pyB = -3 * y - 2 * my  - 1 * distance * STRAIGHT_END_COEFF,
+                pyC = 1 * my,
+                pyD = 1 * y;
+        double pxA = 2 * x + 1 * mx,
+                pxB = -3 * x - 2 * mx,
+                pxC = 1 * mx,
+                pxD = 1 * x;
+
+        SmartDashboard.putNumberArray("spline-x", new double[] {pxA, pxB, pxC, pxD});
+        SmartDashboard.putNumberArray("spline-y", new double[] {pyA, pyB, pyC, pyD});
+
         // K = <mx, my> cross <px''(0), py''(0)> / distance^3
         // px''(0) = 2 * pxB
         double kappa = (my * 2 * pxB - mx * 2 * pyB) / Math.pow(distance, 3);
@@ -146,7 +162,10 @@ public class AutoAlign extends Command {
             lSpeed = minSpeed - error;
             rSpeed = minSpeed + error;
         }
-        TechnoTitan.drive.set(lSpeed, rSpeed);
+        if (!isTest)
+            TechnoTitan.drive.set(lSpeed, rSpeed);
+        else
+            TechnoTitan.drive.set(TechnoTitan.oi.getLeft() * 0.3, TechnoTitan.oi.getRight() * 0.3);
     }
 
     @Override

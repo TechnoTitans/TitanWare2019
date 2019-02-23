@@ -7,6 +7,7 @@ import frc.robot.sensors.vision.VisionKalmanFilter;
 import frc.robot.sensors.vision.VisionSensor;
 import frc.robot.subsystems.DriveTrain;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;
@@ -49,6 +50,7 @@ public class VisionFilterTest {
     }
 
     @Test
+    @Ignore
     public void filterShouldUseEncodersToMakeUpForVision() {
         final double dist = 45.0;
 
