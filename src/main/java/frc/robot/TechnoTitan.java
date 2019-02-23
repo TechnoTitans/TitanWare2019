@@ -8,10 +8,7 @@
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -119,8 +116,8 @@ public class TechnoTitan extends TimedRobot {
     updateI2CSensors.setDaemon(true);
     updateI2CSensors.start();
 
-    centralGyro = new NavXGyro(navx);
-
+//    centralGyro = new NavXGyro(navx);
+    centralGyro = new AnalogGyro(0);
 //    Thread updateToF = new Thread(() -> {
 //      while (!Thread.interrupted()) {
 //        try {
