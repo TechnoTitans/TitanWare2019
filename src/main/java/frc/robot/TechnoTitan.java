@@ -14,10 +14,10 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
-import frc.robot.sensors.QuadEncoder;
-import frc.robot.sensors.TimeOfFlight;
+import frc.robot.sensors.*;
 import frc.robot.sensors.gy521.Accel_GY521;
 import frc.robot.sensors.vision.VisionSensor;
 import frc.robot.subsystems.Arm;
@@ -41,6 +41,7 @@ public class TechnoTitan extends TimedRobot {
   public static VisionSensor vision;
   public static TimeOfFlight tfDistance;
   public static Grabber grabber;
+  public static Gyro centralGyro;
 
   private Accel_GY521 elbowAngleSensor;
   private Accel_GY521 wristAngleSensor;
@@ -102,7 +103,7 @@ public class TechnoTitan extends TimedRobot {
     rightFollow2.setupCurrentLimiting();
 
     drive = new TankDrive(leftETalonSRX, rightETalonSRX);
-    oi = new OI(); // must initializae oi after drive because it requires it as a a subsystem
+    oi = new OI(); // must initialize oi after drive because it requires it as a a subsystem
 
     drive.resetEncoders();
 
@@ -126,6 +127,8 @@ public class TechnoTitan extends TimedRobot {
     CameraServer.getInstance().startAutomaticCapture(0);
     CameraServer.getInstance().startAutomaticCapture(1);
 
+//    centralGyro = new NavXGyro(navx);
+    centralGyro = new AnalogGyro(0);
 //    Thread updateToF = new Thread(() -> {
 //      while (!Thread.interrupted()) {
 //        try {

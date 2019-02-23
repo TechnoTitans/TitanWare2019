@@ -7,18 +7,22 @@
 
 package frc.robot.sensors;
 
+import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
-import frc.robot.TechnoTitan;
 
 /**
  * Add your docs here.
  */
 public class NavXGyro implements Gyro {
-    private double angle = 0;
+    private AHRS m_internalSensor;
+
+    public NavXGyro(AHRS internalGyro) {
+        this.m_internalSensor = internalGyro;
+    }
 
     @Override
     public void close() throws Exception {
-        TechnoTitan.navx.close();
+        this.m_internalSensor.close();
     }
 
     @Override
@@ -33,31 +37,32 @@ public class NavXGyro implements Gyro {
      */
     @Override
     public void reset() {
-        angle = TechnoTitan.navx.getAngle();
+        this.m_internalSensor.reset();
     }
 
-    /**
-     * Resets such that the gyro reads angle
-     * @param angle The angle that the next call of getAngle() should return
-     */
-    public void resetTo(double angle) {
-        reset(); // sets the "0 angle" to the current direction
-        this.angle -= angle; // subtract angle from the "0 angle"
-    }
+//    /**
+//     * Resets such that the gyro reads angle
+//     * @param angle The angle that the next call of getAngle() should return
+//     */
+//
+//    public void resetTo(double angle) {
+//        reset(); // sets the "0 angle" to the current direction
+//        this.angle -= angle; // subtract angle from the "0 angle"
+//    }
 
     @Override
     public double getAngle() {
-        return TechnoTitan.navx.getAngle() - angle;
+        return m_internalSensor.getAngle();
     }
 
     @Override
     public double getRate() {
-        return TechnoTitan.navx.getRate();
+        return this.m_internalSensor.getRate();
     }
 
     @Override
     public void free() {
-        TechnoTitan.navx.close(); // free is depricated, and calls close anyways lmao
+        this.m_internalSensor.close();
     }
 
 }

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.TechnoTitan;
 import frc.robot.sensors.NavXGyro;
+import frc.robot.sensors.TitanGyro;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;
@@ -25,7 +26,7 @@ public class AutoAlignPathweaver extends Command {
 
   private DistanceFollower lFollower, rFollower;
 
-  private NavXGyro gyro;
+  private TitanGyro gyro;
 
 
   // TODO: configure encoders and PID values
@@ -37,7 +38,8 @@ public class AutoAlignPathweaver extends Command {
 
   public AutoAlignPathweaver() {
     requires(TechnoTitan.drive);
-    gyro = new NavXGyro();
+//    gyro = new NavXGyro();
+    gyro = new TitanGyro(TechnoTitan.centralGyro);
     double speed = 0.3;
     config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_FAST, TechnoTitan.kDefaultPeriod, MAX_VELOCITY * speed, 2.0, 60.0);
   }

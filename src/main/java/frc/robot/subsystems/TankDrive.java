@@ -1,10 +1,11 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.interfaces.Gyro;
+import frc.robot.TechnoTitan;
 import frc.robot.motor.TalonSRX;
 import frc.robot.movements.ControlDriveTrain;
 import frc.robot.sensors.Encoder;
-import frc.robot.sensors.NavXGyro;
+import frc.robot.sensors.TitanGyro;
 
 /*
  * Controls tank drive
@@ -16,7 +17,7 @@ public class TankDrive extends DriveTrain {
 	private Gyro gyro;
 
 	public TankDrive(TalonSRX leftETalonSRX, TalonSRX rightETalonSRX) {
-		this(leftETalonSRX, rightETalonSRX, new NavXGyro());
+		this(leftETalonSRX, rightETalonSRX, new TitanGyro(TechnoTitan.centralGyro));
 	}
 
 	/**

@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.TechnoTitan;
 import frc.robot.movements.arm.ArmPosition;
 import frc.robot.sensors.NavXGyro;
+import frc.robot.sensors.TitanGyro;
 
 
 public class ForwardAlign extends Command {
@@ -16,7 +17,7 @@ public class ForwardAlign extends Command {
 
 	private double kP_GYRO = 0.05;
 
-	private NavXGyro gyro;
+	private TitanGyro gyro;
 	private static final double kP_CAM = 0.05;
 
 
@@ -26,7 +27,8 @@ public class ForwardAlign extends Command {
 		this.distEnd = stage.getHorizontalArmLength();
 		distEnd = Math.max(distEnd, MIN_READABLE_DISTANCE); // the sensor can't read closer than 11.9 in
 		this.speed = speed;
-		gyro = new NavXGyro();
+//		gyro = new NavXGyro();
+		gyro = new TitanGyro(TechnoTitan.centralGyro);
 	}
 
 	protected void initialize() {

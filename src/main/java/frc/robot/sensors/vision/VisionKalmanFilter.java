@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.TechnoTitan;
 import frc.robot.sensors.NavXGyro;
+import frc.robot.sensors.TitanGyro;
 
 import java.util.Arrays;
 
@@ -185,7 +186,7 @@ public class VisionKalmanFilter {
     private double x;
     private double y;
 
-    private NavXGyro gyro;
+    private TitanGyro gyro;
 
 
     private double angle;
@@ -196,8 +197,9 @@ public class VisionKalmanFilter {
     private Timer lastTime;
 
     public VisionKalmanFilter() {
-        gyro = new NavXGyro();
         lastTime = new Timer();
+//        gyro = new NavXGyro();
+        gyro = new TitanGyro(TechnoTitan.centralGyro);
     }
 
     public void start() {

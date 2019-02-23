@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import frc.robot.TechnoTitan;
 import frc.robot.motor.Filter;
-import frc.robot.sensors.NavXGyro;
+import frc.robot.sensors.TitanGyro;
 
 public class ControlDriveTrainStraight extends Command  {
     private Gyro gyro;
@@ -17,7 +17,8 @@ public class ControlDriveTrainStraight extends Command  {
 
     public ControlDriveTrainStraight() {
         requires(TechnoTitan.drive);
-        gyro = new NavXGyro();
+//        gyro = new NavXGyro();
+        gyro = new TitanGyro(TechnoTitan.centralGyro);
         filter = new Filter(0.1);
     }
 
