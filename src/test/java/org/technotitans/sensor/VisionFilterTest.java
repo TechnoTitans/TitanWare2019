@@ -1,6 +1,7 @@
 package org.technotitans.sensor;
 
 import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import frc.robot.TechnoTitan;
 import frc.robot.sensors.Encoder;
 import frc.robot.sensors.vision.VisionKalmanFilter;
@@ -33,6 +34,7 @@ public class VisionFilterTest {
         when(driveTrainMock.getRightEncoder()).thenReturn(rightMock);
 
         TechnoTitan.navx = mockNavX;
+        TechnoTitan.centralGyro = mock(Gyro.class);
         TechnoTitan.drive = driveTrainMock;
     }
 
