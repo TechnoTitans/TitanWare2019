@@ -3,10 +3,11 @@ package frc.robot.movements;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.TechnoTitan;
 import frc.robot.sensors.NavXGyro;
+import frc.robot.sensors.TitanGyro;
 import frc.robot.sensors.vision.VisionKalmanFilter;
 
 public class AutoAlign extends Command {
-    private NavXGyro gyro;
+    private TitanGyro gyro;
 
     private final double minSpeed = 0.2;
     private double slowDownDist;
@@ -25,7 +26,8 @@ public class AutoAlign extends Command {
     private static VisionKalmanFilter visionKalmanFilter;
 
     public AutoAlign(double speed, double slowDownDist) {
-        gyro = new NavXGyro();
+//        gyro = new NavXGyro();
+        gyro = new TitanGyro(TechnoTitan.centralGyro);
         this.speed = speed;
         this.slowDownDist = slowDownDist;
         visionKalmanFilter = new VisionKalmanFilter();

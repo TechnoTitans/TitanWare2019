@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.TechnoTitan;
 import frc.robot.sensors.NavXGyro;
+import frc.robot.sensors.TitanGyro;
 
 
 public class Turn extends Command {
@@ -18,7 +19,8 @@ public class Turn extends Command {
     requires(TechnoTitan.drive);
     this.turnAngle = turnAngle;
     this.turnSpeed = turnSpeed;
-    gyro = new NavXGyro();
+//    gyro = new NavXGyro();
+    gyro = new TitanGyro(TechnoTitan.centralGyro);
   }
 
   @Override
