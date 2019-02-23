@@ -174,11 +174,7 @@ public class TechnoTitan extends TimedRobot {
     SmartDashboard.putBoolean("Is xbox on rocket", oi.isXboxOnRocket());
     SmartDashboard.putNumber("Joystick left", oi.getLeft());
     SmartDashboard.putNumber("Joystick right", oi.getRight());
-//    try {
-//      tfDistance.update();
-//    } catch (UncleanStatusException e) {
-//      System.err.println("Warning: " + e);
-//    }
+
     if (oi.shouldResetCommands()) {
       // TODO Uncomment out the removeall
       elbowAngleSensor.emergencySensorReset();

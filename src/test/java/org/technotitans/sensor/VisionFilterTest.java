@@ -47,7 +47,7 @@ public class VisionFilterTest {
         VisionKalmanFilter filter = new VisionKalmanFilter();
         filter.start();
 
-        assertEquals(-dist, filter.getY());
+        assertEquals(-dist, filter.getSensorData().getY());
         verify(mockVision, times(1)).getYDistance();
     }
 
@@ -76,7 +76,7 @@ public class VisionFilterTest {
         }
 
         filter.update();
-        assertEquals(-dist + speed * time / 1000, filter.getY(), 5e-3);
+        assertEquals(-dist + speed * time / 1000, filter.getSensorData().getY(), 5e-3);
     }
 
     // TODO: filter should combine encoders and other stuff

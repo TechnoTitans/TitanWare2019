@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.motor.Filter;
 import frc.robot.motor.Motor;
 import frc.robot.sensors.gy521.Accel_GY521;
 
@@ -18,10 +17,6 @@ public class Arm extends Subsystem {
 
     private Accel_GY521 elbowSensor;
     private Accel_GY521 wristSensor;
-
-    private Filter wristFilter;
-    private Filter elbowFilter;
-
 
 
     private boolean isUp = false;
@@ -123,9 +118,6 @@ public class Arm extends Subsystem {
 
         this.elbowSensor = elbowSensor;
         this.wristSensor = wristSensor;
-
-        wristFilter = new Filter(0.5);
-        elbowFilter = new Filter(0.5);
 
         elbowController = new PIDAngleController("Elbow", kElbowP, kElbowI, kElbowD, MAX_STEADY_VOLTAGE_ELBOW, elbowAngleSensor, this::moveElbow, 35, 20);
         wristController = new PIDAngleController("Wrist", kWristP, kWristI, kWristD, MAX_STEADY_VOLTAGE_WRIST, wristAngleSensor, this::moveWrist, 35, 35);

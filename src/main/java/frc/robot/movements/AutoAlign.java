@@ -3,7 +3,6 @@ package frc.robot.movements;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.TechnoTitan;
-import frc.robot.sensors.NavXGyro;
 import frc.robot.sensors.TitanGyro;
 import frc.robot.sensors.vision.VisionKalmanFilter;
 
@@ -13,15 +12,16 @@ public class AutoAlign extends Command {
     private final double minSpeed = 0.2;
     private double slowDownDist;
 
-    private static final double STRAIGHT_END_COEFF = 2;
+    private static final double STRAIGHT_END_COEFF = 2.7;
     private static final double ROBOT_RADIUS = 11;  // TODO: measure
 
     private static final double TARGET_Y_OFFSET = 10,
-                                NO_SENSOR_DIST = 5;
+                                NO_SENSOR_DIST = 20;
 
     private double speed;
 
     private double lDist, rDist;
+    private double dy = 1e10;
 
     private static VisionKalmanFilter visionKalmanFilter;
 
@@ -41,6 +41,7 @@ public class AutoAlign extends Command {
         gyro.reset();
         if (TechnoTitan.vision.canSeeTargets()) {
             visionKalmanFilter.start();
+            this.dy = visionKalmanFilter.getSensorData().getY();
         } else {
             if (this.getGroup() != null) this.getGroup().cancel();
             else this.cancel();
@@ -117,7 +118,7 @@ public class AutoAlign extends Command {
     }
 
     private boolean isPastSensorRange() {
-        return -visionKalmanFilter.getY() > TARGET_Y_OFFSET + NO_SENSOR_DIST;
+        return -dy > TARGET_Y_OFFSET + NO_SENSOR_DIST;
     }
 
     @Override
@@ -127,9 +128,10 @@ public class AutoAlign extends Command {
         if (isPastSensorRange()) {
             visionKalmanFilter.update();
 
-            double dx = visionKalmanFilter.getX(),
-                    dy = visionKalmanFilter.getY(),
-                    skew = visionKalmanFilter.getAngle();
+            VisionKalmanFilter.VisionPositionInfo visionPositionInfo = visionKalmanFilter.getSensorData();
+            double dx = visionPositionInfo.getX(),
+                    dy = visionPositionInfo.getY(),
+                    skew = visionPositionInfo.getAngle();
             double kappa = calculateCurvature(dx, dy + TARGET_Y_OFFSET, skew);
 
             kappa *= ROBOT_RADIUS;
@@ -143,7 +145,7 @@ public class AutoAlign extends Command {
                 lSpeed /= Math.abs(lSpeed);
                 rSpeed /= Math.abs(lSpeed);
             }
-            if (rSpeed > 1 | rSpeed < -1) {
+            if (rSpeed > 1 || rSpeed < -1) {
                 rSpeed /= Math.abs(rSpeed);
                 lSpeed /= Math.abs(rSpeed);
             }
@@ -157,6 +159,8 @@ public class AutoAlign extends Command {
             SmartDashboard.putNumber("X", dx);
             SmartDashboard.putNumber("lSpeed", lSpeed);
             SmartDashboard.putNumber("rSpeed", rSpeed);
+
+            this.dy = dy;
         } else {
             double error = gyro.getAngle() * 0.05;
             lSpeed = minSpeed - error;
