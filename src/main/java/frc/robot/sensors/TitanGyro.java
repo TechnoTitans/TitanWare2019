@@ -3,11 +3,18 @@ package frc.robot.sensors;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 @SuppressWarnings("WeakerAccess")
+
 public class TitanGyro implements Gyro {
 
     protected Gyro m_internalGyro;
     private double angleOffset = 0;
 
+    /**
+     * The reason we make a class that accepts a gyro is because the alternative would be to create a central shared
+     * gyro in TechnoTitan and reuse that is because there are a lot of issues with sharing such as resetting and shared global
+     * state™. And we know that Shared Global State™ is a Very Bad Thing®.
+     * @param gyroToAccept - the underlying gyro to use
+     */
     public TitanGyro(Gyro gyroToAccept) {
         this.m_internalGyro = gyroToAccept;
     }
