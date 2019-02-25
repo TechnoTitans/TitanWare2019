@@ -57,35 +57,35 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    navx = new AHRS(SPI.Port.kMXP);
-    navx.reset();
+//    navx = new AHRS(SPI.Port.kMXP);
+//    navx.reset();
 
-    vision = new VisionSensor();
-    tfDistance = new TimeOfFlight();
+//    vision = new VisionSensor();
+//    tfDistance = new TimeOfFlight();
 
     // Arm setup
-    TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
-            elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, true);
+//    TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
+//            elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, true);
 
     // MARK - accelerometer setup
 
 
     elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR, false);
     wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR, false);
-    arm = new Arm(elbow, wrist, new Solenoid(RobotMap.PCM_ADDR, RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
-    grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_PANEL_PISTON));
+//    arm = new Arm(elbow, wrist, new Solenoid(RobotMap.PCM_ADDR, RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
+//    grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_PANEL_PISTON));
 
 
     // Drivetrain setup
-    TalonSRX leftETalonSRX = new TalonSRX(RobotMap.LEFT_TALON_E, LEFT_REVERSE),
-             rightETalonSRX = new TalonSRX(RobotMap.RIGHT_TALON_E, RIGHT_REVERSE);
+    TalonSRX leftETalonSRX = new TalonSRX(BlinkyMap.LEFT_TALON_E, LEFT_REVERSE),
+             rightETalonSRX = new TalonSRX(BlinkyMap.RIGHT_TALON_E, RIGHT_REVERSE);
     leftETalonSRX.setEncoder(new QuadEncoder(leftETalonSRX, INCHES_PER_PULSE, true));
     rightETalonSRX.setEncoder(new QuadEncoder(rightETalonSRX, INCHES_PER_PULSE, true));
 
-    TalonSRX leftFollow1 = new TalonSRX(RobotMap.LEFT_TALON_2, LEFT_REVERSE),
-            leftFollow2 = new TalonSRX(RobotMap.LEFT_TALON_3, LEFT_REVERSE),
-            rightFollow1 = new TalonSRX(RobotMap.RIGHT_TALON_2, RIGHT_REVERSE),
-            rightFollow2 = new TalonSRX(RobotMap.RIGHT_TALON_3, RIGHT_REVERSE);
+    TalonSRX leftFollow1 = new TalonSRX(BlinkyMap.LEFT_TALON_2, LEFT_REVERSE),
+            leftFollow2 = new TalonSRX(BlinkyMap.LEFT_TALON_3, LEFT_REVERSE),
+            rightFollow1 = new TalonSRX(BlinkyMap.RIGHT_TALON_2, RIGHT_REVERSE),
+            rightFollow2 = new TalonSRX(BlinkyMap.RIGHT_TALON_3, RIGHT_REVERSE);
 
     leftFollow1.follow(leftETalonSRX);
     leftFollow2.follow(leftETalonSRX);
@@ -104,7 +104,7 @@ public class TechnoTitan extends TimedRobot {
 
     drive.resetEncoders();
 
-    vision.stopRecording();
+//    vision.stopRecording();
 
     Thread updateI2CSensors = new Thread(() -> {
       while (!Thread.interrupted()) {
@@ -119,7 +119,7 @@ public class TechnoTitan extends TimedRobot {
       }
     });
     updateI2CSensors.setDaemon(true);
-    updateI2CSensors.start();
+//    updateI2CSensors.start();
 
     CameraServer.getInstance().startAutomaticCapture(0);
     CameraServer.getInstance().startAutomaticCapture(1);
