@@ -398,8 +398,8 @@ public class VisionKalmanFilter {
         SensorData sensors = visionLagBuffer.remove();
         visionPositionInfo.interpolateSensorData(sensors);
 
-//        if (TechnoTitan.vision.canSeeTargets()) {
-//            visionPositionInfo.interpolateVisionData(TechnoTitan.vision.getXOffset(), TechnoTitan.vision.getYDistance(), TechnoTitan.vision.getSkew());
-//        }
+        if (TechnoTitan.vision.canSeeTargets()) {
+            visionPositionInfo.interpolateVisionData(TechnoTitan.vision.getXOffset(), TechnoTitan.vision.getYDistance(), TechnoTitan.vision.getSkew());
+        }
     }
 }
