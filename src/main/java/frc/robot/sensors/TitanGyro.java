@@ -20,7 +20,7 @@ public class TitanGyro implements Gyro {
     }
 
     public void resetTo(double angle) {
-        this.angleOffset = this.getAngle() - angle;
+        this.angleOffset = m_internalGyro.getAngle() - angle;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class TitanGyro implements Gyro {
 
     @Override
     public void reset() {
-        m_internalGyro.reset();
+        resetTo(0);
     }
 
     @Override

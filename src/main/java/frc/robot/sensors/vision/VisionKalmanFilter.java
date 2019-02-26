@@ -193,16 +193,10 @@ public class VisionKalmanFilter {
         }
     }
 
-    private double x;
-    private double y;
-
     private TitanGyro gyro;
 
 
-    private double angle;
     private double prevGyroAngle = 0;
-
-    private Matrix covMatrix;
 
     private Timer lastTime;
 
@@ -378,9 +372,9 @@ public class VisionKalmanFilter {
 
     public void start() {
         visionLagBuffer.clear();
-        x = TechnoTitan.vision.getXOffset();
-        y = -TechnoTitan.vision.getYDistance();
-        angle = Math.toRadians(TechnoTitan.vision.getSkew());
+        double x = TechnoTitan.vision.getXOffset();
+        double y = -TechnoTitan.vision.getYDistance();
+        double angle = Math.toRadians(TechnoTitan.vision.getSkew());
         visionPositionInfo = new VisionPositionInfo(x, y, angle);
 
         lastTime.reset();
