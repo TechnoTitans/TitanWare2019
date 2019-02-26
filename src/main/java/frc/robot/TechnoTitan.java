@@ -9,6 +9,7 @@ package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.hal.util.UncleanStatusException;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -60,27 +61,29 @@ public class TechnoTitan extends TimedRobot {
 //    navx = new AHRS(SPI.Port.kMXP);
 //    navx.reset();
 
-//    vision = new VisionSensor();
-//    tfDistance = new TimeOfFlight();
+    vision = new VisionSensor();
+    tfDistance = new TimeOfFlight();
+    centralGyro = new AnalogGyro(0);
+
 
     // Arm setup
-//    TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
-//            elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, true);
+    TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
+            elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, true);
 
     // MARK - accelerometer setup
 
 
     elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR, false);
     wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR, false);
-//    arm = new Arm(elbow, wrist, new Solenoid(RobotMap.PCM_ADDR, RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
-//    grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_PANEL_PISTON));
+    arm = new Arm(elbow, wrist, new Solenoid(RobotMap.PCM_ADDR, RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
+    grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_PANEL_PISTON));
 
 
     // Drivetrain setup
     TalonSRX leftETalonSRX = new TalonSRX(BlinkyMap.LEFT_TALON_E, LEFT_REVERSE),
              rightETalonSRX = new TalonSRX(BlinkyMap.RIGHT_TALON_E, RIGHT_REVERSE);
-    leftETalonSRX.setEncoder(new QuadEncoder(leftETalonSRX, INCHES_PER_PULSE, true));
-    rightETalonSRX.setEncoder(new QuadEncoder(rightETalonSRX, INCHES_PER_PULSE, true));
+    leftETalonSRX.setEncoder(new QuadEncoder(leftETalonSRX, BlinkyMap.INCHES_PER_PULSE, true));
+    rightETalonSRX.setEncoder(new QuadEncoder(rightETalonSRX, BlinkyMap.INCHES_PER_PULSE, true));
 
     TalonSRX leftFollow1 = new TalonSRX(BlinkyMap.LEFT_TALON_2, LEFT_REVERSE),
             leftFollow2 = new TalonSRX(BlinkyMap.LEFT_TALON_3, LEFT_REVERSE),
@@ -104,7 +107,7 @@ public class TechnoTitan extends TimedRobot {
 
     drive.resetEncoders();
 
-//    vision.stopRecording();
+    vision.stopRecording();
 
     Thread updateI2CSensors = new Thread(() -> {
       while (!Thread.interrupted()) {
@@ -125,16 +128,15 @@ public class TechnoTitan extends TimedRobot {
     CameraServer.getInstance().startAutomaticCapture(1);
 
 //    centralGyro = new NavXGyro(navx);
-    centralGyro = new AnalogGyro(0);
-//    Thread updateToF = new Thread(() -> {
-//      while (!Thread.interrupted()) {
-//        try {
-//          tfDistance.update();
-//        } catch (UncleanStatusException e) {
-//          System.err.println("Warning: " + e);
-//        }
-//      }
-//    });
+    Thread updateToF = new Thread(() -> {
+      while (!Thread.interrupted()) {
+        try {
+          tfDistance.update();
+        } catch (UncleanStatusException e) {
+          System.err.println("Warning: " + e);
+        }
+      }
+    });
 //    updateToF.setDaemon(true);
 //    updateToF.start();
   }
@@ -150,8 +152,8 @@ public class TechnoTitan extends TimedRobot {
   @Override
   public void robotPeriodic() {
     // MARK - smart dashboard things
-    SmartDashboard.putNumber("NavX Gyro", navx.getAngle());
-
+//    SmartDashboard.putNumber("NavX Gyro", navx.getAngle());
+    SmartDashboard.putNumber("Analogue Angle", centralGyro.getAngle());
     SmartDashboard.putBoolean("Elbow sensor connected", elbowAngleSensor.isSensorConnected());
     SmartDashboard.putNumber("Elbow angle", arm.getElbowAngle());
 

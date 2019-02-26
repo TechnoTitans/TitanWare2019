@@ -39,13 +39,13 @@ public class AutoAlign extends Command {
     @Override
     protected void initialize() {
         gyro.reset();
-        if (TechnoTitan.vision.canSeeTargets()) {
+//        if (TechnoTitan.vision.canSeeTargets()) {
             visionKalmanFilter.start();
             this.dy = visionKalmanFilter.getSensorData().getY();
-        } else {
-            if (this.getGroup() != null) this.getGroup().cancel();
-            else this.cancel();
-        }
+//        } else {
+//            if (this.getGroup() != null) this.getGroup().cancel();
+//            else this.cancel();
+//        }
     }
 
     /**

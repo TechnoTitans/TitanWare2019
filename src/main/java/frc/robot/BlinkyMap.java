@@ -11,6 +11,7 @@ public class BlinkyMap {
 //    public static final int ELBOW_MOTOR = 3;
 
     // Talons with encoders
+    public static final double INCHES_PER_PULSE = 0.00475;
     public static final int LEFT_TALON_E = 5, RIGHT_TALON_E = 11;
 
     // Other talons
