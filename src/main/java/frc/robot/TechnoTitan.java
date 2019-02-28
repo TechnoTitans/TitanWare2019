@@ -137,7 +137,7 @@ public class TechnoTitan extends TimedRobot {
         }
       }
     });
-//    updateToF.setDaemon(true);
+    updateToF.setDaemon(true);
 //    updateToF.start();
   }
 
@@ -163,9 +163,9 @@ public class TechnoTitan extends TimedRobot {
     SmartDashboard.putNumber("Encoder left", drive.getLeftEncoder().getDistance());
     SmartDashboard.putNumber("Encoder right", drive.getRightEncoder().getDistance());
 
-
-//    SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
-//    SmartDashboard.putBoolean("TF is valid?", tfDistance.isValid());
+    tfDistance.update();
+    SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
+    SmartDashboard.putBoolean("TF is valid?", tfDistance.isValid());
     SmartDashboard.putBoolean("Override arm sensors", arm.areSensorsOverriden());
 //    SmartDashboard.putNumber("Elbow output", arm.getElbowOutput());
 //    SmartDashboard.putNumber("Wrist output", arm.getWristOutput());
