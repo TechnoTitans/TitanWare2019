@@ -316,8 +316,9 @@ public class VisionKalmanFilter {
         }
 
         void interpolateVisionData(double visionX, double visionY, double visionSkew) {
-            double xResidual = visionX - x;
-            double yResidual = -visionY - y;
+            VisionPositionInfo predicted = VisionPositionInfo.fromSensorDataRadians(visionX, visionY, angle);
+            double xResidual = predicted.getX() - x;
+            double yResidual = predicted.getY() - y;
             double angleResidual = Math.toRadians(visionSkew) - angle;
 
             Matrix H = new Matrix(new double[][]{
@@ -326,11 +327,10 @@ public class VisionKalmanFilter {
                     {0, 0, 1}
             });
 
-            double angleVar = Math.max(30, -y * 2);
             Matrix R = new Matrix(new double[][]{
-                    {angleVar * 0.8, 0, angleVar * 0.9},  // TODO: add value
-                    {0, 9, 0},
-                    {angleVar * 0.9, 0, angleVar}
+                    {15, 0, 0},  // TODO: add value
+                    {0, 15, 0},
+                    {0, 0, 15}
             });
 
 //            Matrix S = H.multiply(covMatrix).multiply(H.transpose());
@@ -356,6 +356,16 @@ public class VisionKalmanFilter {
             y += gains[1];
             angle += gains[2];
         }
+
+        private static VisionPositionInfo fromSensorDataRadians(double visionX, double visionY, double angle) {
+            double predictedX = -visionY * Math.sin(angle) - visionX * Math.cos(angle);
+            double predictedY = -visionY * Math.cos(angle) + visionX * Math.sin(angle);
+            return new VisionPositionInfo(predictedX, predictedY, angle);
+        }
+
+        static VisionPositionInfo fromSensorData(double visionX, double visionY, double skew) {
+            return fromSensorDataRadians(visionX, visionY, Math.toRadians(skew));
+        }
     }
 
     private Queue<SensorData> visionLagBuffer;
@@ -372,10 +382,7 @@ public class VisionKalmanFilter {
 
     public void start() {
         visionLagBuffer.clear();
-        double x = TechnoTitan.vision.getXOffset();
-        double y = -TechnoTitan.vision.getYDistance();
-        double angle = Math.toRadians(TechnoTitan.vision.getSkew());
-        visionPositionInfo = new VisionPositionInfo(x, y, angle);
+        visionPositionInfo = VisionPositionInfo.fromSensorData(TechnoTitan.vision.getXOffset(), TechnoTitan.vision.getYDistance(), TechnoTitan.vision.getSkew());
 
         lastTime.reset();
         lastTime.start();

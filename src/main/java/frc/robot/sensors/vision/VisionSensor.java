@@ -8,13 +8,21 @@
 package frc.robot.sensors.vision;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.TechnoTitan;
+import frc.robot.sensors.TitanGyro;
 
 /**
  * This class is a sort of wrapper class that simply communicates with the rpi, which is the real "Vision Sensor".
  */
 public class VisionSensor {
-    public VisionSensor() {
+    private static TitanGyro visionGyro;
 
+    public VisionSensor() {
+    }
+
+    public static void initGyro() {
+        if (visionGyro == null) visionGyro = new TitanGyro(TechnoTitan.centralGyro);
+        visionGyro.resetTo(180);;
     }
 
     public void startRecording() {
@@ -44,8 +52,31 @@ public class VisionSensor {
      * 
      * @return the angle of the robot relative to the strips in degrees, with clockwise being positive
      */
+    public static double getNearestTargetAngle() {
+//        return SmartDashboard.getNumber("pi-angle", 0.0);
+//        return 0.0;
+        final double ROCKET_ANGLE = 29;
+        final double mid = (ROCKET_ANGLE + 90) / 2;
+        double rawAngle = ((visionGyro.getAngle() % 360) + 360) % 360;
+        if (rawAngle > 180) rawAngle -= 360;
+        double absAngle = Math.abs(rawAngle),
+                isClockwise = rawAngle > 0 ? 1 : -1;
+        if (absAngle < ROCKET_ANGLE / 2)
+            return 0;
+        else if (absAngle < mid)
+            return ROCKET_ANGLE * isClockwise;
+        else if (absAngle < 180 - mid)
+            return 90 * isClockwise;
+        else
+            return (180 - ROCKET_ANGLE) * isClockwise;
+    }
+
     public double getSkew() {
-        return SmartDashboard.getNumber("pi-angle", 0.0);
+        return visionGyro.getAngle() - VisionSensor.getNearestTargetAngle();
+    }
+
+    public static void resetSkew() {
+        visionGyro.resetTo(getNearestTargetAngle());
     }
     
     public boolean canSeeTargets() {
