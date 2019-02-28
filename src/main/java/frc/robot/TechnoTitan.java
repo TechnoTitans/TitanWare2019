@@ -129,7 +129,6 @@ public class TechnoTitan extends TimedRobot {
     CameraServer.getInstance().startAutomaticCapture(0);
     CameraServer.getInstance().startAutomaticCapture(1);
 
-//    centralGyro = new NavXGyro(navx);
     Thread updateToF = new Thread(() -> {
       while (!Thread.interrupted()) {
         tfDistance.update();
@@ -153,8 +152,8 @@ public class TechnoTitan extends TimedRobot {
   public void robotPeriodic() {
     // MARK - smart dashboard things
 //    SmartDashboard.putNumber("NavX Gyro", navx.getAngle());
-    SmartDashboard.putNumber("Analog Angle", centralGyro.getAngle());
-    SmartDashboard.putNumber("Vision sensor skew", VisionSensor.getGyroAngle());
+    SmartDashboard.putNumber("Gyro Angle", centralGyro.getAngle());
+    SmartDashboard.putNumber("Vision sensor target", VisionSensor.getNearestTargetAngle());
     SmartDashboard.putBoolean("Elbow sensor connected", elbowAngleSensor.isSensorConnected());
     SmartDashboard.putNumber("Elbow angle", arm.getElbowAngle());
 
@@ -165,8 +164,8 @@ public class TechnoTitan extends TimedRobot {
     SmartDashboard.putNumber("Encoder right", drive.getRightEncoder().getDistance());
 
 
-//    SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
-//    SmartDashboard.putBoolean("TF is valid?", tfDistance.isValid());
+    SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
+    SmartDashboard.putBoolean("TF is valid?", tfDistance.isValid());
     SmartDashboard.putBoolean("Override arm sensors", arm.areSensorsOverriden());
 //    SmartDashboard.putNumber("Elbow output", arm.getElbowOutput());
 //    SmartDashboard.putNumber("Wrist output", arm.getWristOutput());
