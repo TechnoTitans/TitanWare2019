@@ -253,9 +253,9 @@ public class VisionKalmanFilter {
             this.y = y;
             this.angle = angle;
             covMatrix = new Matrix(new double[][] {
-                    {80, 0, 90},
+                    {80, 0, 0},
                     {0, 9, 0},
-                    {90, 0, 100}
+                    {0, 0, 100}
             });
         }
 

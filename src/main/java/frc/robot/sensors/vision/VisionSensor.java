@@ -22,7 +22,7 @@ public class VisionSensor {
 
     public static void initGyro() {
         if (visionGyro == null) visionGyro = new TitanGyro(TechnoTitan.centralGyro);
-        visionGyro.resetTo(180);;
+        visionGyro.resetTo(0);;
     }
 
     public void startRecording() {
@@ -53,12 +53,12 @@ public class VisionSensor {
      * @return the angle of the robot relative to the strips in degrees, with clockwise being positive
      */
     public static double getNearestTargetAngle() {
+        if (visionGyro == null) return 0;
 //        return SmartDashboard.getNumber("pi-angle", 0.0);
 //        return 0.0;
         final double ROCKET_ANGLE = 29;
         final double mid = (ROCKET_ANGLE + 90) / 2;
-        double rawAngle = ((visionGyro.getAngle() % 360) + 360) % 360;
-        if (rawAngle > 180) rawAngle -= 360;
+        double rawAngle = getRawAngle();
         double absAngle = Math.abs(rawAngle),
                 isClockwise = rawAngle > 0 ? 1 : -1;
         if (absAngle < ROCKET_ANGLE / 2)
@@ -71,8 +71,15 @@ public class VisionSensor {
             return (180 - ROCKET_ANGLE) * isClockwise;
     }
 
+    public static double getRawAngle() {
+        if (visionGyro == null) return 0;
+        double rawAngle = ((visionGyro.getAngle() % 360) + 360) % 360;
+        if (rawAngle > 180) rawAngle -= 360;
+        return rawAngle;
+    }
+
     public double getSkew() {
-        return visionGyro.getAngle() - VisionSensor.getNearestTargetAngle();
+        return getRawAngle() - VisionSensor.getNearestTargetAngle();
     }
 
     public static void resetSkew() {

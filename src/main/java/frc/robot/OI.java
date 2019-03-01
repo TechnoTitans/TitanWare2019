@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.movements.AutoAlign;
 import frc.robot.movements.ControlDriveTrainStraight;
 import frc.robot.movements.ForwardAlign;
+import frc.robot.movements.Launch;
 import frc.robot.movements.arm.ArmPosition;
 import frc.robot.movements.arm.ControlArm;
 import frc.robot.movements.arm.MoveArmToPosition;
@@ -107,8 +108,9 @@ public class OI {
         Button driveTriggerLeft = new JoystickButton(left, 1);
         Button autoAlign = new Btn(left, 3);
         Button forwardAlign = new Btn(left, 2);
+        Button launchButton = new Btn(left, 7);
 
-        btnHatchEject = new Btn(right, 10); // by default is 1 (trigger)
+        btnHatchEject = new Btn(right, 5);
         btnGrabberIntake = new Btn(right, 2);
         btnGrabberExpel = new Btn(right, 3);
 
@@ -224,6 +226,8 @@ public class OI {
         autoAlign.toggleWhenPressed(new AutoAlign(0.5, 20, true));
 
         forwardAlign.whenPressed(new ForwardAlign(ArmPosition.ROCKET_LEVEL_1_BALL, 60, 0.5));
+
+        launchButton.whenPressed(new Launch());
     }
 
     private double clampInput(double input) {

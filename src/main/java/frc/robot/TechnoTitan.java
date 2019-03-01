@@ -136,8 +136,6 @@ public class TechnoTitan extends TimedRobot {
     });
     updateToF.setDaemon(true);
     updateToF.start();
-
-    VisionSensor.initGyro();
   }
 
   /**
@@ -153,7 +151,7 @@ public class TechnoTitan extends TimedRobot {
     // MARK - smart dashboard things
 //    SmartDashboard.putNumber("NavX Gyro", navx.getAngle());
     SmartDashboard.putNumber("Gyro Angle", centralGyro.getAngle());
-    SmartDashboard.putNumber("Vision sensor target", VisionSensor.getNearestTargetAngle());
+    SmartDashboard.putNumber("Angle error", VisionSensor.getRawAngle() - VisionSensor.getNearestTargetAngle());
     SmartDashboard.putBoolean("Elbow sensor connected", elbowAngleSensor.isSensorConnected());
     SmartDashboard.putNumber("Elbow angle", arm.getElbowAngle());
 
@@ -218,6 +216,7 @@ public class TechnoTitan extends TimedRobot {
   @Override
   public void autonomousInit() {
     vision.startRecording();
+    VisionSensor.initGyro();
   }
 
   /**

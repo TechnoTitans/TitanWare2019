@@ -41,13 +41,13 @@ public class Arm extends Subsystem {
                                 RAMP_WRIST = 20;
 
     // PID Loop tuning
-    private static final double kWristP = 0.02;
-    private static final double kWristI = 0.0001;
-    private static final double kWristD = 0.0;
+    private static final double kWristP = 0.025;
+    private static final double kWristI = 0.001;
+    private static final double kWristD = 0.03;
 
-    private static final double kElbowP = 0.007;
-    private static final double kElbowI = 0.0002;
-    private static final double kElbowD = 0.0;
+    private static final double kElbowP = 0.013;
+    private static final double kElbowI = 0.0003;
+    private static final double kElbowD = 0.015;
     private static final double MAX_STEADY_VOLTAGE_ELBOW = 0.24;
     private static final double MAX_STEADY_VOLTAGE_WRIST = 0.001;
 
@@ -119,8 +119,8 @@ public class Arm extends Subsystem {
         this.elbowSensor = elbowSensor;
         this.wristSensor = wristSensor;
 
-        elbowController = new PIDAngleController("Elbow", kElbowP, kElbowI, kElbowD, MAX_STEADY_VOLTAGE_ELBOW, elbowAngleSensor, this::moveElbow, 35, 20);
-        wristController = new PIDAngleController("Wrist", kWristP, kWristI, kWristD, MAX_STEADY_VOLTAGE_WRIST, wristAngleSensor, this::moveWrist, 35, 35);
+        elbowController = new PIDAngleController("Elbow", kElbowP, kElbowI, kElbowD, MAX_STEADY_VOLTAGE_ELBOW, elbowAngleSensor, this::moveElbow, 50, 25);
+        wristController = new PIDAngleController("Wrist", kWristP, kWristI, kWristD, MAX_STEADY_VOLTAGE_WRIST, wristAngleSensor, this::moveWrist, 65, 65);
         elbowController.setOutputRange(-0.05, 0.6);
         wristController.setOutputRange(-0.5, 0.5);
 
