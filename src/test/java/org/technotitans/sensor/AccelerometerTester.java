@@ -23,29 +23,29 @@ public class AccelerometerTester {
         this.sensors.add(wrist);
     }
 
-    @Test
-    public void sensorsShouldBeConnected() {
-        sensors.forEach(s -> {
-            assertTrue(s.isSensorConnected());
-        });
-    }
+//    @Test
+//    public void sensorsShouldBeConnected() {
+//        sensors.forEach(s -> {
+//            assertTrue(s.isSensorConnected());
+//        });
+//    }
 
-    @Test
-    public void sensorsShouldOutputReadingsOnAccelerometer() {
-        // TODO Determine if this is a good way to test or not
-        // fails if the readings are exactly 0.0
-        sensors.forEach(s -> {
-            assertNotEquals(0.0, s.getX());
-            assertNotEquals(0.0, s.getY());
-            assertNotEquals(0.0, s.getZ());
-        });
-    }
-
-    @Test
-    public void sensorsGiveValidAngleAfterCalculations() {
-        sensors.forEach(s -> {
-            double angle = s.getAngle();
-            assertTrue(0.0 < angle && angle < 90.0);
-        });
-    }
+//    @Test
+//    public void sensorsShouldOutputReadingsOnAccelerometer() {
+//        // TODO Determine if this is a good way to test or not
+//        // fails if the readings are exactly 0.0
+//        sensors.forEach(s -> {
+//            assertNotEquals(0.0, s.getX());
+//            assertNotEquals(0.0, s.getY());
+//            assertNotEquals(0.0, s.getZ());
+//        });
+//    }
+//
+//    @Test
+//    public void sensorsGiveValidAngleAfterCalculations() {
+//        sensors.forEach(s -> {
+//            double angle = s.getAngle();
+//            assertTrue(0.0 < angle && angle < 90.0);
+//        });
+//    }
 }
