@@ -158,7 +158,7 @@ public class TechnoTitan extends TimedRobot {
     // MARK - smart dashboard things
 //    SmartDashboard.putNumber("NavX Gyro", navx.getAngle());
     SmartDashboard.putNumber("Gyro Angle", centralGyro.getAngle());
-    SmartDashboard.putNumber("Angle error", VisionSensor.getRawAngle() - VisionSensor.getNearestTargetAngle());
+    SmartDashboard.putNumber("Angle error", VisionSensor.getAngleTargetDiff());
     SmartDashboard.putBoolean("Elbow sensor connected", elbowAngleSensor.isSensorConnected());
     SmartDashboard.putNumber("Elbow angle", arm.getElbowAngle());
 
