@@ -14,7 +14,7 @@ public class MoveArmToPosition extends ConditionalCommand {
             command.addSequential(new InstantCommand(() -> TechnoTitan.arm.elbowController.disable()));
         }
         if (position == ArmPosition.HATCH_PICKUP || position == ArmPosition.STOW_POSITION) {
-            command.addSequential(new InstantCommand(() -> TechnoTitan.arm.wristController.disable()));
+            command.addSequential(new InstantCommand(() -> TechnoTitan.arm.wristController.reset()));
         }
     }
 

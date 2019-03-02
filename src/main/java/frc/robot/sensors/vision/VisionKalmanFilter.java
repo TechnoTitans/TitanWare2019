@@ -366,6 +366,14 @@ public class VisionKalmanFilter {
         static VisionPositionInfo fromSensorData(double visionX, double visionY, double skew) {
             return fromSensorDataRadians(visionX, visionY, Math.toRadians(skew));
         }
+
+        private double getPredictedVisionX() {
+            return -x * Math.cos(angle) + y * Math.sin(angle);
+        }
+
+        private double getPredictedVisionY() {
+            return -x * Math.sin(angle) - y * Math.cos(angle);
+        }
     }
 
     private Queue<SensorData> visionLagBuffer;

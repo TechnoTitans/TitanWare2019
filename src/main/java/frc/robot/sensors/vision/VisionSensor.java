@@ -21,7 +21,7 @@ public class VisionSensor {
     }
 
     public static void initGyro() {
-        if (visionGyro == null) visionGyro = new TitanGyro(TechnoTitan.centralGyro);
+        visionGyro = new TitanGyro(TechnoTitan.centralGyro);
         visionGyro.resetTo(0);;
     }
 
@@ -82,6 +82,9 @@ public class VisionSensor {
         return getRawAngle() - VisionSensor.getNearestTargetAngle();
     }
 
+    /**
+     * Call this method whenever we are guaranteed to be perfectly lined up with a target
+     */
     public static void resetSkew() {
         visionGyro.resetTo(getNearestTargetAngle());
     }
