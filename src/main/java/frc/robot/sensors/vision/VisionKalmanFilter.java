@@ -315,32 +315,33 @@ public class VisionKalmanFilter {
             covMatrix.add(Q);
         }
 
-        void interpolateVisionData(double visionX, double visionY, double visionSkew) {
-            VisionPositionInfo predicted = VisionPositionInfo.fromSensorDataRadians(visionX, visionY, angle);
-            double xResidual = predicted.getX() - x;
-            double yResidual = predicted.getY() - y;
-            double angleResidual = Math.toRadians(visionSkew) - angle;
+        void interpolateVisionData(double visionX, double visionY) {
+            double xResidual = visionX - getPredictedVisionX();
+            double yResidual = visionY - getPredictedVisionY();
 
+//            visionX = -x * Math.cos(angle) + y * Math.sin(angle);
+//            visionY = -x * Math.sin(angle) - y * Math.cos(angle);
+//            double predictedX = -visionY * Math.sin(angle) - visionX * Math.cos(angle);
+//            double predictedY = -visionY * Math.cos(angle) + visionX * Math.sin(angle);
             Matrix H = new Matrix(new double[][]{
-                    {1, 0, 0},
-                    {0, 1, 0},
-                    {0, 0, 1}
+//                    {-Math.cos(angle), Math.sin(angle), -getPredictedVisionY()},
+                    {-Math.cos(angle), Math.sin(angle), 0},
+//                    {-1, 1, 0},
+//                    {-Math.sin(angle), -Math.cos(angle), getPredictedVisionX()}
+                    {-Math.sin(angle), -Math.cos(angle), 0}
+//                    {-1, -1, 0}
             });
 
             Matrix R = new Matrix(new double[][]{
-                    {15, 0, 0},  // TODO: add value
-                    {0, 15, 0},
-                    {0, 0, 15}
+                    {25, 0},  // TODO: add value
+                    {0, 25}
             });
 
-//            Matrix S = H.multiply(covMatrix).multiply(H.transpose());
-//            S.add(R);
-            // Equivalent to (since H is identity for now)
-            Matrix S = R;
-            S.add(covMatrix);
+            Matrix S = H.multiply(covMatrix).multiply(H.transpose());
+            S.add(R);
 
             Matrix K = covMatrix.multiply(H.transpose()).multiply(S.invert());
-            double[] gains = K.multiply(new double[]{xResidual, yResidual, angleResidual});
+            double[] gains = K.multiply(new double[]{xResidual, yResidual});
             addGains(gains);
 
             Matrix eye = new Matrix(new double[][]{
@@ -354,7 +355,7 @@ public class VisionKalmanFilter {
         private void addGains(double[] gains) {
             x += gains[0];
             y += gains[1];
-            angle += gains[2];
+//            angle += gains[2];
         }
 
         private static VisionPositionInfo fromSensorDataRadians(double visionX, double visionY, double angle) {
@@ -414,7 +415,7 @@ public class VisionKalmanFilter {
         visionPositionInfo.interpolateSensorData(sensors);
 
         if (TechnoTitan.vision.canSeeTargets()) {
-            visionPositionInfo.interpolateVisionData(TechnoTitan.vision.getXOffset(), TechnoTitan.vision.getYDistance(), TechnoTitan.vision.getSkew());
+            visionPositionInfo.interpolateVisionData(TechnoTitan.vision.getXOffset(), TechnoTitan.vision.getYDistance());
         }
     }
 }
