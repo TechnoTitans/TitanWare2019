@@ -43,6 +43,9 @@ public class TechnoTitan extends TimedRobot {
   public static Grabber grabber;
   public static Gyro centralGyro;
 
+
+  private TalonSRX wrist, elbow;
+
   private Accel_GY521 elbowAngleSensor;
   private Accel_GY521 wristAngleSensor;
 
@@ -69,14 +72,14 @@ public class TechnoTitan extends TimedRobot {
 
 
     // Arm setup
-    TalonSRX wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false),
-            elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, true);
+    wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false);
+    elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, true);
 
     // MARK - accelerometer setup
 
 
-    elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR, false);
-    wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR, false);
+    elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR, false, -56);
+    wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR, false, 86.8);
     arm = new Arm(elbow, wrist, new Solenoid(RobotMap.PCM_ADDR, RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
     grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_PANEL_PISTON));
 
@@ -148,6 +151,10 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+
+
+      SmartDashboard.putNumber("Elbow Talon Voltage", elbow.getCurrent());
+      SmartDashboard.putNumber("Wrist Talon Voltage", wrist.getCurrent());
     // MARK - smart dashboard things
 //    SmartDashboard.putNumber("NavX Gyro", navx.getAngle());
     SmartDashboard.putNumber("Gyro Angle", centralGyro.getAngle());
@@ -230,6 +237,7 @@ public class TechnoTitan extends TimedRobot {
   @Override
   public void teleopInit() {
     vision.startRecording();
+    VisionSensor.initGyro();
   }
 
   /**

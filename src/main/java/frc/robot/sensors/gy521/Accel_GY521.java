@@ -43,7 +43,7 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
     // TODO get link to manual
 
 
-    public Accel_GY521(int address, boolean watchdogEnabled) {
+    public Accel_GY521(int address, boolean watchdogEnabled, double initAngle) {
         // device setup
         this.deviceAddr = address;
         this.watchdogEnabled = watchdogEnabled;
@@ -61,6 +61,8 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
 
         // sendable setup
         this.sendableName = this.toString(); // default name
+
+        this.previousAngle = initAngle;
     }
 
     // MARK - instance configuration methods
