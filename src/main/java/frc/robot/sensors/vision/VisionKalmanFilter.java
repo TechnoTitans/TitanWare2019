@@ -74,7 +74,7 @@ public class VisionKalmanFilter {
             for (int i = 0; i < rows; ++i) {
                 double t = 0;
                 for (int j = 0; j < cols; ++j) {
-                    t += other[i] * data[i][j];
+                    t += other[j] * data[i][j];
                 }
                 result[i] = t;
             }
@@ -253,9 +253,9 @@ public class VisionKalmanFilter {
             this.y = y;
             this.angle = angle;
             covMatrix = new Matrix(new double[][] {
-                    {80, 0, 0},
-                    {0, 9, 0},
-                    {0, 0, 100}
+                    {25, 0, 0},
+                    {0, 25, 0},
+                    {0, 0, 25}
             });
         }
 
@@ -308,11 +308,33 @@ public class VisionKalmanFilter {
             Matrix Q = new Matrix(new double[][] {
                     {variation * dt, 0, 0},
                     {0, variation * dt, 0},
-                    {0, 0, variation * dt}
+                    {0, 0, 0 * dt}
             });
 
             covMatrix = F.multiply(covMatrix).multiply(F.transpose());
             covMatrix.add(Q);
+
+            double dist = sensors.getDistance();
+//            double dist = 0;
+            if (dist > 11.9 && shouldSeeDistanceSensor()) {
+                double distResidual = dist - getPredictedDistance();
+                double[] H = new double[] {0, -1 / Math.cos(angle), 0}; // derivative of distResidual with respect to y, row vector
+                double errorDist = 0.62;  // +- 4 cm = 0.62 in^2 variance error
+                double S = H[1] * covMatrix.multiply(H)[1];
+                S += errorDist;
+                double[] K = covMatrix.multiply(H);  // column vector
+                double[] gains = new double[K.length];
+                for (int i = 0; i < K.length; ++i) {
+                    K[i] /= S;
+                    gains[i] = K[i] * distResidual;
+                }
+                addGains(gains);
+                Matrix diff = new Matrix(new double[][]{
+                        {1, -K[0] * H[1], 0}, {0, 1 - K[1] * H[1], 0}, {0, -K[2] * H[1], 1}
+                });
+
+                covMatrix = diff.multiply(covMatrix);
+            }
         }
 
         void interpolateVisionData(double visionX, double visionY) {
@@ -340,6 +362,7 @@ public class VisionKalmanFilter {
             Matrix S = H.multiply(covMatrix).multiply(H.transpose());
             S.add(R);
 
+
             Matrix K = covMatrix.multiply(H.transpose()).multiply(S.invert());
             double[] gains = K.multiply(new double[]{xResidual, yResidual});
             addGains(gains);
@@ -358,15 +381,17 @@ public class VisionKalmanFilter {
 //            angle += gains[2];
         }
 
-        private static VisionPositionInfo fromSensorDataRadians(double visionX, double visionY, double angle) {
+        static VisionPositionInfo fromSensorData(double visionX, double visionY, double skew) {
+            double angle = Math.toRadians(skew);
             double predictedX = -visionY * Math.sin(angle) - visionX * Math.cos(angle);
             double predictedY = -visionY * Math.cos(angle) + visionX * Math.sin(angle);
             return new VisionPositionInfo(predictedX, predictedY, angle);
         }
 
-        static VisionPositionInfo fromSensorData(double visionX, double visionY, double skew) {
-            return fromSensorDataRadians(visionX, visionY, Math.toRadians(skew));
-        }
+        // x = -visionY * Math.sin(angle) - visionX * Math.cos(angle);
+        // y = -visionY * Math.cos(angle) + visionX * Math.sin(angle);
+        // x sin A + y cos A = -visionY
+        // -x cos A + y sin A = visionX
 
         private double getPredictedVisionX() {
             return -x * Math.cos(angle) + y * Math.sin(angle);
@@ -374,6 +399,14 @@ public class VisionKalmanFilter {
 
         private double getPredictedVisionY() {
             return -x * Math.sin(angle) - y * Math.cos(angle);
+        }
+
+        private boolean shouldSeeDistanceSensor() {
+            return Math.abs(y * Math.tan(angle) - x) < 18;
+        }
+
+        private double getPredictedDistance() {
+            return -y / Math.cos(angle);
         }
     }
 
@@ -401,7 +434,7 @@ public class VisionKalmanFilter {
     public void updateSensorBuffer(double dt) {
         double lSpeed = TechnoTitan.drive.getLeftEncoder().getSpeedInches(),
                 rSpeed = TechnoTitan.drive.getRightEncoder().getSpeedInches();
-        visionLagBuffer.add(new SensorData(lSpeed, rSpeed, Math.toRadians(gyro.getAngle() - prevGyroAngle), -1, dt));
+        visionLagBuffer.add(new SensorData(lSpeed, rSpeed, Math.toRadians(gyro.getAngle() - prevGyroAngle), TechnoTitan.tfDistance.getDistance(), dt));
         prevGyroAngle = gyro.getAngle();
     }
 

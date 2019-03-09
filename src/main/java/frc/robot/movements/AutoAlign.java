@@ -7,8 +7,6 @@ import frc.robot.sensors.TitanGyro;
 import frc.robot.sensors.vision.VisionKalmanFilter;
 
 public class AutoAlign extends Command {
-    private TitanGyro gyro;
-
     private final double minSpeed = 0.2;
     private double slowDownDist;
 
@@ -29,7 +27,6 @@ public class AutoAlign extends Command {
 
     public AutoAlign(double speed, double slowDownDist, boolean isTest) {
         requires(TechnoTitan.drive);
-        gyro = new TitanGyro(TechnoTitan.centralGyro);
         this.speed = speed;
         this.slowDownDist = slowDownDist;
         visionKalmanFilter = new VisionKalmanFilter();
@@ -38,7 +35,6 @@ public class AutoAlign extends Command {
 
     @Override
     protected void initialize() {
-        gyro.reset();
 //        if (TechnoTitan.vision.canSeeTargets()) {
             visionKalmanFilter.start();
             this.dy = visionKalmanFilter.getSensorData().getY();
@@ -125,13 +121,13 @@ public class AutoAlign extends Command {
     protected void execute() {
         double lSpeed, rSpeed;
 
-        if (isPastSensorRange()) {
-            visionKalmanFilter.update();
+        visionKalmanFilter.update();
 
-            VisionKalmanFilter.VisionPositionInfo visionPositionInfo = visionKalmanFilter.getSensorData();
-            double dx = visionPositionInfo.getX(),
-                    dy = visionPositionInfo.getY(),
-                    skew = visionPositionInfo.getAngle();
+        VisionKalmanFilter.VisionPositionInfo visionPositionInfo = visionKalmanFilter.getSensorData();
+        double dx = visionPositionInfo.getX(),
+                dy = visionPositionInfo.getY(),
+                skew = visionPositionInfo.getAngle();
+        if (isPastSensorRange()) {
             double kappa = calculateCurvature(dx, dy + TARGET_Y_OFFSET, skew);
 
             kappa *= ROBOT_RADIUS;
@@ -149,23 +145,21 @@ public class AutoAlign extends Command {
                 rSpeed /= Math.abs(rSpeed);
                 lSpeed /= Math.abs(rSpeed);
             }
-            gyro.resetTo(Math.toDegrees(skew));
             lDist = TechnoTitan.drive.getLeftEncoder().getDistance();
             rDist = TechnoTitan.drive.getRightEncoder().getDistance();
 
             SmartDashboard.putNumber("Curvature", kappa);
-            SmartDashboard.putNumber("Angle", gyro.getAngle());
-            SmartDashboard.putNumber("Distance", dy);
-            SmartDashboard.putNumber("X", dx);
-            SmartDashboard.putNumber("lSpeed", lSpeed);
-            SmartDashboard.putNumber("rSpeed", rSpeed);
-
-            this.dy = dy;
         } else {
-            double error = gyro.getAngle() * 0.05;
+            double error = skew * 3;
             lSpeed = minSpeed - error;
             rSpeed = minSpeed + error;
         }
+        SmartDashboard.putNumber("Angle", Math.toDegrees(skew));
+        SmartDashboard.putNumber("Distance", dy);
+        SmartDashboard.putNumber("X", dx);
+        SmartDashboard.putNumber("lSpeed", lSpeed);
+        SmartDashboard.putNumber("rSpeed", rSpeed);
+        this.dy = dy;
         if (!isTest)
             TechnoTitan.drive.set(lSpeed, rSpeed);
         else
