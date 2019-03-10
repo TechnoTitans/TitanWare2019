@@ -25,6 +25,7 @@ public class PIDAngleController extends PIDController {
      */
     public PIDAngleController(String name, double Kp, double Ki, double Kd, double maxSteadyVoltage, PIDSource sensor, PIDOutput output, double maxSetpointRateUp, double maxSetpointRateDown) {
         super(Kp, Ki, Kd, sensor, output);
+        setpointFilter = new LinearFilter(maxSetpointRateUp * kDefaultPeriod, maxSetpointRateDown * kDefaultPeriod);
         setTolerance(new Tolerance() {
             private static final double TOLERANCE = 4; // degrees
             @Override
@@ -35,7 +36,6 @@ public class PIDAngleController extends PIDController {
         setName("PID " + name);
         this.maxSteadyVoltage = maxSteadyVoltage;
         unfilteredSetpoint = 0;
-        setpointFilter = new LinearFilter(maxSetpointRateUp * kDefaultPeriod, maxSetpointRateDown * kDefaultPeriod);
     }
 
     public void updateSmartdashboard() {
@@ -51,6 +51,8 @@ public class PIDAngleController extends PIDController {
     }
 
     public void updateSetpoint() {
+        // because this is called in a different thread, setpoint filter might not be assigned yet
+        if (setpointFilter == null) return;
         if (this.isEnabled()) {
             setpointFilter.update(unfilteredSetpoint);
             this.setSetpoint(setpointFilter.getValue());

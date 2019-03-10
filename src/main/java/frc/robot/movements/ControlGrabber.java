@@ -2,6 +2,7 @@ package frc.robot.movements;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.TechnoTitan;
+import frc.robot.sensors.vision.VisionSensor;
 
 public class ControlGrabber extends Command {
     public ControlGrabber() {
@@ -20,6 +21,7 @@ public class ControlGrabber extends Command {
 
         if (TechnoTitan.oi.shouldExpelHatch()) {
             TechnoTitan.grabber.expelHatch();
+            VisionSensor.resetSkew();
         }
         TechnoTitan.grabber.updatePistons();
     }

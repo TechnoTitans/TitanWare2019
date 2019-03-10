@@ -13,8 +13,8 @@ public class MoveArmToPosition extends ConditionalCommand {
             // disable pid
             command.addSequential(new InstantCommand(() -> TechnoTitan.arm.elbowController.disable()));
         }
-        if (position == ArmPosition.HATCH_PICKUP) {
-            command.addSequential(new InstantCommand(() -> TechnoTitan.arm.wristController.disable()));
+        if (position == ArmPosition.HATCH_PICKUP || position == ArmPosition.STOW_POSITION) {
+            command.addSequential(new InstantCommand(() -> TechnoTitan.arm.wristController.reset()));
         }
     }
 
@@ -22,6 +22,12 @@ public class MoveArmToPosition extends ConditionalCommand {
         MoveArmToPositionSafe(ArmPosition position) {
             addSequential(new MoveWristUp());
             addSequential(new MoveArmPiston(position.isSolenoidEnabled()));
+//            addSequential(new ConditionalCommand((new InstantCommand(() -> TechnoTitan.arm.wristController.disable()))) {
+//                @Override
+//                protected boolean condition() {
+//                    return position.getElbowAngle() < TechnoTitan.arm.getElbowAngle();
+//                }
+//            });
             addSequential(new ControlArmPID(position, false, true));
             addSequential(new ControlArmPID(position, true, false));
             disableNecessaryPIDs(position, this);
