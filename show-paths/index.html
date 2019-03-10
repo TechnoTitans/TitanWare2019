@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test Dashboard</title>
+<script src="/networktables/networktables.js"></script>
+</head>
+<body>
+<canvas width="600" height="600" style="border: 1px solid black;"></canvas>
+<script type="text/javascript">
+var table = "/Smartdashboard/";
+var canvas = document.querySelector("canvas"),
+    ctx = canvas.getContext("2d"),
+    width = canvas.width,
+    height = canvas.height,
+    scale = 8,
+    targetX = width / 2,
+    targetY = height * 0.1;
+
+var drawTargets = function() {
+    ctx.fillStyle = "red";
+    ctx.beginPath();
+    ctx.arc(targetX, targetY, 5, 0, 2*Math.PI, false);
+    ctx.fill();
+}
+
+var refreshCanvas = function() {
+    ctx.clearRect(0, 0, width, height);
+    drawTargets();
+    var robotX = 0, robotY = -50, robotAngle = 0;
+    robotAngle *= Math.PI / 180;
+    var x = targetX + robotX * scale, y = targetY - robotY * scale;
+    ctx.fillStyle = "gray";
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, 2*Math.PI, false);
+    ctx.fill();
+    var dirLen = 50;
+    var offX = x + dirLen * Math.sin(robotAngle), offY = y - dirLen * Math.cos(robotAngle);
+    ctx.strokeStyle = "black";
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(offX, offY);
+    ctx.stroke();
+
+    ctx.strokeStyle = "red";
+    var pX = [-40.0, 60.0, 0.0, -20.0];
+    var pY = [108.01781746031389, -111.48209244958791, 59.464274989274024, -56.0];
+    ctx.beginPath();
+    ctx.moveTo(targetX, targetY);
+    for (let t = 1; t >= 0; t -= 0.01) {
+      let pathX = pX[0] * t * t * t + pX[1] * t * t + pX[2] * t + pX[3];
+      let pathY = pY[0] * t * t * t + pY[1] * t * t + pY[2] * t + pY[3];
+      ctx.lineTo(targetX + pathX * scale, targetY - pathY * scale);
+    }
+    ctx.stroke();
+    requestAnimationFrame(refreshCanvas);
+};
+
+refreshCanvas();
+</script>
+</body>
+</html>
