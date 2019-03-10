@@ -4,6 +4,7 @@
  import edu.wpi.first.wpilibj.interfaces.Gyro;
  import frc.robot.TechnoTitan;
  import frc.robot.sensors.Encoder;
+ import frc.robot.sensors.TimeOfFlight;
  import frc.robot.sensors.vision.VisionKalmanFilter;
  import frc.robot.sensors.vision.VisionSensor;
  import frc.robot.subsystems.DriveTrain;
@@ -11,14 +12,14 @@
  import org.junit.Ignore;
  import org.junit.Test;
 
- import static junit.framework.TestCase.assertEquals;
- import static junit.framework.TestCase.fail;
+ import static junit.framework.TestCase.*;
  import static org.mockito.Mockito.*;
 
  public class VisionFilterTest {
      private VisionSensor mockVision;
      private AHRS mockNavX;
      private Encoder leftMock, rightMock;
+     private TimeOfFlight tfDistance;
 
      @Before
      public void setUp() {
@@ -30,12 +31,15 @@
          rightMock = mock(Encoder.class);
          DriveTrain driveTrainMock = mock(DriveTrain.class);
 
+         tfDistance = mock(TimeOfFlight.class);
+
          when(driveTrainMock.getLeftEncoder()).thenReturn(leftMock);
          when(driveTrainMock.getRightEncoder()).thenReturn(rightMock);
 
          TechnoTitan.navx = mockNavX;
          TechnoTitan.centralGyro = mock(Gyro.class);
          TechnoTitan.drive = driveTrainMock;
+         TechnoTitan.tfDistance = tfDistance;
      }
 
      @Test
@@ -53,7 +57,6 @@
      }
 
      @Test
-     @Ignore
      public void filterShouldUseEncodersToMakeUpForVision() {
          final double dist = 45.0;
 
@@ -80,5 +83,23 @@
          assertEquals(-dist + speed * time / 1000, filter.getSensorData().getY(), 5e-3);
      }
 
-     // TODO: filter should combine encoders and other stuff
+     @Test
+     public void filterShouldUseDistanceSensor() {
+         final double dist = 45.0;
+
+         when(mockVision.getYDistance()).thenReturn(dist);
+
+         VisionKalmanFilter filter = new VisionKalmanFilter();
+         filter.start();
+
+         when(tfDistance.getDistance()).thenReturn(dist - 5);
+         when(tfDistance.isValid()).thenReturn(true);
+
+         when(mockVision.canSeeTargets()).thenReturn(false);
+         when(mockVision.getYDistance()).thenReturn(-1.0);
+
+         filter.update();
+         double y = filter.getSensorData().getY();
+         assertTrue("Y value not combined with distance sensor correctly: " + y, -(dist - 2) < y && y < -(dist - 5));
+     }
  }

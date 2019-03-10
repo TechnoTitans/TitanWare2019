@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Queue;
 
 public class VisionKalmanFilter {
-    private static final int LAG_FRAMES = 5;
+    private static final int LAG_FRAMES = 2;
 
     private static class Matrix {
         private double[][] data;
@@ -81,6 +81,28 @@ public class VisionKalmanFilter {
             return result;
         }
 
+        static double innerProduct(double[] a, double[] b) {
+            if (a.length != b.length) throw new IllegalArgumentException("Lengths don't match");
+            double result = 0;
+            for (int i = 0; i < a.length; ++i) result += a[i] * b[i];
+            return result;
+        }
+
+        static Matrix outerProduct(double[] a, double[] b) {
+            double[][] result = new double[a.length][b.length];
+            for (int i = 0; i < a.length; ++i) {
+                for (int j = 0; j < b.length; ++j) {
+                    result[i][j] = a[i] * b[j];
+                }
+            }
+            return new Matrix(result);
+        }
+
+        static Matrix eye() {
+            return new Matrix(new double[][]{
+                    {1, 0, 0}, {0, 1, 0}, {0, 0, 1}
+            });
+        }
         // Methods from: https://www.sanfoundry.com/java-program-find-inverse-matrix/
         Matrix invert() {
             double[][] a = data;
@@ -255,7 +277,7 @@ public class VisionKalmanFilter {
             covMatrix = new Matrix(new double[][] {
                     {25, 0, 0},
                     {0, 25, 0},
-                    {0, 0, 25}
+                    {0, 0, 0.00047}
             });
         }
 
@@ -289,7 +311,6 @@ public class VisionKalmanFilter {
             x += averageSpeed * Math.sin(angle) * dt;
             y += averageSpeed * Math.cos(angle) * dt;
             double angleChange = sensors.getAngleChange();
-            angle += angleChange;
 
             /* (x, y, angle, lSpeed, rSpeed), S = 2*averageSpeed
             F =
@@ -299,41 +320,48 @@ public class VisionKalmanFilter {
              */
             Matrix F = new Matrix(new double[][] {
                     {1, 0, averageSpeed * Math.cos(angle) * dt},
+//                    {1, 0, 0},
                     {0, 1, -averageSpeed * Math.sin(angle) * dt},
+//                    {0, 1, 0},
                     {0, 0, 1}
             });
+            angle += angleChange;
 
             // noise
             final double variation = 2;
             Matrix Q = new Matrix(new double[][] {
                     {variation * dt, 0, 0},
                     {0, variation * dt, 0},
-                    {0, 0, 0 * dt}
+                    {0, 0, 0.0 * dt}
             });
 
             covMatrix = F.multiply(covMatrix).multiply(F.transpose());
             covMatrix.add(Q);
 
             double dist = sensors.getDistance();
-//            double dist = 0;
             if (dist > 11.9 && shouldSeeDistanceSensor()) {
                 double distResidual = dist - getPredictedDistance();
-                double[] H = new double[] {0, -1 / Math.cos(angle), 0}; // derivative of distResidual with respect to y, row vector
-                double errorDist = 0.62;  // +- 4 cm = 0.62 in^2 variance error
-                double S = H[1] * covMatrix.multiply(H)[1];
-                S += errorDist;
-                double[] K = covMatrix.multiply(H);  // column vector
-                double[] gains = new double[K.length];
-                for (int i = 0; i < K.length; ++i) {
-                    K[i] /= S;
-                    gains[i] = K[i] * distResidual;
-                }
-                addGains(gains);
-                Matrix diff = new Matrix(new double[][]{
-                        {1, -K[0] * H[1], 0}, {0, 1 - K[1] * H[1], 0}, {0, -K[2] * H[1], 1}
-                });
+                if (Math.abs(distResidual) < 30) {
+                    double[] H = new double[]{0, -1 / Math.cos(angle), -y / Math.cos(angle) * Math.tan(angle)}; // derivative of distResidual with respect to y, row vector
+                    double errorDist = 5;  // 2.2 in error
+                    double[] covH = covMatrix.multiply(H);
+                    double S = Matrix.innerProduct(H, covH);
+                    S += errorDist;
+                    double[] K = covH;  // column vector
+                    double[] gains = new double[K.length];
+                    for (int i = 0; i < K.length; ++i) {
+                        K[i] /= S;
+                        gains[i] = K[i] * distResidual;
+                    }
+                    addGains(gains);
 
-                covMatrix = diff.multiply(covMatrix);
+                    Matrix diff = Matrix.eye();
+                    diff.subtract(Matrix.outerProduct(K, H));
+
+                    covMatrix = diff.multiply(covMatrix);
+                } else {
+                    System.out.println("Warning: distance sensor does not match vision data (error=" + distResidual + ")");
+                }
             }
         }
 
@@ -346,12 +374,10 @@ public class VisionKalmanFilter {
 //            double predictedX = -visionY * Math.sin(angle) - visionX * Math.cos(angle);
 //            double predictedY = -visionY * Math.cos(angle) + visionX * Math.sin(angle);
             Matrix H = new Matrix(new double[][]{
-//                    {-Math.cos(angle), Math.sin(angle), -getPredictedVisionY()},
-                    {-Math.cos(angle), Math.sin(angle), 0},
-//                    {-1, 1, 0},
-//                    {-Math.sin(angle), -Math.cos(angle), getPredictedVisionX()}
-                    {-Math.sin(angle), -Math.cos(angle), 0}
-//                    {-1, -1, 0}
+                    {-Math.cos(angle), Math.sin(angle), -getPredictedVisionY()},
+//                    {-Math.cos(angle), Math.sin(angle), 0},
+                    {-Math.sin(angle), -Math.cos(angle), getPredictedVisionX()}
+//                    {-Math.sin(angle), -Math.cos(angle), 0}
             });
 
             Matrix R = new Matrix(new double[][]{
@@ -362,23 +388,20 @@ public class VisionKalmanFilter {
             Matrix S = H.multiply(covMatrix).multiply(H.transpose());
             S.add(R);
 
-
             Matrix K = covMatrix.multiply(H.transpose()).multiply(S.invert());
             double[] gains = K.multiply(new double[]{xResidual, yResidual});
             addGains(gains);
 
-            Matrix eye = new Matrix(new double[][]{
-                    {1, 0, 0}, {0, 1, 0}, {0, 0, 1}
-            });
+            Matrix diff = Matrix.eye();
 
-            eye.subtract(K.multiply(H));
-            covMatrix = eye.multiply(covMatrix);
+            diff.subtract(K.multiply(H));
+            covMatrix = diff.multiply(covMatrix);
         }
 
         private void addGains(double[] gains) {
             x += gains[0];
             y += gains[1];
-//            angle += gains[2];
+            angle += gains[2];
         }
 
         static VisionPositionInfo fromSensorData(double visionX, double visionY, double skew) {
@@ -434,7 +457,8 @@ public class VisionKalmanFilter {
     public void updateSensorBuffer(double dt) {
         double lSpeed = TechnoTitan.drive.getLeftEncoder().getSpeedInches(),
                 rSpeed = TechnoTitan.drive.getRightEncoder().getSpeedInches();
-        visionLagBuffer.add(new SensorData(lSpeed, rSpeed, Math.toRadians(gyro.getAngle() - prevGyroAngle), TechnoTitan.tfDistance.getDistance(), dt));
+        visionLagBuffer.add(new SensorData(lSpeed, rSpeed, Math.toRadians(gyro.getAngle() - prevGyroAngle), TechnoTitan.tfDistance.isValid() ?
+                TechnoTitan.tfDistance.getDistance() : 0, dt));
         prevGyroAngle = gyro.getAngle();
     }
 
