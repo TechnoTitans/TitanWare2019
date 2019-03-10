@@ -277,7 +277,7 @@ public class VisionKalmanFilter {
             covMatrix = new Matrix(new double[][] {
                     {25, 0, 0},
                     {0, 25, 0},
-                    {0, 0, 0.00047}
+                    {0, 0, 0}
             });
         }
 
@@ -332,7 +332,7 @@ public class VisionKalmanFilter {
             Matrix Q = new Matrix(new double[][] {
                     {variation * dt, 0, 0},
                     {0, variation * dt, 0},
-                    {0, 0, 0.0 * dt}
+                    {0, 0, 0 * dt}
             });
 
             covMatrix = F.multiply(covMatrix).multiply(F.transpose());
@@ -381,7 +381,7 @@ public class VisionKalmanFilter {
             });
 
             Matrix R = new Matrix(new double[][]{
-                    {25, 0},  // TODO: add value
+                    {4, 0},  // TODO: add value
                     {0, 25}
             });
 
@@ -457,8 +457,7 @@ public class VisionKalmanFilter {
     public void updateSensorBuffer(double dt) {
         double lSpeed = TechnoTitan.drive.getLeftEncoder().getSpeedInches(),
                 rSpeed = TechnoTitan.drive.getRightEncoder().getSpeedInches();
-        visionLagBuffer.add(new SensorData(lSpeed, rSpeed, Math.toRadians(gyro.getAngle() - prevGyroAngle), TechnoTitan.tfDistance.isValid() ?
-                TechnoTitan.tfDistance.getDistance() : 0, dt));
+        visionLagBuffer.add(new SensorData(lSpeed, rSpeed, Math.toRadians(gyro.getAngle() - prevGyroAngle), 0, dt));
         prevGyroAngle = gyro.getAngle();
     }
 

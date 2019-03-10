@@ -64,6 +64,8 @@ public class TechnoTitan extends TimedRobot {
     vision = new VisionSensor();
     tfDistance = new TimeOfFlight();
     centralGyro = new AnalogGyro(0);
+    ((AnalogGyro) centralGyro).setSensitivity(0.00365);
+    centralGyro.calibrate();
 
 
     // Arm setup
@@ -130,15 +132,14 @@ public class TechnoTitan extends TimedRobot {
 //    centralGyro = new NavXGyro(navx);
     Thread updateToF = new Thread(() -> {
       while (!Thread.interrupted()) {
+        tfDistance.update();
         try {
-          tfDistance.update();
-        } catch (UncleanStatusException e) {
-          System.err.println("Warning: " + e);
-        }
+          Thread.sleep(20L);
+        } catch (InterruptedException e) {}
       }
     });
-//    updateToF.setDaemon(true);
-//    updateToF.start();
+    updateToF.setDaemon(true);
+    updateToF.start();
   }
 
   /**
@@ -164,8 +165,8 @@ public class TechnoTitan extends TimedRobot {
     SmartDashboard.putNumber("Encoder right", drive.getRightEncoder().getDistance());
 
 
-//    SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
-//    SmartDashboard.putBoolean("TF is valid?", tfDistance.isValid());
+    SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
+    SmartDashboard.putBoolean("TF is valid?", tfDistance.isValid());
     SmartDashboard.putBoolean("Override arm sensors", arm.areSensorsOverriden());
 //    SmartDashboard.putNumber("Elbow output", arm.getElbowOutput());
 //    SmartDashboard.putNumber("Wrist output", arm.getWristOutput());
