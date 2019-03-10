@@ -8,6 +8,7 @@
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.hal.util.UncleanStatusException;
 import edu.wpi.first.wpilibj.*;
@@ -130,11 +131,14 @@ public class TechnoTitan extends TimedRobot {
     updateI2CSensors.start();
 
     CameraServer.getInstance().startAutomaticCapture(0);
-    CameraServer.getInstance().startAutomaticCapture(1);
+//    CameraServer.getInstance().startAutomaticCapture(1);
 
     Thread updateToF = new Thread(() -> {
       while (!Thread.interrupted()) {
         tfDistance.update();
+        try {
+          Thread.sleep(20);
+        } catch(InterruptedException e) {}
       }
     });
     updateToF.setDaemon(true);
@@ -168,7 +172,7 @@ public class TechnoTitan extends TimedRobot {
     SmartDashboard.putNumber("Encoder left", drive.getLeftEncoder().getDistance());
     SmartDashboard.putNumber("Encoder right", drive.getRightEncoder().getDistance());
 
-
+//    tfDistance.update();
     SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
     SmartDashboard.putBoolean("TF is valid?", tfDistance.isValid());
     SmartDashboard.putBoolean("Override arm sensors", arm.areSensorsOverriden());
@@ -184,8 +188,6 @@ public class TechnoTitan extends TimedRobot {
 
     if (oi.shouldResetCommands()) {
       // TODO Uncomment out the removeall
-      elbowAngleSensor.emergencySensorReset();
-      wristAngleSensor.emergencySensorReset();
       SmartDashboard.putNumber("Resetting", Math.random());
       Scheduler.getInstance().removeAll();
       TechnoTitan.arm.elbowController.reset();
@@ -232,6 +234,7 @@ public class TechnoTitan extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     Scheduler.getInstance().run();
+    SmartDashboard.putNumber("Time left in sandstorm", DriverStation.getInstance().getMatchTime());
   }
 
   @Override

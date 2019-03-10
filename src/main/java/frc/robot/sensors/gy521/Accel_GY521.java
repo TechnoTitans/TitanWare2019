@@ -252,8 +252,11 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
         this.updateWatchdog();
         double accelAngle = this.getAccelAngle();
         double gyroRate = this.getRate();
+        // do this after reading so that it doesn't delay the normal usage because waking up has a delay
+        this.setSleepMode(false); // always set sleep to false so that the chip recovers after power loss
         previousAngle = (previousAngle + gyroRate * getElapsedTime()) * kGyroInfluence
                 + (accelAngle) * (1 - kGyroInfluence);
+
         // Assumptions:
         // The apparatus that this device is mounted on will be at a steady-state (not shaking around)
         // at startup.

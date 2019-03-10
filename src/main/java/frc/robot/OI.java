@@ -206,13 +206,13 @@ public class OI {
         // arm controls
         btnRocketBall1.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_1_BALL));
         btnRocketBall2.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_2_BALL));
-        btnRocketBall3.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_3_BALL));
+        //btnRocketBall3.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_3_BALL));
         btnRocketBallCargo.whenPressed(new MoveArmToPosition(ArmPosition.CARGO_SHIP_BALL));
         btnRocketBallPickup.whenPressed(new MoveArmToPosition(ArmPosition.BALL_PICKUP));
 
         btnHatch1.whenPressed(new MoveArmToPosition(ArmPosition.LOW_HATCH));
         btnHatch2.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_2_HATCH));
-        btnHatch3.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_3_HATCH));
+        //btnHatch3.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_3_HATCH));
 
         hatchPickup.whenPressed(new MoveArmToPosition(ArmPosition.HATCH_PICKUP));
 
@@ -224,7 +224,7 @@ public class OI {
 //        autoAlign.toggleWhenPressed(new AutoAlign(0.5, 20, true));
         autoAlign.toggleWhenPressed(new AutoAlignAngle());
 
-        forwardAlign.whenPressed(new ForwardAlign(ArmPosition.ROCKET_LEVEL_1_BALL, 60, 0.5));
+        forwardAlign.whenPressed(new ForwardAlign(ArmPosition.LOW_HATCH, 60, 0.5));
 
         launchButton.whenPressed(new Launch());
         expelGrabberAndBackup.whenPressed(new ReleaseHatch());
