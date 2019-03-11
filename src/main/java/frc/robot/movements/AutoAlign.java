@@ -7,10 +7,10 @@ import frc.robot.sensors.TitanGyro;
 import frc.robot.sensors.vision.VisionKalmanFilter;
 
 public class AutoAlign extends Command {
-    private final double minSpeed = 0.2;
+    private final double minSpeed = 0.4;
     private double slowDownDist;
 
-    private static final double STRAIGHT_END_COEFF = 2;
+    private static final double STRAIGHT_END_COEFF = 2.4;
     private static final double ROBOT_RADIUS = 11;  // TODO: measure
 
     private static final double TARGET_Y_OFFSET = 20,
@@ -150,7 +150,7 @@ public class AutoAlign extends Command {
 
             SmartDashboard.putNumber("Curvature", kappa);
         } else {
-            double error = skew * 0.05;
+            double error = skew * 1;
             lSpeed = minSpeed - error;
             rSpeed = minSpeed + error;
         }

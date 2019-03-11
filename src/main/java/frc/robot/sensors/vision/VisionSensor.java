@@ -16,6 +16,7 @@ import frc.robot.sensors.TitanGyro;
  */
 public class VisionSensor {
     private static TitanGyro visionGyro;
+    private static final double CAMERA_ROBOT_CENTER_OFFSET = 6;
 
     public VisionSensor() {
     }
@@ -45,7 +46,7 @@ public class VisionSensor {
      * @return the y distance from the tarrgets in inches
      */
     public double getYDistance() {
-        return SmartDashboard.getNumber("pi-distance", 600);
+        return SmartDashboard.getNumber("pi-distance", 600) + CAMERA_ROBOT_CENTER_OFFSET;
     }
 
     /**

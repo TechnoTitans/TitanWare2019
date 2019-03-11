@@ -223,9 +223,9 @@ public class OI {
         btnOverrideSensors.whenPressed(new ControlArm());
 
 
-        autoAlign.toggleWhenPressed(new AutoAlign(0.5, 20, true));
+        autoAlign.toggleWhenPressed(new AutoAlign(0.6, 20, false));
 
-        forwardAlign.whenPressed(new ForwardAlign(ArmPosition.ROCKET_LEVEL_1_BALL, 60, 0.5));
+        forwardAlign.whenPressed(new ForwardAlign(ArmPosition.ROCKET_LEVEL_1_BALL, 60, 0.6));
 
         launchButton.whenPressed(new Launch());
     }

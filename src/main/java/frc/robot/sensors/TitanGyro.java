@@ -1,5 +1,6 @@
 package frc.robot.sensors;
 
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 @SuppressWarnings("WeakerAccess")
