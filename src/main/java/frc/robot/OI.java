@@ -221,8 +221,8 @@ public class OI {
         btnOverrideSensors.whenPressed(new ControlArm());
 
 
-//        autoAlign.toggleWhenPressed(new AutoAlign(0.5, 20, true));
-        autoAlign.toggleWhenPressed(new AutoAlignAngle());
+        autoAlign.toggleWhenPressed(new AutoAlign(0.8, 20, false));
+//        autoAlign.toggleWhenPressed(new AutoAlignAngle());
 
         forwardAlign.whenPressed(new ForwardAlign(ArmPosition.LOW_HATCH, 60, 0.5));
 
