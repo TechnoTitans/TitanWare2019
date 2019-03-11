@@ -150,7 +150,7 @@ public class AutoAlign extends Command {
 
             SmartDashboard.putNumber("Curvature", kappa);
         } else {
-            double error = skew * 3;
+            double error = skew * 0.1;
             lSpeed = minSpeed - error;
             rSpeed = minSpeed + error;
         }
