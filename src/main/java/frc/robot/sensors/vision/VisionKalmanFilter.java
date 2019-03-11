@@ -454,10 +454,14 @@ public class VisionKalmanFilter {
         gyro.reset();
     }
 
+    public void start2() {
+        visionPositionInfo = VisionPositionInfo.fromSensorData(TechnoTitan.vision.getXOffset(), TechnoTitan.vision.getYDistance(), gyro.getAngle());
+    }
+
     public void updateSensorBuffer(double dt) {
         double lSpeed = TechnoTitan.drive.getLeftEncoder().getSpeedInches(),
                 rSpeed = TechnoTitan.drive.getRightEncoder().getSpeedInches();
-        visionLagBuffer.add(new SensorData(lSpeed, rSpeed, Math.toRadians(gyro.getAngle() - prevGyroAngle), 0, dt));
+        visionLagBuffer.add(new SensorData(lSpeed, rSpeed, Math.toRadians(gyro.getAngle() - prevGyroAngle), TechnoTitan.tfDistance.isValid() ? TechnoTitan.tfDistance.getDistance() : 0, dt));
         prevGyroAngle = gyro.getAngle();
     }
 
@@ -472,6 +476,7 @@ public class VisionKalmanFilter {
 
         if (TechnoTitan.vision.canSeeTargets()) {
             visionPositionInfo.interpolateVisionData(TechnoTitan.vision.getXOffset(), TechnoTitan.vision.getYDistance());
+//            start2();
         }
     }
 }

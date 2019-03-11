@@ -10,10 +10,10 @@ public class AutoAlign extends Command {
     private final double minSpeed = 0.2;
     private double slowDownDist;
 
-    private static final double STRAIGHT_END_COEFF = 2.7;
+    private static final double STRAIGHT_END_COEFF = 2;
     private static final double ROBOT_RADIUS = 11;  // TODO: measure
 
-    private static final double TARGET_Y_OFFSET = 10,
+    private static final double TARGET_Y_OFFSET = 20,
                                 NO_SENSOR_DIST = 20;
 
     private double speed;
@@ -150,7 +150,7 @@ public class AutoAlign extends Command {
 
             SmartDashboard.putNumber("Curvature", kappa);
         } else {
-            double error = skew * 3;
+            double error = skew * 0.05;
             lSpeed = minSpeed - error;
             rSpeed = minSpeed + error;
         }
@@ -168,9 +168,7 @@ public class AutoAlign extends Command {
 
     @Override
     protected boolean isFinished() {
-        if (!isPastSensorRange()) return false;
-        double dist = (TechnoTitan.drive.getLeftEncoder().getDistance() - lDist) / 2 + (TechnoTitan.drive.getRightEncoder().getDistance() - rDist) / 2;
-        return dist >= NO_SENSOR_DIST;
+        return -dy <= TARGET_Y_OFFSET;
     }
 
     @Override
