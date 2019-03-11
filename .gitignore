@@ -151,6 +151,7 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 .idea/
 *.iml
+out/
 
 # # VS Code Specific Java Settings
 .classpath

@@ -21,7 +21,7 @@ public class VisionSensor {
     }
 
     public static void initGyro() {
-        visionGyro = new TitanGyro(TechnoTitan.centralGyro);
+        if (visionGyro == null) visionGyro = new TitanGyro(TechnoTitan.centralGyro);
         visionGyro.resetTo(0);;
     }
 
@@ -52,13 +52,12 @@ public class VisionSensor {
      * 
      * @return the angle of the robot relative to the strips in degrees, with clockwise being positive
      */
-    public static double getNearestTargetAngle() {
+    public static double getNearestTargetAngle(double rawAngle) {
         if (visionGyro == null) return 0;
 //        return SmartDashboard.getNumber("pi-angle", 0.0);
 //        return 0.0;
         final double ROCKET_ANGLE = 29;
         final double mid = (ROCKET_ANGLE + 90) / 2;
-        double rawAngle = getRawAngle();
         double absAngle = Math.abs(rawAngle),
                 isClockwise = rawAngle > 0 ? 1 : -1;
         if (absAngle < ROCKET_ANGLE / 2)
@@ -67,8 +66,15 @@ public class VisionSensor {
             return ROCKET_ANGLE * isClockwise;
         else if (absAngle < 180 - mid)
             return 90 * isClockwise;
-        else
+        else if (absAngle < 180 - ROCKET_ANGLE / 2)
             return (180 - ROCKET_ANGLE) * isClockwise;
+        else
+            return 180 * isClockwise;
+    }
+
+    public static double getAngleTargetDiff() {
+        double angle = getRawAngle();
+        return angle - getNearestTargetAngle(angle);
     }
 
     public static double getRawAngle() {
@@ -79,14 +85,11 @@ public class VisionSensor {
     }
 
     public double getSkew() {
-        return getRawAngle() - VisionSensor.getNearestTargetAngle();
+        return getAngleTargetDiff();
     }
 
-    /**
-     * Call this method whenever we are guaranteed to be perfectly lined up with a target
-     */
     public static void resetSkew() {
-        visionGyro.resetTo(getNearestTargetAngle());
+        visionGyro.resetTo(getNearestTargetAngle(getRawAngle()));
     }
     
     public boolean canSeeTargets() {
