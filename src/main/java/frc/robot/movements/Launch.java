@@ -6,7 +6,7 @@ import frc.robot.TechnoTitan;
 
 public class Launch extends TimedCommand {
     public Launch() {
-        super(1.5);
+        super(.75);
         requires(TechnoTitan.drive);
     }
 
@@ -18,7 +18,7 @@ public class Launch extends TimedCommand {
 
     @Override
     protected void execute() {
-        TechnoTitan.drive.set(0.5, 0.5);
+        TechnoTitan.drive.set(0.8, 0.8);
     }
 
     @Override

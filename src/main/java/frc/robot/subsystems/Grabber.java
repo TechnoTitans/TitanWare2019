@@ -42,6 +42,10 @@ public class Grabber extends Subsystem {
         pancakeTimer.start();
     }
 
+    public void setPancakePistons(boolean on) {
+        pancakePistons.set(on);
+    }
+
     public void updatePistons() {
         if (pancakeTimer.get() > 0.5) {
             pancakeTimer.stop();

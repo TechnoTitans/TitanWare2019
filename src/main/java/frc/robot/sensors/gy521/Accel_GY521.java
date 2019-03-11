@@ -43,7 +43,7 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
     // TODO get link to manual
 
 
-    public Accel_GY521(int address, boolean watchdogEnabled) {
+    public Accel_GY521(int address, boolean watchdogEnabled, double initAngle) {
         // device setup
         this.deviceAddr = address;
         this.watchdogEnabled = watchdogEnabled;
@@ -61,6 +61,8 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
 
         // sendable setup
         this.sendableName = this.toString(); // default name
+
+        this.previousAngle = initAngle;
     }
 
     // MARK - instance configuration methods
@@ -250,8 +252,11 @@ public class Accel_GY521  implements Accelerometer, Gyro, Sendable {
         this.updateWatchdog();
         double accelAngle = this.getAccelAngle();
         double gyroRate = this.getRate();
+        // do this after reading so that it doesn't delay the normal usage because waking up has a delay
+        this.setSleepMode(false); // always set sleep to false so that the chip recovers after power loss
         previousAngle = (previousAngle + gyroRate * getElapsedTime()) * kGyroInfluence
                 + (accelAngle) * (1 - kGyroInfluence);
+
         // Assumptions:
         // The apparatus that this device is mounted on will be at a steady-state (not shaking around)
         // at startup.
