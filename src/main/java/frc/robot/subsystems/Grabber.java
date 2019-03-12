@@ -7,19 +7,22 @@ import frc.robot.motor.Motor;
 import frc.robot.movements.ControlGrabber;
 
 public class Grabber extends Subsystem {
-    private Motor grabberMotor;
-    private Timer pancakeTimer;
+
+    private Motor grabberMotor, wristMotor;
+
+//    private Timer pancakeTimer;
     private static final double EXPEL_SPEED = 1;
     private static final double INTAKE_SPEED = -0.4;
 
-    private Solenoid pancakePistons;
-    private Solenoid grabbyPiston;
+    private Solenoid extendHatchMechPiston, hatchGrabPiston;
 
-    public Grabber(Motor grabberMotor, Solenoid pancakePistons, Solenoid grabbyPiston) {
+    public Grabber(Motor grabberMotor, Motor wristMotor, Solenoid extendHatchMechPiston, Solenoid hatchGrabPiston) {
         this.grabberMotor = grabberMotor;
-        this.pancakePistons = pancakePistons;
-        this.grabbyPiston = grabbyPiston;
-        pancakeTimer = new Timer();
+        this.wristMotor = wristMotor;
+
+        this.extendHatchMechPiston = extendHatchMechPiston;
+        this.hatchGrabPiston = hatchGrabPiston;
+//        pancakeTimer = new Timer();
     }
 
     public void expel() {
@@ -34,37 +37,41 @@ public class Grabber extends Subsystem {
         grabberMotor.set(INTAKE_SPEED);
     }
 
-    public void setSpeed(double speed) {
+    public void setGrabberMotor(double speed) {
         grabberMotor.set(speed);
     }
 
-    public void expelHatch() {
-        pancakePistons.set(true);
-        pancakeTimer.reset();
-        pancakeTimer.start();
+    public void setWristMotor(double speed) {
+        this.wristMotor.set(speed);
     }
 
-    public void setPancakePistons(boolean on) {
-        pancakePistons.set(on);
+
+    public void setExtendHatchMechPiston(boolean on) {
+        extendHatchMechPiston.set(on);
+    }
+    public void toggleExtendHatchMechPiston() {
+        extendHatchMechPiston.set(!extendHatchMechPiston.get());
     }
 
-    public void setClawPistons(boolean on) {
-        grabbyPiston.set(on);
-    }
+//    public void setClawPistons(boolean on) {
+//        grabbyPiston.set(on);
+//    }
 
-    public void toggleClawPistons() {
-        grabbyPiston.set(!grabbyPiston.get());
-    }
+//    public void toggleClawPistons() {
+//        grabbyPiston.set(!grabbyPiston.get());
+//    }
 
-    public void updatePistons() {
-        if (pancakeTimer.get() > 0.5) {
-            pancakeTimer.stop();
-            pancakePistons.set(false);
-        }
-    }
+//    public void updatePistons() {
+//        if (pancakeTimer.get() > 0.5) {
+//            pancakeTimer.stop();
+//            extendHatchMechPiston.set(false);
+//        }
+//    }
 
     @Override
     protected void initDefaultCommand() {
         setDefaultCommand(new ControlGrabber());
     }
+
+
 }

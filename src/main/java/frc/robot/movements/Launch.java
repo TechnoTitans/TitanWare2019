@@ -12,8 +12,8 @@ public class Launch extends TimedCommand {
 
     @Override
     protected void initialize() {
-        TechnoTitan.arm.wristController.setUnfilteredSetpoint(88);
-        TechnoTitan.arm.wristController.enable();
+//        TechnoTitan.arm.wristController.setUnfilteredSetpoint(88);
+//        TechnoTitan.arm.wristController.enable();
     }
 
     @Override

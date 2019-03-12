@@ -26,7 +26,7 @@ public class ControlArmPID extends Command {
     private boolean moveWrist, moveElbow;
 
     public ControlArmPID(ArmPosition positionInfo, boolean moveWrist, boolean moveElbow) {
-        requires(TechnoTitan.arm);
+//        requires(TechnoTitan.arm);
         this.moveWrist = moveWrist;
         this.moveElbow = moveElbow;
         /*
@@ -65,12 +65,12 @@ public class ControlArmPID extends Command {
     protected void initialize() {
 //        if (TechnoTitan.arm.areSensorsOverriden()) return;
         if (moveElbow) {
-            TechnoTitan.arm.elbowController.setUnfilteredSetpoint(positionInfo.getElbowAngle());
-            TechnoTitan.arm.elbowController.enable();
+//            TechnoTitan.arm.elbowController.setUnfilteredSetpoint(positionInfo.getElbowAngle());
+//            TechnoTitan.arm.elbowController.enable();
         }
         if (moveWrist) {
-            TechnoTitan.arm.wristController.setUnfilteredSetpoint(positionInfo.getWristAngle());
-            TechnoTitan.arm.wristController.enable();
+//            TechnoTitan.arm.wristController.setUnfilteredSetpoint(positionInfo.getWristAngle());
+//            TechnoTitan.arm.wristController.enable();
         }
 //        TechnoTitan.arm.setArmSolenoid(this.positionInfo.isSolenoidEnabled());
     }
@@ -86,8 +86,8 @@ public class ControlArmPID extends Command {
 //        return TechnoTitan.arm.areSensorsOverriden() || (this.elbowController.onTarget() && this.wristController.onTarget());
 //        return TechnoTitan.arm.areSensorsOverriden();
         boolean result = true;
-        if (moveElbow) result = result && TechnoTitan.arm.elbowController.onTarget();
-        if (moveWrist) result = result && TechnoTitan.arm.wristController.onTarget();
+//        if (moveElbow) result = result && TechnoTitan.arm.elbowController.onTarget();
+//        if (moveWrist) result = result && TechnoTitan.arm.wristController.onTarget();
         return result;
     }
 }

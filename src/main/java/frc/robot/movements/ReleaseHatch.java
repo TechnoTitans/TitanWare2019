@@ -10,20 +10,19 @@ public class ReleaseHatch extends CommandGroup {
         requires(TechnoTitan.grabber);
         requires(TechnoTitan.drive);
         addSequential(new InstantCommand(() -> {
-            TechnoTitan.grabber.setClawPistons(false); // make sure that they are in
-            TechnoTitan.grabber.setPancakePistons(true);
+            TechnoTitan.grabber.setExtendHatchMechPiston(true);
             TechnoTitan.drive.set(-0.3);
         }));
         addSequential(new WaitCommand(0.25));
         addSequential(new InstantCommand(() -> {
-            TechnoTitan.grabber.setPancakePistons(false);
+            TechnoTitan.grabber.setExtendHatchMechPiston(false);
             TechnoTitan.drive.set(0);
         }));
     }
 
     @Override
     public void interrupted() {
-        TechnoTitan.grabber.setPancakePistons(false);
+        TechnoTitan.grabber.setExtendHatchMechPiston(false);
         TechnoTitan.drive.set(0);
     }
 }

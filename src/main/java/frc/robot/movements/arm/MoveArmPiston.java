@@ -8,18 +8,18 @@ public class MoveArmPiston extends Command {
     private double waitTime = 1e10;
 
     public MoveArmPiston(boolean solenoidEnabled) {
-        requires(TechnoTitan.arm);
+//        requires(TechnoTitan.arm);
         this.solenoidEnabled = solenoidEnabled;
     }
 
     @Override
     protected void initialize() {
-        boolean up = TechnoTitan.arm.isUp();
-        if (up == solenoidEnabled) waitTime = 0;
-        else if (up && !solenoidEnabled) waitTime = 1;
-        else if (!up && solenoidEnabled) waitTime = 1;
+//        boolean up = TechnoTitan.arm.isUp();
+//        if (up == solenoidEnabled) waitTime = 0;
+//        else if (up && !solenoidEnabled) waitTime = 1;
+//        else if (!up && solenoidEnabled) waitTime = 1;
 
-        TechnoTitan.arm.setArmSolenoid(solenoidEnabled);
+//        TechnoTitan.arm.setArmSolenoid(solenoidEnabled);
     }
 
     @Override
