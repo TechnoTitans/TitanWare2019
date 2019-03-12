@@ -1,6 +1,8 @@
 package frc.robot.sensors.vision;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.TechnoTitan;
 import frc.robot.sensors.TitanGyro;
 
@@ -8,26 +10,27 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Queue;
 
-public class VisionKalmanFilter {
-    private static final int LAG_FRAMES = 5;
+public class VisionKalmanFilter extends Command {
+    private static final int LAG_FRAMES = 2;
+    public static final double K_LEFT_ENCODER = 22.0;
 
     private static class Matrix {
         private double[][] data;
         private int cols, rows;
 
-        public Matrix(double[][] data) {
+        Matrix(double[][] data) {
             this.data = data;
             this.rows = data.length;
             this.cols = (rows > 0 ? data[0].length : 0);
         }
 
-        public Matrix(int rows, int cols) {
+        Matrix(int rows, int cols) {
             this.cols = cols;
             this.rows = rows;
             data = new double[rows][cols];
         }
 
-        public Matrix multiply(Matrix other) {
+        Matrix multiply(Matrix other) {
             double[][] newData = new double[rows][other.cols];
             if (cols != other.rows) throw new IllegalArgumentException("Matrix shapes not compatible");
             for (int i = 0; i < rows; ++i) {
@@ -42,7 +45,7 @@ public class VisionKalmanFilter {
             return new Matrix(newData);
         }
 
-        public Matrix transpose() {
+        Matrix transpose() {
             double[][] result = new double[cols][rows];
             for (int i = 0; i < rows; ++i) {
                 for (int j = 0; j < cols; ++j) {
@@ -52,7 +55,7 @@ public class VisionKalmanFilter {
             return new Matrix(result);
         }
 
-        public void add(Matrix other) {
+        void add(Matrix other) {
             for (int i = 0; i < rows; ++i) {
                 for (int j = 0; j < cols; ++j) {
                     data[i][j] += other.data[i][j];
@@ -60,7 +63,7 @@ public class VisionKalmanFilter {
             }
         }
 
-        public void subtract(Matrix other) {
+        void subtract(Matrix other) {
             for (int i = 0; i < rows; ++i) {
                 for (int j = 0; j < cols; ++j) {
                     data[i][j] -= other.data[i][j];
@@ -68,7 +71,7 @@ public class VisionKalmanFilter {
             }
         }
 
-        public double[] multiply(double[] other) {
+        double[] multiply(double[] other) {
             double[] result = new double[rows];
             if (other.length != cols) throw new IllegalArgumentException("Not enough to multiply");
             for (int i = 0; i < rows; ++i) {
@@ -81,8 +84,30 @@ public class VisionKalmanFilter {
             return result;
         }
 
+        static double innerProduct(double[] a, double[] b) {
+            if (a.length != b.length) throw new IllegalArgumentException("Lengths don't match");
+            double result = 0;
+            for (int i = 0; i < a.length; ++i) result += a[i] * b[i];
+            return result;
+        }
+
+        static Matrix outerProduct(double[] a, double[] b) {
+            double[][] result = new double[a.length][b.length];
+            for (int i = 0; i < a.length; ++i) {
+                for (int j = 0; j < b.length; ++j) {
+                    result[i][j] = a[i] * b[j];
+                }
+            }
+            return new Matrix(result);
+        }
+
+        static Matrix eye() {
+            return new Matrix(new double[][]{
+                    {1, 0, 0}, {0, 1, 0}, {0, 0, 1}
+            });
+        }
         // Methods from: https://www.sanfoundry.com/java-program-find-inverse-matrix/
-        public Matrix invert() {
+        Matrix invert() {
             double[][] a = data;
             int n = rows;
             double x[][] = new double[n][n];
@@ -194,9 +219,12 @@ public class VisionKalmanFilter {
     }
 
     private TitanGyro gyro;
+
     private double prevGyroAngle = 0;
 
     private Timer lastTime;
+
+    private VisionPositionInfo resultPositionInfo;
 
     public VisionKalmanFilter() {
         lastTime = new Timer();
@@ -204,6 +232,7 @@ public class VisionKalmanFilter {
         gyro = new TitanGyro(TechnoTitan.centralGyro);
         visionLagBuffer = new ArrayDeque<>();
         visionPositionInfo = new VisionPositionInfo(0, 0, 0);
+        resultPositionInfo = new VisionPositionInfo(0, 0, 0);
     }
 
     private static class SensorData {
@@ -237,7 +266,7 @@ public class VisionKalmanFilter {
             return distance;
         }
 
-        public double getDt() {
+        double getDt() {
             return dt;
         }
     }
@@ -252,8 +281,8 @@ public class VisionKalmanFilter {
             this.angle = angle;
             covMatrix = new Matrix(new double[][] {
                     {25, 0, 0},
-                    {0, 2500, 0},
-                    {0, 0, 25}
+                    {0, 25, 0},
+                    {0, 0, 0.00047}
             });
         }
 
@@ -282,12 +311,20 @@ public class VisionKalmanFilter {
         void interpolateSensorData(SensorData sensors) {
             double lSpeed = sensors.getEncoderLeftSpeed(),
                     rSpeed = sensors.getEncoderRightSpeed();
-            double averageSpeed = (lSpeed + rSpeed) / 2;
             double dt = sensors.getDt();
-            x += averageSpeed * Math.sin(angle) * dt;
-            y += averageSpeed * Math.cos(angle) * dt;
             double angleChange = sensors.getAngleChange();
 
+
+            // This is because the left encoder isn't working
+            // Make sure we don't divide by 0
+            if (dt > 0.005) lSpeed = rSpeed + (angleChange / dt) * K_LEFT_ENCODER;
+            else lSpeed = rSpeed;
+
+            double averageSpeed = (lSpeed + rSpeed) / 2;
+
+
+            x += averageSpeed * Math.sin(angle) * dt;
+            y += averageSpeed * Math.cos(angle) * dt;
             /* (x, y, angle, lSpeed, rSpeed), S = 2*averageSpeed
             F =
             1, 0, averageSpeed*dt*cos(angle)
@@ -308,80 +345,93 @@ public class VisionKalmanFilter {
             Matrix Q = new Matrix(new double[][] {
                     {variation * dt, 0, 0},
                     {0, variation * dt, 0},
-                    {0, 0, 0 * dt}
+                    {0, 0, 0.0 * dt}
             });
 
             covMatrix = F.multiply(covMatrix).multiply(F.transpose());
             covMatrix.add(Q);
 
             double dist = sensors.getDistance();
-//            double dist = 0;
             if (dist > 11.9 && shouldSeeDistanceSensor()) {
                 double distResidual = dist - getPredictedDistance();
-                double[] H = new double[] {0, -1 / Math.cos(angle), 0}; // derivative of distResidual with respect to y, row vector
-                double errorDist = 0.62;  // +- 4 cm = 0.62 in^2 variance error
-                double S = H[1] * covMatrix.multiply(H)[1];
-                S += errorDist;
-                double[] K = covMatrix.multiply(H);  // column vector
-                double[] gains = new double[K.length];
-                for (int i = 0; i < K.length; ++i) {
-                    K[i] /= S;
-                    gains[i] = K[i] * distResidual;
-                }
-                addGains(gains);
-                Matrix diff = new Matrix(new double[][]{
-                        {1, -K[0] * H[1], 0}, {0, 1 - K[1] * H[1], 0}, {0, -K[2] * H[1], 1}
-                });
+                if (Math.abs(distResidual) < 30) {
+                    double[] H = new double[]{0, -1 / Math.cos(angle), -y / Math.cos(angle) * Math.tan(angle)}; // derivative of distResidual with respect to y, row vector
+                    double errorDist = 5;  // 2.2 in error
+                    double[] covH = covMatrix.multiply(H);
+                    double S = Matrix.innerProduct(H, covH);
+                    S += errorDist;
+                    double[] K = covH;  // column vector
+                    double[] gains = new double[K.length];
+                    for (int i = 0; i < K.length; ++i) {
+                        K[i] /= S;
+                        gains[i] = K[i] * distResidual;
+                    }
+                    addGains(gains);
 
-                covMatrix = diff.multiply(covMatrix);
+                    Matrix diff = Matrix.eye();
+                    diff.subtract(Matrix.outerProduct(K, H));
+
+                    covMatrix = diff.multiply(covMatrix);
+                } else {
+                    System.out.println("Warning: distance sensor does not match vision data (error=" + distResidual + ")");
+                }
             }
         }
 
         void interpolateVisionData(double visionX, double visionY) {
-            double xResidual = visionX - getPredictedVisionX();
-            double yResidual = visionY - getPredictedVisionY();
+            double predictedX = getPredictedVisionX();
+            double predictedY = getPredictedVisionY();
+            double xResidual = visionX - predictedX;
+            double yResidual = visionY - predictedY;
+
+            // project the residual vector onto the perpendicular vector
+            double perpVecX = Math.cos(angle),
+                    perpVecY = Math.sin(angle);
+
+            // We can add and subtract multiples of 16*<perpVecX, perpVecY> from the residual vector
+            double projectionLen = perpVecX * xResidual + perpVecY * yResidual;
+            final double TARGET_DIST_DIFF = 21.75;
+            projectionLen = TARGET_DIST_DIFF * Math.round(projectionLen / TARGET_DIST_DIFF);
+            predictedX += projectionLen * perpVecX;
+            predictedY += projectionLen * perpVecY;
+
+            // recompute residuals
+            xResidual = visionX - predictedX;
+            yResidual = visionY - predictedY;
 
 //            visionX = -x * Math.cos(angle) + y * Math.sin(angle);
 //            visionY = -x * Math.sin(angle) - y * Math.cos(angle);
-//            double predictedX = -visionY * Math.sin(angle) - visionX * Math.cos(angle);
-//            double predictedY = -visionY * Math.cos(angle) + visionX * Math.sin(angle);
+//            double predictedX = -visionY * Math.sin(angle) - visionX * Math.cos(angle) + projectionLen * cos(angle);
+//            double predictedY = -visionY * Math.cos(angle) + visionX * Math.sin(angle) + projectionLen * sin(angle);
             Matrix H = new Matrix(new double[][]{
-//                    {-Math.cos(angle), Math.sin(angle), -getPredictedVisionY()},
-                    {-Math.cos(angle), Math.sin(angle), 0},
-//                    {-1, 1, 0},
-//                    {-Math.sin(angle), -Math.cos(angle), getPredictedVisionX()}
-                    {-Math.sin(angle), -Math.cos(angle), 0}
-//                    {-1, -1, 0}
+                    {-Math.cos(angle), Math.sin(angle), -predictedY},
+//                    {-Math.cos(angle), Math.sin(angle), 0},
+                    {-Math.sin(angle), -Math.cos(angle), predictedX}
+//                    {-Math.sin(angle), -Math.cos(angle), 0}
             });
 
             Matrix R = new Matrix(new double[][]{
                     {25, 0},  // TODO: add value
-                    {0, 2500}
+                    {0, 25}
             });
 
             Matrix S = H.multiply(covMatrix).multiply(H.transpose());
             S.add(R);
 
-            // Equivalent to (since H is identity for now)
-//            Matrix S = R;
-//            S.add(covMatrix);
-
             Matrix K = covMatrix.multiply(H.transpose()).multiply(S.invert());
             double[] gains = K.multiply(new double[]{xResidual, yResidual});
             addGains(gains);
 
-            Matrix eye = new Matrix(new double[][]{
-                    {1, 0, 0}, {0, 1, 0}, {0, 0, 1}
-            });
+            Matrix diff = Matrix.eye();
 
-            eye.subtract(K.multiply(H));
-            covMatrix = eye.multiply(covMatrix);
+            diff.subtract(K.multiply(H));
+            covMatrix = diff.multiply(covMatrix);
         }
 
         private void addGains(double[] gains) {
             x += gains[0];
             y += gains[1];
-//            angle += gains[2];
+            angle += gains[2];
         }
 
         static VisionPositionInfo fromSensorData(double visionX, double visionY, double skew) {
@@ -416,19 +466,15 @@ public class VisionKalmanFilter {
     private Queue<SensorData> visionLagBuffer;
 
     public VisionPositionInfo getSensorData() {
-        VisionPositionInfo positionInfoCopy = visionPositionInfo.copy();
-        for (SensorData sensors : visionLagBuffer) {
-            positionInfoCopy.interpolateSensorData(sensors);
-        }
-        return positionInfoCopy;
+        return resultPositionInfo;
     }
 
     private VisionPositionInfo visionPositionInfo;
 
-    public void start() {
+    public void initialize() {
         visionLagBuffer.clear();
         visionPositionInfo = VisionPositionInfo.fromSensorData(TechnoTitan.vision.getXOffset(), TechnoTitan.vision.getYDistance(), TechnoTitan.vision.getSkew());
-
+        resultPositionInfo = visionPositionInfo.copy();
         lastTime.reset();
         lastTime.start();
         gyro.reset();
@@ -437,21 +483,38 @@ public class VisionKalmanFilter {
     public void updateSensorBuffer(double dt) {
         double lSpeed = TechnoTitan.drive.getLeftEncoder().getSpeedInches(),
                 rSpeed = TechnoTitan.drive.getRightEncoder().getSpeedInches();
-        visionLagBuffer.add(new SensorData(lSpeed, rSpeed, Math.toRadians(gyro.getAngle() - prevGyroAngle), TechnoTitan.tfDistance.getDistance(), dt));
+        visionLagBuffer.add(new SensorData(lSpeed, rSpeed, Math.toRadians(gyro.getAngle() - prevGyroAngle), TechnoTitan.tfDistance.isValid() ?
+                TechnoTitan.tfDistance.getDistance() : 0, dt));
         prevGyroAngle = gyro.getAngle();
     }
 
-    public void update() {
+    public void execute() {
         double dt = lastTime.get();
         lastTime.reset();
 
         updateSensorBuffer(dt);
-        if (visionLagBuffer.size() < LAG_FRAMES) return;
-        SensorData sensors = visionLagBuffer.remove();
-        visionPositionInfo.interpolateSensorData(sensors);
+        if (visionLagBuffer.size() >= LAG_FRAMES) {
+            SensorData sensors = visionLagBuffer.remove();
+            visionPositionInfo.interpolateSensorData(sensors);
 
-        if (TechnoTitan.vision.canSeeTargets()) {
-            visionPositionInfo.interpolateVisionData(TechnoTitan.vision.getXOffset(), TechnoTitan.vision.getYDistance());
+            if (TechnoTitan.vision.canSeeTargets()) {
+                visionPositionInfo.interpolateVisionData(TechnoTitan.vision.getXOffset(), TechnoTitan.vision.getYDistance());
+            }
         }
+
+        resultPositionInfo = visionPositionInfo.copy();
+        for (SensorData futureSensors : visionLagBuffer) {
+            resultPositionInfo.interpolateSensorData(futureSensors);
+        }
+
+
+        SmartDashboard.putNumber("Angle", Math.toDegrees(resultPositionInfo.getAngle()));
+        SmartDashboard.putNumber("Distance", resultPositionInfo.getY());
+        SmartDashboard.putNumber("X", resultPositionInfo.getX());
+    }
+
+    @Override
+    protected boolean isFinished() {
+        return false;
     }
 }

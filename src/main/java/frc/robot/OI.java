@@ -17,6 +17,7 @@ import frc.robot.movements.*;
 import frc.robot.movements.arm.ArmPosition;
 import frc.robot.movements.arm.ControlArm;
 import frc.robot.movements.arm.MoveArmToPosition;
+import frc.robot.sensors.vision.VisionKalmanFilter;
 
 
 /**
@@ -223,10 +224,12 @@ public class OI {
         btnOverrideSensors.whenPressed(new ControlArm());
 
 
-//        autoAlign.toggleWhenPressed(new AutoAlign(0.5, 20, true));
-        autoAlign.toggleWhenPressed(new AutoAlignAngle());
+        VisionKalmanFilter visionFilter = new VisionKalmanFilter();
+        autoAlign.toggleWhenPressed(new AutoAlign(0.8, 20, visionFilter));
+//        autoAlign.toggleWhenPressed(new AutoAlignAngle());
 
-        forwardAlign.whenPressed(new ForwardAlign(ArmPosition.LOW_HATCH, 60, 0.5));
+//        forwardAlign.whenPressed(new ForwardAlign(ArmPosition.LOW_HATCH, 60, 0.5));
+        forwardAlign.toggleWhenPressed(visionFilter);
 
         launchButton.whenPressed(new Launch());
         expelGrabberAndBackup.whenPressed(new ReleaseHatch());
