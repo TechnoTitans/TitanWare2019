@@ -1,6 +1,7 @@
 package frc.robot.movements;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.TechnoTitan;
 import frc.robot.sensors.TitanGyro;
@@ -17,31 +18,20 @@ public class AutoAlign extends Command {
                                 NO_SENSOR_DIST = 20;
 
     private double speed;
+    private double dy = -1e10;
 
-    private double lDist, rDist;
-    private double dy = 1e10;
+    private VisionKalmanFilter visionKalmanFilter;
 
-    private static VisionKalmanFilter visionKalmanFilter;
-
-    private boolean isTest;
-
-    public AutoAlign(double speed, double slowDownDist, boolean isTest) {
+    public AutoAlign(double speed, double slowDownDist, VisionKalmanFilter visionKalmanFilter) {
         requires(TechnoTitan.drive);
         this.speed = speed;
         this.slowDownDist = slowDownDist;
-        visionKalmanFilter = new VisionKalmanFilter();
-        this.isTest = isTest;
+        this.visionKalmanFilter = visionKalmanFilter;
     }
 
     @Override
     protected void initialize() {
-//        if (TechnoTitan.vision.canSeeTargets()) {
-            visionKalmanFilter.start();
-            this.dy = visionKalmanFilter.getSensorData().getY();
-//        } else {
-//            if (this.getGroup() != null) this.getGroup().cancel();
-//            else this.cancel();
-//        }
+        if (!visionKalmanFilter.isRunning()) visionKalmanFilter.start();
     }
 
     /**
@@ -121,9 +111,9 @@ public class AutoAlign extends Command {
 
     @Override
     protected void execute() {
-        double lSpeed, rSpeed;
+        if (!visionKalmanFilter.isRunning() || visionKalmanFilter.timeSinceInitialized() < 0.1) return;
 
-        visionKalmanFilter.update();
+        double lSpeed, rSpeed;
 
         VisionKalmanFilter.VisionPositionInfo visionPositionInfo = visionKalmanFilter.getSensorData();
         double dx = visionPositionInfo.getX(),
@@ -147,8 +137,6 @@ public class AutoAlign extends Command {
                 rSpeed /= Math.abs(rSpeed);
                 lSpeed /= Math.abs(rSpeed);
             }
-            lDist = TechnoTitan.drive.getLeftEncoder().getDistance();
-            rDist = TechnoTitan.drive.getRightEncoder().getDistance();
 
             SmartDashboard.putNumber("Curvature", kappa);
         } else {
@@ -156,16 +144,10 @@ public class AutoAlign extends Command {
             lSpeed = minSpeed - error;
             rSpeed = minSpeed + error;
         }
-        SmartDashboard.putNumber("Angle", Math.toDegrees(skew));
-        SmartDashboard.putNumber("Distance", dy);
-        SmartDashboard.putNumber("X", dx);
         SmartDashboard.putNumber("lSpeed", lSpeed);
         SmartDashboard.putNumber("rSpeed", rSpeed);
         this.dy = dy;
-        if (!isTest)
-            TechnoTitan.drive.set(lSpeed, rSpeed);
-        else
-            TechnoTitan.drive.set(TechnoTitan.oi.getLeft() * 0.3, TechnoTitan.oi.getRight() * 0.3);
+        TechnoTitan.drive.set(lSpeed, rSpeed);
     }
 
     @Override
