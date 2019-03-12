@@ -19,10 +19,7 @@ import frc.robot.motor.TalonSRX;
 import frc.robot.sensors.*;
 import frc.robot.sensors.gy521.Accel_GY521;
 import frc.robot.sensors.vision.VisionSensor;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Grabber;
-import frc.robot.subsystems.TankDrive;
+import frc.robot.subsystems.*;
 
 import java.awt.*;
 
@@ -35,9 +32,11 @@ import java.awt.*;
  * project.
  */
 public class TechnoTitan extends TimedRobot {
+
   public static OI oi;
   public static DriveTrain drive;
   public static Arm arm;
+  public static Elevator elevator;
   public static AHRS navx;
   public static VisionSensor vision;
   public static TimeOfFlight tfDistance;
@@ -46,10 +45,13 @@ public class TechnoTitan extends TimedRobot {
 
 
   private TalonSRX wrist, elbow;
+  private TalonSRX elevatorMotor;
 
   private Accel_GY521 elbowAngleSensor;
   private Accel_GY521 wristAngleSensor;
 
+    private DigitalInput limitSwitchTop;
+    private DigitalInput limitSwitchBottom;
 
   private static final boolean LEFT_REVERSE = false,
                                RIGHT_REVERSE = true;
@@ -76,12 +78,21 @@ public class TechnoTitan extends TimedRobot {
     wrist = new TalonSRX(RobotMap.WRIST_MOTOR, false);
     elbow = new TalonSRX(RobotMap.ELBOW_MOTOR, true);
 
+    // elevator setup
+      elevatorMotor = new TalonSRX(RobotMap.ELEVATOR_MOTOR, false);
+
     // MARK - accelerometer setup
 
 
     elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR, false, -56);
     wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR, false, 86.8);
-    arm = new Arm(elbow, wrist, new Solenoid(RobotMap.PCM_ADDR, RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
+
+    limitSwitchTop = new DigitalInput(RobotMap.LS_TOP);
+    limitSwitchTop = new DigitalInput(RobotMap.LS_BOT);
+
+
+      arm = new Arm(elbow, wrist, new Solenoid(RobotMap.PCM_ADDR, RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
+      elevator = new Elevator(elevatorMotor, limitSwitchTop, limitSwitchBottom);
     grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_PANEL_PISTON));
 
 

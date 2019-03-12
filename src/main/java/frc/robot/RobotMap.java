@@ -51,4 +51,7 @@ public class RobotMap {
   public static final int PCM_ADDR = 15;
   public static final int ARM_PISTON = 0;
   public static final int HATCH_PANEL_PISTON = 1;
+  public static final int ELEVATOR_MOTOR = -999; // TODO calculate actual value
+  public static final int LS_TOP = -1;
+  public static final int LS_BOT = -1;
 }
