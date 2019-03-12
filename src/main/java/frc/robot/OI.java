@@ -65,6 +65,7 @@ public class OI {
                     btnEmergencyResetSensors;
 
     private Btn btnHatchEject;
+    private Btn btnMoveTargetLeft, btnMoveTargetRight;
 
     public OI() {
         initialize();
@@ -108,6 +109,9 @@ public class OI {
         Button forwardAlign = new Btn(left, 2);
         Button launchButton = new Btn(left, 7);
         Button expelGrabberAndBackup = new Btn(right, 10);
+
+        btnMoveTargetLeft = new Btn(left, 4);
+        btnMoveTargetRight = new Btn(left, 5);
 
         btnHatchEject = new Btn(right, 5);
         btnGrabberIntake = new Btn(right, 2);
@@ -280,4 +284,8 @@ public class OI {
     public boolean shouldExpelHatch() {
         return btnHatchEject.isPressed();
     }
+
+    public boolean getMoveTargetLeft() { return btnMoveTargetLeft.isPressed(); }
+
+    public boolean getMoveTargetRight() { return btnMoveTargetRight.isPressed(); }
 }

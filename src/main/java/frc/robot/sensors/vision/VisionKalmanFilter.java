@@ -13,6 +13,7 @@ import java.util.Queue;
 public class VisionKalmanFilter extends Command {
     private static final int LAG_FRAMES = 2;
     public static final double K_LEFT_ENCODER = 22.0;
+    private static final double TARGET_DIST_DIFF = 21.75;
 
     private static class Matrix {
         private double[][] data;
@@ -390,7 +391,6 @@ public class VisionKalmanFilter extends Command {
 
             // We can add and subtract multiples of 16*<perpVecX, perpVecY> from the residual vector
             double projectionLen = perpVecX * xResidual + perpVecY * yResidual;
-            final double TARGET_DIST_DIFF = 21.75;
             projectionLen = TARGET_DIST_DIFF * Math.round(projectionLen / TARGET_DIST_DIFF);
             predictedX += projectionLen * perpVecX;
             predictedY += projectionLen * perpVecY;
@@ -461,6 +461,14 @@ public class VisionKalmanFilter extends Command {
         private double getPredictedDistance() {
             return -y / Math.cos(angle);
         }
+
+        void moveRight() {
+            x += TARGET_DIST_DIFF;
+        }
+
+        void moveLeft() {
+            x -= TARGET_DIST_DIFF;
+        }
     }
 
     private Queue<SensorData> visionLagBuffer;
@@ -507,10 +515,15 @@ public class VisionKalmanFilter extends Command {
             resultPositionInfo.interpolateSensorData(futureSensors);
         }
 
-
         SmartDashboard.putNumber("Angle", Math.toDegrees(resultPositionInfo.getAngle()));
         SmartDashboard.putNumber("Distance", resultPositionInfo.getY());
         SmartDashboard.putNumber("X", resultPositionInfo.getX());
+
+        if (TechnoTitan.oi.getMoveTargetLeft()) {
+            visionPositionInfo.moveRight();
+        } else if (TechnoTitan.oi.getMoveTargetRight()) {
+            visionPositionInfo.moveLeft();
+        }
     }
 
     @Override
