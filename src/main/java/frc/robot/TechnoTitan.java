@@ -8,20 +8,21 @@
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.hal.util.UncleanStatusException;
-import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
-import frc.robot.sensors.*;
+import frc.robot.sensors.NavXGyro;
+import frc.robot.sensors.QuadEncoder;
+import frc.robot.sensors.TimeOfFlight;
 import frc.robot.sensors.gy521.Accel_GY521;
 import frc.robot.sensors.vision.VisionSensor;
 import frc.robot.subsystems.*;
-
-import java.awt.*;
 
 
 /**
@@ -91,9 +92,10 @@ public class TechnoTitan extends TimedRobot {
     limitSwitchTop = new DigitalInput(RobotMap.LS_BOT);
 
 
-      arm = new Arm(elbow, wrist, new Solenoid(RobotMap.PCM_ADDR, RobotMap.ARM_PISTON), elbowAngleSensor, wristAngleSensor);
-      elevator = new Elevator(elevatorMotor, limitSwitchTop, limitSwitchBottom);
-    grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_PANEL_PISTON));
+     
+    elevator = new Elevator(elevatorMotor, limitSwitchTop, limitSwitchBottom);
+    arm = new Arm(elbow, wrist, elbowAngleSensor, wristAngleSensor);
+    grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_PANEL_PISTON), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_GRABBER_PISTON));
 
 
     // Drivetrain setup
