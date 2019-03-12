@@ -10,6 +10,7 @@ import java.util.Queue;
 
 public class VisionKalmanFilter {
     private static final int LAG_FRAMES = 2;
+    public static final double K_LEFT_ENCODER = 22.0;
 
     private static class Matrix {
         private double[][] data;
@@ -306,12 +307,20 @@ public class VisionKalmanFilter {
         void interpolateSensorData(SensorData sensors) {
             double lSpeed = sensors.getEncoderLeftSpeed(),
                     rSpeed = sensors.getEncoderRightSpeed();
-            double averageSpeed = (lSpeed + rSpeed) / 2;
             double dt = sensors.getDt();
-            x += averageSpeed * Math.sin(angle) * dt;
-            y += averageSpeed * Math.cos(angle) * dt;
             double angleChange = sensors.getAngleChange();
 
+
+            // This is because the left encoder isn't working
+            // Make sure we don't divide by 0
+            if (dt > 0.005) lSpeed = rSpeed + (angleChange / dt) * K_LEFT_ENCODER;
+            else lSpeed = rSpeed;
+
+            double averageSpeed = (lSpeed + rSpeed) / 2;
+
+
+            x += averageSpeed * Math.sin(angle) * dt;
+            y += averageSpeed * Math.cos(angle) * dt;
             /* (x, y, angle, lSpeed, rSpeed), S = 2*averageSpeed
             F =
             1, 0, averageSpeed*dt*cos(angle)
@@ -366,17 +375,34 @@ public class VisionKalmanFilter {
         }
 
         void interpolateVisionData(double visionX, double visionY) {
-            double xResidual = visionX - getPredictedVisionX();
-            double yResidual = visionY - getPredictedVisionY();
+            double predictedX = getPredictedVisionX();
+            double predictedY = getPredictedVisionY();
+            double xResidual = visionX - predictedX;
+            double yResidual = visionY - predictedY;
+
+            // project the residual vector onto the perpendicular vector
+            double perpVecX = Math.cos(angle),
+                    perpVecY = Math.sin(angle);
+
+            // We can add and subtract multiples of 16*<perpVecX, perpVecY> from the residual vector
+            double projectionLen = perpVecX * xResidual + perpVecY * yResidual;
+            final double TARGET_DIST_DIFF = 21.75;
+            projectionLen = TARGET_DIST_DIFF * Math.round(projectionLen / TARGET_DIST_DIFF);
+            predictedX += projectionLen * perpVecX;
+            predictedY += projectionLen * perpVecY;
+
+            // recompute residuals
+            xResidual = visionX - predictedX;
+            yResidual = visionY - predictedY;
 
 //            visionX = -x * Math.cos(angle) + y * Math.sin(angle);
 //            visionY = -x * Math.sin(angle) - y * Math.cos(angle);
-//            double predictedX = -visionY * Math.sin(angle) - visionX * Math.cos(angle);
-//            double predictedY = -visionY * Math.cos(angle) + visionX * Math.sin(angle);
+//            double predictedX = -visionY * Math.sin(angle) - visionX * Math.cos(angle) + projectionLen * cos(angle);
+//            double predictedY = -visionY * Math.cos(angle) + visionX * Math.sin(angle) + projectionLen * sin(angle);
             Matrix H = new Matrix(new double[][]{
-                    {-Math.cos(angle), Math.sin(angle), -getPredictedVisionY()},
+                    {-Math.cos(angle), Math.sin(angle), -predictedY},
 //                    {-Math.cos(angle), Math.sin(angle), 0},
-                    {-Math.sin(angle), -Math.cos(angle), getPredictedVisionX()}
+                    {-Math.sin(angle), -Math.cos(angle), predictedX}
 //                    {-Math.sin(angle), -Math.cos(angle), 0}
             });
 

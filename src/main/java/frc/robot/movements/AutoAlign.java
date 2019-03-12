@@ -94,6 +94,8 @@ public class AutoAlign extends Command {
 //        double pxB = -3 * x - 2 * mx,
 //                pyB = -3 * y - 2 * my - 1 * distance * STRAIGHT_END_COEFF;
 
+        // TODO: try this out maybe?
+//        double coeff = Math.abs(x) / distance * 1 + STRAIGHT_END_COEFF;
         double pyA = 2 * y + 1 * my  + 1 * distance * STRAIGHT_END_COEFF,
                 pyB = -3 * y - 2 * my  - 1 * distance * STRAIGHT_END_COEFF,
                 pyC = 1 * my,
