@@ -5,14 +5,14 @@
 <script src="/networktables/networktables.js"></script>
 </head>
 <body>
-<canvas width="600" height="600" style="border: 1px solid black;"></canvas>
+<canvas width="1200" height="1200" style="border: 1px solid black;"></canvas>
 <script type="text/javascript">
-var table = "/Smartdashboard/";
+var table = "/SmartDashboard/";
 var canvas = document.querySelector("canvas"),
     ctx = canvas.getContext("2d"),
     width = canvas.width,
     height = canvas.height,
-    scale = 8,
+    scale = 6,
     targetX = width / 2,
     targetY = height * 0.1;
 
@@ -26,7 +26,7 @@ var drawTargets = function() {
 var refreshCanvas = function() {
     ctx.clearRect(0, 0, width, height);
     drawTargets();
-    var robotX = 0, robotY = -50, robotAngle = 0;
+    var robotX = NetworkTables.getValue(table + "X", 0), robotY = NetworkTables.getValue(table + "Distance", 0), robotAngle = NetworkTables.getValue(table + "Angle", 0);
     robotAngle *= Math.PI / 180;
     var x = targetX + robotX * scale, y = targetY - robotY * scale;
     ctx.fillStyle = "gray";
@@ -42,13 +42,13 @@ var refreshCanvas = function() {
     ctx.stroke();
 
     ctx.strokeStyle = "red";
-    var pX = [-40.0, 60.0, 0.0, -20.0];
-    var pY = [108.01781746031389, -111.48209244958791, 59.464274989274024, -56.0];
+    var pX = NetworkTables.getValue(table + "spline-x", [0, 0, 0, 0]);
+    var pY = NetworkTables.getValue(table + "spline-y", [0, 0, 0, 0]);
     ctx.beginPath();
     ctx.moveTo(targetX, targetY);
     for (let t = 1; t >= 0; t -= 0.01) {
-      let pathX = pX[0] * t * t * t + pX[1] * t * t + pX[2] * t + pX[3];
-      let pathY = pY[0] * t * t * t + pY[1] * t * t + pY[2] * t + pY[3];
+      let pathX = pX[0] * t * t * t + pX[1] * t * t + pX[2] * t + robotX;
+      let pathY = pY[0] * t * t * t + pY[1] * t * t + pY[2] * t + robotY;
       ctx.lineTo(targetX + pathX * scale, targetY - pathY * scale);
     }
     ctx.stroke();
