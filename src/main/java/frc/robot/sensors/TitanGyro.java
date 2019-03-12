@@ -9,6 +9,7 @@ public class TitanGyro implements Gyro {
 
     protected Gyro m_internalGyro;
     private double angleOffset = 0;
+    private double scale;
 
     /**
      * The reason we make a class that accepts a gyro is because the alternative would be to create a central shared
@@ -17,11 +18,16 @@ public class TitanGyro implements Gyro {
      * @param gyroToAccept - the underlying gyro to use
      */
     public TitanGyro(Gyro gyroToAccept) {
+        this(gyroToAccept, 1 / 4.3);
+    }
+
+    public TitanGyro(Gyro gyroToAccept, double scale) {
         this.m_internalGyro = gyroToAccept;
+        this.scale = scale;
     }
 
     public void resetTo(double angle) {
-        this.angleOffset = m_internalGyro.getAngle() - angle;
+        this.angleOffset = m_internalGyro.getAngle() * scale - angle;
     }
 
     @Override
@@ -38,12 +44,12 @@ public class TitanGyro implements Gyro {
     public double getAngle() {
 //         m_gyro_angle - angleOffset = angle_rst
 //         m_gyro_angle - angle_rst = angleOffset
-        return m_internalGyro.getAngle() - angleOffset;
+        return m_internalGyro.getAngle() * scale - angleOffset;
     }
 
     @Override
     public double getRate() {
-        return m_internalGyro.getRate();
+        return m_internalGyro.getRate() * scale;
     }
 
     @Override

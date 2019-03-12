@@ -64,7 +64,7 @@ public class TechnoTitan extends TimedRobot {
     vision = new VisionSensor();
     tfDistance = new TimeOfFlight();
     centralGyro = new AnalogGyro(0);
-    ((AnalogGyro) centralGyro).setSensitivity(0.00285);
+    ((AnalogGyro) centralGyro).setSensitivity(0.00155);
     centralGyro.calibrate();
 
 

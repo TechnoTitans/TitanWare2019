@@ -1,6 +1,8 @@
 package frc.robot.sensors.vision;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.TechnoTitan;
 import frc.robot.sensors.TitanGyro;
 
@@ -8,8 +10,9 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Queue;
 
-public class VisionKalmanFilter {
+public class VisionKalmanFilter extends Command {
     private static final int LAG_FRAMES = 2;
+    public static final double K_LEFT_ENCODER = 22.0;
 
     private static class Matrix {
         private double[][] data;
@@ -217,10 +220,11 @@ public class VisionKalmanFilter {
 
     private TitanGyro gyro;
 
-
     private double prevGyroAngle = 0;
 
     private Timer lastTime;
+
+    private VisionPositionInfo resultPositionInfo;
 
     public VisionKalmanFilter() {
         lastTime = new Timer();
@@ -228,6 +232,7 @@ public class VisionKalmanFilter {
         gyro = new TitanGyro(TechnoTitan.centralGyro);
         visionLagBuffer = new ArrayDeque<>();
         visionPositionInfo = new VisionPositionInfo(0, 0, 0);
+        resultPositionInfo = new VisionPositionInfo(0, 0, 0);
     }
 
     private static class SensorData {
@@ -277,7 +282,7 @@ public class VisionKalmanFilter {
             covMatrix = new Matrix(new double[][] {
                     {25, 0, 0},
                     {0, 25, 0},
-                    {0, 0, 0}
+                    {0, 0, 0.00047}
             });
         }
 
@@ -306,12 +311,20 @@ public class VisionKalmanFilter {
         void interpolateSensorData(SensorData sensors) {
             double lSpeed = sensors.getEncoderLeftSpeed(),
                     rSpeed = sensors.getEncoderRightSpeed();
-            double averageSpeed = (lSpeed + rSpeed) / 2;
             double dt = sensors.getDt();
-            x += averageSpeed * Math.sin(angle) * dt;
-            y += averageSpeed * Math.cos(angle) * dt;
             double angleChange = sensors.getAngleChange();
 
+
+            // This is because the left encoder isn't working
+            // Make sure we don't divide by 0
+            if (dt > 0.005) lSpeed = rSpeed + (angleChange / dt) * K_LEFT_ENCODER;
+            else lSpeed = rSpeed;
+
+            double averageSpeed = (lSpeed + rSpeed) / 2;
+
+
+            x += averageSpeed * Math.sin(angle) * dt;
+            y += averageSpeed * Math.cos(angle) * dt;
             /* (x, y, angle, lSpeed, rSpeed), S = 2*averageSpeed
             F =
             1, 0, averageSpeed*dt*cos(angle)
@@ -332,7 +345,7 @@ public class VisionKalmanFilter {
             Matrix Q = new Matrix(new double[][] {
                     {variation * dt, 0, 0},
                     {0, variation * dt, 0},
-                    {0, 0, 0 * dt}
+                    {0, 0, 0.0 * dt}
             });
 
             covMatrix = F.multiply(covMatrix).multiply(F.transpose());
@@ -366,22 +379,39 @@ public class VisionKalmanFilter {
         }
 
         void interpolateVisionData(double visionX, double visionY) {
-            double xResidual = visionX - getPredictedVisionX();
-            double yResidual = visionY - getPredictedVisionY();
+            double predictedX = getPredictedVisionX();
+            double predictedY = getPredictedVisionY();
+            double xResidual = visionX - predictedX;
+            double yResidual = visionY - predictedY;
+
+            // project the residual vector onto the perpendicular vector
+            double perpVecX = Math.cos(angle),
+                    perpVecY = Math.sin(angle);
+
+            // We can add and subtract multiples of 16*<perpVecX, perpVecY> from the residual vector
+            double projectionLen = perpVecX * xResidual + perpVecY * yResidual;
+            final double TARGET_DIST_DIFF = 21.75;
+            projectionLen = TARGET_DIST_DIFF * Math.round(projectionLen / TARGET_DIST_DIFF);
+            predictedX += projectionLen * perpVecX;
+            predictedY += projectionLen * perpVecY;
+
+            // recompute residuals
+            xResidual = visionX - predictedX;
+            yResidual = visionY - predictedY;
 
 //            visionX = -x * Math.cos(angle) + y * Math.sin(angle);
 //            visionY = -x * Math.sin(angle) - y * Math.cos(angle);
-//            double predictedX = -visionY * Math.sin(angle) - visionX * Math.cos(angle);
-//            double predictedY = -visionY * Math.cos(angle) + visionX * Math.sin(angle);
+//            double predictedX = -visionY * Math.sin(angle) - visionX * Math.cos(angle) + projectionLen * cos(angle);
+//            double predictedY = -visionY * Math.cos(angle) + visionX * Math.sin(angle) + projectionLen * sin(angle);
             Matrix H = new Matrix(new double[][]{
-                    {-Math.cos(angle), Math.sin(angle), -getPredictedVisionY()},
+                    {-Math.cos(angle), Math.sin(angle), -predictedY},
 //                    {-Math.cos(angle), Math.sin(angle), 0},
-                    {-Math.sin(angle), -Math.cos(angle), getPredictedVisionX()}
+                    {-Math.sin(angle), -Math.cos(angle), predictedX}
 //                    {-Math.sin(angle), -Math.cos(angle), 0}
             });
 
             Matrix R = new Matrix(new double[][]{
-                    {4, 0},  // TODO: add value
+                    {25, 0},  // TODO: add value
                     {0, 25}
             });
 
@@ -436,47 +466,55 @@ public class VisionKalmanFilter {
     private Queue<SensorData> visionLagBuffer;
 
     public VisionPositionInfo getSensorData() {
-        VisionPositionInfo positionInfoCopy = visionPositionInfo.copy();
-        for (SensorData sensors : visionLagBuffer) {
-            positionInfoCopy.interpolateSensorData(sensors);
-        }
-        return positionInfoCopy;
+        return resultPositionInfo;
     }
 
     private VisionPositionInfo visionPositionInfo;
 
-    public void start() {
+    public void initialize() {
         visionLagBuffer.clear();
         visionPositionInfo = VisionPositionInfo.fromSensorData(TechnoTitan.vision.getXOffset(), TechnoTitan.vision.getYDistance(), TechnoTitan.vision.getSkew());
-
+        resultPositionInfo = visionPositionInfo.copy();
         lastTime.reset();
         lastTime.start();
         gyro.reset();
     }
 
-    public void start2() {
-        visionPositionInfo = VisionPositionInfo.fromSensorData(TechnoTitan.vision.getXOffset(), TechnoTitan.vision.getYDistance(), gyro.getAngle() / 2.4);
-    }
-
     public void updateSensorBuffer(double dt) {
         double lSpeed = TechnoTitan.drive.getLeftEncoder().getSpeedInches(),
                 rSpeed = TechnoTitan.drive.getRightEncoder().getSpeedInches();
-        visionLagBuffer.add(new SensorData(lSpeed, rSpeed, Math.toRadians(gyro.getAngle() / 2.4 - prevGyroAngle), TechnoTitan.tfDistance.isValid() ? TechnoTitan.tfDistance.getDistance() : 0, dt));
-        prevGyroAngle = gyro.getAngle() / 2.4;
+        visionLagBuffer.add(new SensorData(lSpeed, rSpeed, Math.toRadians(gyro.getAngle() - prevGyroAngle), TechnoTitan.tfDistance.isValid() ?
+                TechnoTitan.tfDistance.getDistance() : 0, dt));
+        prevGyroAngle = gyro.getAngle();
     }
 
-    public void update() {
+    public void execute() {
         double dt = lastTime.get();
         lastTime.reset();
 
         updateSensorBuffer(dt);
-        if (visionLagBuffer.size() < LAG_FRAMES) return;
-        SensorData sensors = visionLagBuffer.remove();
-        visionPositionInfo.interpolateSensorData(sensors);
+        if (visionLagBuffer.size() >= LAG_FRAMES) {
+            SensorData sensors = visionLagBuffer.remove();
+            visionPositionInfo.interpolateSensorData(sensors);
 
-        if (TechnoTitan.vision.canSeeTargets()) {
-            visionPositionInfo.interpolateVisionData(TechnoTitan.vision.getXOffset(), TechnoTitan.vision.getYDistance());
-//            start2();
+            if (TechnoTitan.vision.canSeeTargets()) {
+                visionPositionInfo.interpolateVisionData(TechnoTitan.vision.getXOffset(), TechnoTitan.vision.getYDistance());
+            }
         }
+
+        resultPositionInfo = visionPositionInfo.copy();
+        for (SensorData futureSensors : visionLagBuffer) {
+            resultPositionInfo.interpolateSensorData(futureSensors);
+        }
+
+
+        SmartDashboard.putNumber("Angle", Math.toDegrees(resultPositionInfo.getAngle()));
+        SmartDashboard.putNumber("Distance", resultPositionInfo.getY());
+        SmartDashboard.putNumber("X", resultPositionInfo.getX());
+    }
+
+    @Override
+    protected boolean isFinished() {
+        return false;
     }
 }
