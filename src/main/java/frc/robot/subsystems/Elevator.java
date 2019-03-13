@@ -61,7 +61,7 @@ public class Elevator extends Subsystem {
 
     public void moveWrist(double speed) {
         speed = Math.min(speed, MAX_WRIST_SPEED);
-        m_motor.set(speedwr);
+        m_motor.set(speed);
     }
 
     // todo reset encoders on every limitswitch hit
