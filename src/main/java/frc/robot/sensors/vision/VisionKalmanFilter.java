@@ -14,6 +14,7 @@ public class VisionKalmanFilter extends Command {
     private static final int LAG_FRAMES = 2;
     public static final double K_LEFT_ENCODER = 22.0;
     private static final double TARGET_DIST_DIFF = 21.75;
+    public static final double MIN_DIST_SENSOR = 19.9;
 
     private static class Matrix {
         private double[][] data;
@@ -324,8 +325,8 @@ public class VisionKalmanFilter extends Command {
             double averageSpeed = (lSpeed + rSpeed) / 2;
 
 
-            x += averageSpeed * Math.sin(angle) * dt;
-            y += averageSpeed * Math.cos(angle) * dt;
+            x += averageSpeed * Math.sin(angle + angleChange / 2) * dt;
+            y += averageSpeed * Math.cos(angle + angleChange / 2) * dt;
             /* (x, y, angle, lSpeed, rSpeed), S = 2*averageSpeed
             F =
             1, 0, averageSpeed*dt*cos(angle)
@@ -353,7 +354,7 @@ public class VisionKalmanFilter extends Command {
             covMatrix.add(Q);
 
             double dist = sensors.getDistance();
-            if (dist > 11.9 && shouldSeeDistanceSensor()) {
+            if (dist > MIN_DIST_SENSOR && shouldSeeDistanceSensor()) {
                 double distResidual = dist - getPredictedDistance();
                 if (Math.abs(distResidual) < 30) {
                     double[] H = new double[]{0, -1 / Math.cos(angle), -y / Math.cos(angle) * Math.tan(angle)}; // derivative of distResidual with respect to y, row vector
@@ -455,7 +456,7 @@ public class VisionKalmanFilter extends Command {
         }
 
         private boolean shouldSeeDistanceSensor() {
-            return Math.abs(y * Math.tan(angle) - x) < 18;
+            return Math.abs(y * Math.tan(angle) - x) < 5;
         }
 
         private double getPredictedDistance() {

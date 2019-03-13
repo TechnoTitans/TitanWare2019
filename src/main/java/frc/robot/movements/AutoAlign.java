@@ -8,14 +8,18 @@ import frc.robot.sensors.TitanGyro;
 import frc.robot.sensors.vision.VisionKalmanFilter;
 
 public class AutoAlign extends Command {
+    private static final double MIN_X_ERROR = 3;
     private final double minSpeed = 0.4;
     private double slowDownDist;
 
     private static final double STRAIGHT_END_COEFF = 2.4;
     private static final double ROBOT_RADIUS = 11;  // TODO: measure
 
-    private static final double TARGET_Y_OFFSET = 10,
-                                NO_SENSOR_DIST = 20;
+    private static final double TARGET_Y_OFFSET = 25,
+                                NO_SENSOR_DIST = 20,
+                                BACKUP_DIST = 20;
+
+    private boolean isBackingUpToRealign = false;
 
     private double speed;
     private double dy = -1e10;
@@ -111,7 +115,10 @@ public class AutoAlign extends Command {
 
     @Override
     protected void execute() {
-        if (!visionKalmanFilter.isRunning() || visionKalmanFilter.timeSinceInitialized() < 0.1) return;
+        if (!visionKalmanFilter.isRunning() || visionKalmanFilter.timeSinceInitialized() < 0.1) {
+            TechnoTitan.drive.stop();
+            return;
+        };
 
         double lSpeed, rSpeed;
 
@@ -119,7 +126,12 @@ public class AutoAlign extends Command {
         double dx = visionPositionInfo.getX(),
                 dy = visionPositionInfo.getY(),
                 skew = visionPositionInfo.getAngle();
-        if (isPastSensorRange()) {
+        if (isBackingUpToRealign) {
+            double error = skew * 1;
+            lSpeed = -0.3 - error;
+            rSpeed = -0.3 + error;
+            isBackingUpToRealign = -dy > TARGET_Y_OFFSET + NO_SENSOR_DIST + BACKUP_DIST;
+        } else if (isPastSensorRange()) {
             double kappa = calculateCurvature(dx, dy + TARGET_Y_OFFSET, skew);
 
             kappa *= ROBOT_RADIUS;
@@ -139,10 +151,14 @@ public class AutoAlign extends Command {
             }
 
             SmartDashboard.putNumber("Curvature", kappa);
-        } else {
+        } else if (Math.abs(dx) < MIN_X_ERROR) {
             double error = skew * 1;
             lSpeed = minSpeed - error;
             rSpeed = minSpeed + error;
+        } else {
+            lSpeed = 0;
+            rSpeed = 0;
+            isBackingUpToRealign = true;
         }
         SmartDashboard.putNumber("lSpeed", lSpeed);
         SmartDashboard.putNumber("rSpeed", rSpeed);
@@ -158,5 +174,7 @@ public class AutoAlign extends Command {
     @Override
     protected void end() {
         TechnoTitan.drive.stop();
+        SmartDashboard.putNumberArray("spline-x", new double[] {0, 0, 0, 0});
+        SmartDashboard.putNumberArray("spline-y", new double[] {0, 0, 0, 0});
     }
 }

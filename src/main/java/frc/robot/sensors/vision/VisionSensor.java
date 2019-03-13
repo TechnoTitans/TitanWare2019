@@ -16,7 +16,7 @@ import frc.robot.sensors.TitanGyro;
  */
 public class VisionSensor {
     private static TitanGyro visionGyro;
-    private static final double CAMERA_ROBOT_CENTER_OFFSET = 6;
+    private static final double CAMERA_ROBOT_CENTER_OFFSET = 7;
 
     public VisionSensor() {
     }

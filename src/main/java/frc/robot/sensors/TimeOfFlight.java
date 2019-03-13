@@ -20,6 +20,7 @@ public class TimeOfFlight {
     private SerialPort serial;
 
     private boolean aligned = false;
+    private static final double DIST_SENSOR_TO_ROBOT = 8;
 
     private double distance;
     private int strength;
@@ -33,7 +34,7 @@ public class TimeOfFlight {
      * @return the distance
      */
     public double getDistance() {
-        return distance;
+        return distance + DIST_SENSOR_TO_ROBOT;
     }
 
     /**

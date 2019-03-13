@@ -65,11 +65,10 @@
          doCallRealMethod().when(elbowMotor).getPercentSpeed();
          doCallRealMethod().when(wristMotor).getPercentSpeed();
 
-         solenoid = mock(Solenoid.class);
          elbowSensor = mock(Accel_GY521.class);
          wristSensor = mock(Accel_GY521.class);
 
-         TechnoTitan.arm = new Arm(elbowMotor, wristMotor, solenoid, elbowSensor, wristSensor);
+         TechnoTitan.arm = new Arm(elbowMotor, wristMotor, elbowSensor, wristSensor);
 
          oi = mock(OI.class);
          TechnoTitan.oi = oi;
