@@ -127,10 +127,10 @@
 //         assertEquals(wristMotor.getPercentSpeed(), 0, 1e-5);
 //
 //         final double joystickPress = 0.5;
-//         when(oi.getElbowMove()).thenReturn(joystickPress);
+//         when(oi.getElevatorMove()).thenReturn(joystickPress);
 //
 //         Scheduler.getInstance().run();
-//         verify(oi, atLeast(2)).getElbowMove();
+//         verify(oi, atLeast(2)).getElevatorMove();
 //
 //         // Filter constant should definitely be smaller than 0.3 or else we've done something very wrong
 //         double lastSet = elbowMotor.getPercentSpeed();

@@ -1,20 +1,26 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.motor.TalonSRX;
+import frc.robot.movements.elevator.ControlElevator;
 
 public class Elevator extends Subsystem {
 
 
-    private static final double MAX_SPEED = 1.0;
-
-
+    private static final double MAX_ELEVATOR_SPEED = 1.0;
+    private static final double MAX_WRIST_SPEED = 1.0;
 
     private DigitalInput lsTop;
     private DigitalInput lsBot;
     private TalonSRX m_motor;
     private boolean overrideLS = false;
+
+
+    public static final class Constants {
+
+    }
 
     private Elevator() {}
 
@@ -22,6 +28,10 @@ public class Elevator extends Subsystem {
         this.lsTop = limitSwitchTop;
         this.lsBot = limitSwitchBottom;
         this.overrideLS = false;
+
+        // config pid
+        motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 30);
+
         m_motor = motor;
     }
 
@@ -37,16 +47,21 @@ public class Elevator extends Subsystem {
         this.overrideLS = !this.overrideLS;
     }
 
-    public void setSpeed(double speed) {
+    public void moveElevator(double speed) {
         // todo clamp/filter?
         // TODO LimitSwitch wrapper class
         // if we are not overriding the limit switches, and either is pressed
         if (!overrideLS && (lsTop.get() || lsBot.get())) {
             m_motor.set(0);
         } else {
-            speed = Math.min(speed, MAX_SPEED);
+            speed = Math.min(speed, MAX_ELEVATOR_SPEED);
             m_motor.set(speed);
         }
+    }
+
+    public void moveWrist(double speed) {
+        speed = Math.min(speed, MAX_WRIST_SPEED);
+        m_motor.set(speedwr);
     }
 
     // todo reset encoders on every limitswitch hit
@@ -57,6 +72,6 @@ public class Elevator extends Subsystem {
 
     @Override
     protected void initDefaultCommand() {
-        // controlelevator ?
+        setDefaultCommand(new ControlElevator());
     }
 }

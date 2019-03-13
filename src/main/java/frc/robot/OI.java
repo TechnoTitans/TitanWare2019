@@ -252,7 +252,7 @@ public class OI {
         return clampInput(-right.getRawAxis(1));
     }
 
-    public double getElbowMove() {
+    public double getElevatorMove() {
         return -clampInput(xbox.getY(GenericHID.Hand.kLeft) * 2);
     }
 

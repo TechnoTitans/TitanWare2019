@@ -22,7 +22,7 @@ public class ControlArm extends Command {
     }
 
     public void execute() {
-        elbowFilter.update(TechnoTitan.oi.getElbowMove());
+        elbowFilter.update(TechnoTitan.oi.getElevatorMove());
         wristFilter.update(TechnoTitan.oi.getWristMove());
 //        TechnoTitan.arm.moveElbow(elbowFilter.getValue() * MAX_ELBOW_SPEED);
 //        TechnoTitan.arm.moveWrist(wristFilter.getValue() * MAX_WRIST_SPEED);
