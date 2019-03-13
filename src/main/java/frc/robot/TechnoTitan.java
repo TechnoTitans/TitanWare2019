@@ -93,15 +93,15 @@ public class TechnoTitan extends TimedRobot {
 
 
     // Drivetrain setup
-    TalonSRX leftETalonSRX = new TalonSRX(RobotMap.LEFT_TALON_E, LEFT_REVERSE),
-             rightETalonSRX = new TalonSRX(RobotMap.RIGHT_TALON_E, RIGHT_REVERSE);
+    TalonSRX leftETalonSRX = new TalonSRX(BlinkyMap.LEFT_TALON_E, LEFT_REVERSE),
+             rightETalonSRX = new TalonSRX(BlinkyMap.RIGHT_TALON_E, RIGHT_REVERSE);
     leftETalonSRX.setEncoder(new QuadEncoder(leftETalonSRX, INCHES_PER_PULSE, true));
     rightETalonSRX.setEncoder(new QuadEncoder(rightETalonSRX, INCHES_PER_PULSE, true));
 
-    TalonSRX leftFollow1 = new TalonSRX(RobotMap.LEFT_TALON_2, LEFT_REVERSE),
-            leftFollow2 = new TalonSRX(RobotMap.LEFT_TALON_3, LEFT_REVERSE),
-            rightFollow1 = new TalonSRX(RobotMap.RIGHT_TALON_2, RIGHT_REVERSE),
-            rightFollow2 = new TalonSRX(RobotMap.RIGHT_TALON_3, RIGHT_REVERSE);
+    TalonSRX leftFollow1 = new TalonSRX(BlinkyMap.LEFT_TALON_2, LEFT_REVERSE),
+            leftFollow2 = new TalonSRX(BlinkyMap.LEFT_TALON_3, LEFT_REVERSE),
+            rightFollow1 = new TalonSRX(BlinkyMap.RIGHT_TALON_2, RIGHT_REVERSE),
+            rightFollow2 = new TalonSRX(BlinkyMap.RIGHT_TALON_3, RIGHT_REVERSE);
 
     leftFollow1.follow(leftETalonSRX);
     leftFollow2.follow(leftETalonSRX);
