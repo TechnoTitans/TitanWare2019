@@ -2,7 +2,6 @@ package frc.robot.movements;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import edu.wpi.first.wpilibj.command.TimedCommand;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.robot.TechnoTitan;
 
@@ -11,6 +10,7 @@ public class ReleaseHatch extends CommandGroup {
         requires(TechnoTitan.grabber);
         requires(TechnoTitan.drive);
         addSequential(new InstantCommand(() -> {
+            TechnoTitan.grabber.setClawPistons(false); // make sure that they are in
             TechnoTitan.grabber.setPancakePistons(true);
             TechnoTitan.drive.set(-0.3);
         }));

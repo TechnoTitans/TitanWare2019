@@ -13,7 +13,7 @@ public class Arm extends Subsystem {
     // TODO: find value
     private static final double ROBOT_FRAME_WIDTH = 23.3;  // Distance in inches from arm pivot to distance sensor
     private Motor elbow, wrist;
-    private Solenoid armSolenoid;
+//    private Solenoid armSolenoid;
 
     private Accel_GY521 elbowSensor;
     private Accel_GY521 wristSensor;
@@ -111,10 +111,9 @@ public class Arm extends Subsystem {
         wrist.set(speed);
     }
 
-    public Arm(Motor elbow, Motor wrist, Solenoid armPiston, Accel_GY521 elbowSensor, Accel_GY521 wristSensor) {
+    public Arm(Motor elbow, Motor wrist, Accel_GY521 elbowSensor, Accel_GY521 wristSensor) {
         this.elbow = elbow;
         this.wrist = wrist;
-        this.armSolenoid = armPiston;
 
         this.elbowSensor = elbowSensor;
         this.wristSensor = wristSensor;
@@ -133,8 +132,9 @@ public class Arm extends Subsystem {
 
 
     public void setArmSolenoid(boolean on) {
+        System.out.println("PSST, this method doesn't actually do anything...");
         this.isUp = on;
-        armSolenoid.set(on);
+//        armSolenoid.set(on);
     }
 
     /**
@@ -152,7 +152,7 @@ public class Arm extends Subsystem {
     }
 
     public void toggleUp() {
-        this.setArmSolenoid(!isUp);
+//        this.setArmSolenoid(!isUp);
     }
 
 

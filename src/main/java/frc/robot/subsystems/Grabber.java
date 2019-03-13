@@ -13,10 +13,12 @@ public class Grabber extends Subsystem {
     private static final double INTAKE_SPEED = -0.4;
 
     private Solenoid pancakePistons;
+    private Solenoid grabbyPiston;
 
-    public Grabber(Motor grabberMotor, Solenoid pancakePistons) {
+    public Grabber(Motor grabberMotor, Solenoid pancakePistons, Solenoid grabbyPiston) {
         this.grabberMotor = grabberMotor;
         this.pancakePistons = pancakePistons;
+        this.grabbyPiston = grabbyPiston;
         pancakeTimer = new Timer();
     }
 
@@ -44,6 +46,14 @@ public class Grabber extends Subsystem {
 
     public void setPancakePistons(boolean on) {
         pancakePistons.set(on);
+    }
+
+    public void setClawPistons(boolean on) {
+        grabbyPiston.set(on);
+    }
+
+    public void toggleClawPistons() {
+        grabbyPiston.set(!grabbyPiston.get());
     }
 
     public void updatePistons() {

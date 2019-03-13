@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.movements.*;
 import frc.robot.movements.arm.ArmPosition;
 import frc.robot.movements.arm.ControlArm;
@@ -109,6 +110,7 @@ public class OI {
         Button forwardAlign = new Btn(left, 2);
         Button launchButton = new Btn(left, 7);
         Button expelGrabberAndBackup = new Btn(right, 10);
+        Button toggleGrabberClaw = new Btn(right, 4);
 
         btnMoveTargetLeft = new Btn(left, 4);
         btnMoveTargetRight = new Btn(left, 5);
@@ -235,6 +237,7 @@ public class OI {
 
         launchButton.whenPressed(new Launch());
         expelGrabberAndBackup.whenPressed(new ReleaseHatch());
+        toggleGrabberClaw.whenPressed(new InstantCommand(() -> TechnoTitan.grabber.toggleClawPistons()));
     }
 
     private double clampInput(double input) {

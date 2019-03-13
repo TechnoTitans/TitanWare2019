@@ -49,6 +49,7 @@ public class RobotMap {
   public static final int WRIST_ANGLE_ADDR = 0x68;  // default
 
   public static final int PCM_ADDR = 15;
-  public static final int ARM_PISTON = 0;
+//  public static final int ARM_PISTON = 0;
   public static final int HATCH_PANEL_PISTON = 1;
+  public static final int HATCH_GRABBER_PISTON = 0;
 }
