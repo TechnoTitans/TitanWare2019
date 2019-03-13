@@ -20,10 +20,10 @@ public class ControlGrabber extends Command {
         }
 
         if (TechnoTitan.oi.shouldExpelHatch()) {
-            TechnoTitan.grabber.expelHatch();
+//            TechnoTitan.grabber.expelHatch();
             VisionSensor.resetSkew();
         }
-        TechnoTitan.grabber.updatePistons();
+//        TechnoTitan.grabber.updatePistons();
     }
 
     @Override

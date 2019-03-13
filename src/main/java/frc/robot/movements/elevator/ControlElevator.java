@@ -14,6 +14,7 @@ public class ControlElevator extends Command {
 
     public ControlElevator() {
         requires(TechnoTitan.elevator);
+        requires(TechnoTitan.wrist);
     }
 
     public void initialize() {
@@ -27,7 +28,7 @@ public class ControlElevator extends Command {
         wristFilter.update(TechnoTitan.oi.getWristMove());
 
         TechnoTitan.elevator.moveElevator(elevatorFilter.getValue() * MAX_ELEVATOR_SPEED);
-        TechnoTitan.elevator.moveWrist(wristFilter.getValue() * MAX_WRIST_SPEED);
+        TechnoTitan.wrist.moveWrist(wristFilter.getValue() * MAX_WRIST_SPEED);
     }
 
 

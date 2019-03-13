@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.movements.*;
-import frc.robot.movements.arm.ArmPosition;
-import frc.robot.movements.arm.ControlArm;
-import frc.robot.movements.arm.MoveArmToPosition;
+import frc.robot.movements.elevator.ControlElevator;
+import frc.robot.movements.elevator.ElevatorPosition;
+import frc.robot.movements.elevator.MoveElevatorToPosition;
 import frc.robot.sensors.vision.VisionKalmanFilter;
 
 
@@ -112,20 +112,30 @@ public class OI {
         Button toggleGrabberClaw = new Btn(right, 4);
 
         btnHatchEject = new Btn(right, 5);
-        btnGrabberIntake = new Btn(right, 2);
-        btnGrabberExpel = new Btn(right, 3);
+        btnGrabberIntake = new Button() {
+            @Override
+            public boolean get() {
+                return xbox.getAButton();
+            }
+        };
+        btnGrabberExpel = new Button() {
+            @Override
+            public boolean get() {
+                return xbox.getBButton();
+            }
+        };
 
         Button btnRocketBall1 = new Button() {
             @Override
             public boolean get() {
-                return xbox.getAButton() && isXboxOnRocket();
+                return xbox.getAButton() && isXboxOnRocket() && false;
             }
         };
 
         Button btnRocketBall2 = new Button() {
             @Override
             public boolean get() {
-                return xbox.getXButton() && isXboxOnRocket();
+                return xbox.getXButton() && isXboxOnRocket() && false;
             }
         };
 
@@ -207,21 +217,21 @@ public class OI {
         driveTriggerLeft.whileHeld(new ControlDriveTrainStraight());
 
         // arm controls
-        btnRocketBall1.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_1_BALL));
-        btnRocketBall2.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_2_BALL));
+        btnRocketBall1.whenPressed(new MoveElevatorToPosition(ElevatorPosition.ROCKET_LEVEL_1_BALL));
+        btnRocketBall2.whenPressed(new MoveElevatorToPosition(ElevatorPosition.ROCKET_LEVEL_2_BALL));
         //btnRocketBall3.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_3_BALL));
-        btnRocketBallCargo.whenPressed(new MoveArmToPosition(ArmPosition.CARGO_SHIP_BALL));
-        btnRocketBallPickup.whenPressed(new MoveArmToPosition(ArmPosition.BALL_PICKUP));
+        btnRocketBallCargo.whenPressed(new MoveElevatorToPosition(ElevatorPosition.CARGO_SHIP_BALL));
+        btnRocketBallPickup.whenPressed(new MoveElevatorToPosition(ElevatorPosition.BALL_PICKUP));
 
-        btnHatch1.whenPressed(new MoveArmToPosition(ArmPosition.LOW_HATCH));
-        btnHatch2.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_2_HATCH));
+        btnHatch1.whenPressed(new MoveElevatorToPosition(ElevatorPosition.LOW_HATCH));
+        btnHatch2.whenPressed(new MoveElevatorToPosition(ElevatorPosition.ROCKET_LEVEL_2_HATCH));
         //btnHatch3.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_3_HATCH));
 
-        hatchPickup.whenPressed(new MoveArmToPosition(ArmPosition.HATCH_PICKUP));
+        hatchPickup.whenPressed(new MoveElevatorToPosition(ElevatorPosition.HATCH_PICKUP));
 
-        btnStow.whenPressed(new MoveArmToPosition(ArmPosition.STOW_POSITION));
+        btnStow.whenPressed(new MoveElevatorToPosition(ElevatorPosition.STOW_POSITION));
 
-        btnOverrideSensors.whenPressed(new ControlArm());
+        btnOverrideSensors.whenPressed(new ControlElevator());
 
 
         VisionKalmanFilter visionFilter = new VisionKalmanFilter();

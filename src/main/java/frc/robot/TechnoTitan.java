@@ -11,6 +11,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
@@ -35,6 +36,7 @@ public class TechnoTitan extends TimedRobot {
   public static DriveTrain drive;
 //  public static Arm arm;
   public static Elevator elevator;
+  public static Wrist wrist;
   public static AHRS navx;
   public static VisionSensor vision;
   public static TimeOfFlight tfDistance;
@@ -42,11 +44,7 @@ public class TechnoTitan extends TimedRobot {
   public static Gyro centralGyro;
 
 
-  private TalonSRX wrist, elbow;
-  private TalonSRX elevatorMotor;
-
-  private Accel_GY521 elbowAngleSensor;
-  private Accel_GY521 wristAngleSensor;
+  private TalonSRX elevatorMotor, wristMotor;
 
     private DigitalInput limitSwitchTop;
     private DigitalInput limitSwitchBottom;
@@ -74,13 +72,12 @@ public class TechnoTitan extends TimedRobot {
 
 
     // elevator setup
-      elevatorMotor = new TalonSRX(BlinkyMap.ELEVATOR_MOTOR, false);
+    elevatorMotor = new TalonSRX(BlinkyMap.ELEVATOR_MOTOR, false);
+    elevatorMotor.setEncoder(new QuadEncoder(elevatorMotor, 1, false));
+    wristMotor = new TalonSRX(BlinkyMap.WRIST_MOTOR, false);
+    wristMotor.setEncoder(new QuadEncoder(wristMotor, 1, false));
 
     // MARK - accelerometer setup
-
-
-    elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR, false, -56);
-    wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR, false, 86.8);
 
     limitSwitchTop = new DigitalInput(RobotMap.LS_TOP);
     limitSwitchBottom = new DigitalInput(RobotMap.LS_BOT);
@@ -89,6 +86,7 @@ public class TechnoTitan extends TimedRobot {
      
     elevator = new Elevator(elevatorMotor, limitSwitchTop, limitSwitchBottom);
 //    arm = new Arm(elbow, wrist, elbowAngleSensor, wristAngleSensor);
+    wrist = new Wrist(wristMotor);
     grabber = new Grabber(new TalonSRX(BlinkyMap.GRABBER_MOTOR, false), new TalonSRX(BlinkyMap.WRIST_MOTOR, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_MECH_EXTEND_PISTON), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_GRAB_PISTON));
 
 
@@ -122,21 +120,6 @@ public class TechnoTitan extends TimedRobot {
 
     vision.stopRecording();
 
-    Thread updateI2CSensors = new Thread(() -> {
-      while (!Thread.interrupted()) {
-        wristAngleSensor.update();
-        try {
-          Thread.sleep(20L);
-        } catch (InterruptedException e) {}
-        elbowAngleSensor.update();
-        try {
-          Thread.sleep(20L);
-        } catch (InterruptedException e) {}
-      }
-    });
-    updateI2CSensors.setDaemon(true);
-    updateI2CSensors.start();
-
     CameraServer.getInstance().startAutomaticCapture(0);
 //    CameraServer.getInstance().startAutomaticCapture(1);
 
@@ -164,30 +147,22 @@ public class TechnoTitan extends TimedRobot {
   public void robotPeriodic() {
 
 
-      SmartDashboard.putNumber("Elbow Talon Voltage", elbow.getCurrent());
-      SmartDashboard.putNumber("Wrist Talon Voltage", wrist.getCurrent());
+      SmartDashboard.putNumber("Elevator Talon Voltage", elevatorMotor.getCurrent());
+      SmartDashboard.putNumber("Wrist Talon Voltage", wristMotor.getCurrent());
     // MARK - smart dashboard things
 //    SmartDashboard.putNumber("NavX Gyro", navx.getAngle());
     SmartDashboard.putNumber("Gyro Angle", centralGyro.getAngle());
     SmartDashboard.putNumber("Angle error", VisionSensor.getAngleTargetDiff());
-    SmartDashboard.putBoolean("Elbow sensor connected", elbowAngleSensor.isSensorConnected());
-//    SmartDashboard.putNumber("Elbow angle", arm.getElbowAngle());
-
-    SmartDashboard.putBoolean("Wrist sensor connected", wristAngleSensor.isSensorConnected());
-//    SmartDashboard.putNumber("Wrist angle", arm.getWristAngle());
 
     SmartDashboard.putNumber("Encoder left", drive.getLeftEncoder().getDistance());
     SmartDashboard.putNumber("Encoder right", drive.getRightEncoder().getDistance());
 
-//    tfDistance.update();
+    SmartDashboard.putNumber("Wrist encoder", wrist.getPosition());
+    SmartDashboard.putNumber("Elevator encoder", elevator.getPosition());
+
+    // ball pickup: +1250
     SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
     SmartDashboard.putBoolean("TF is valid?", tfDistance.isValid());
-//    SmartDashboard.putBoolean("Override arm sensors", arm.areSensorsOverriden());
-//    SmartDashboard.putNumber("Elbow output", arm.getElbowOutput());
-//    SmartDashboard.putNumber("Wrist output", arm.getWristOutput());
-
-//    arm.wristController.updateSmartdashboard();
-//    arm.elbowController.updateSmartdashboard();
 
     SmartDashboard.putBoolean("Is xbox on rocket", oi.isXboxOnRocket());
     SmartDashboard.putNumber("Joystick left", oi.getLeft());
@@ -197,9 +172,6 @@ public class TechnoTitan extends TimedRobot {
       // TODO Uncomment out the remove all
       SmartDashboard.putNumber("Resetting", Math.random());
       Scheduler.getInstance().removeAll();
-      // todo reset elevator pid stuff
-//      TechnoTitan.arm.elbowController.reset();
-//      TechnoTitan.arm.wristController.reset();
     }
   }
 

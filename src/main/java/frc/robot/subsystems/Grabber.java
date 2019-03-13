@@ -12,7 +12,7 @@ public class Grabber extends Subsystem {
 
 //    private Timer pancakeTimer;
     private static final double EXPEL_SPEED = 1;
-    private static final double INTAKE_SPEED = -0.4;
+    private static final double INTAKE_SPEED = -0.8;
 
     private Solenoid extendHatchMechPiston, hatchGrabPiston;
 

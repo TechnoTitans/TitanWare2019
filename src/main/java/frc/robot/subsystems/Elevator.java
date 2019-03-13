@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
@@ -8,13 +9,16 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.motor.TalonSRX;
 import frc.robot.movements.ConstantsMM;
 import frc.robot.movements.elevator.ControlElevator;
+import frc.robot.sensors.Encoder;
 import frc.robot.sensors.QuadEncoder;
 
 public class Elevator extends Subsystem {
 
 
-    private static final double MAX_ELEVATOR_SPEED = 1.0;
-    private static final double MAX_WRIST_SPEED = 1.0;
+    private static final double MAX_ELEVATOR_SPEED = 1.0,
+                                MAX_WRIST_SPEED = 1.0,
+                                MIN_ELEVATOR_SPEED = -0.5,
+                                MIN_WRIST_SPEED = -0.7;
     private static final double MAX_TICKS = QuadEncoder.PULSES_PER_ROTATION * 2.5;
 
     // MARK - motion magic config
@@ -23,7 +27,7 @@ public class Elevator extends Subsystem {
     private DigitalInput lsTop;
     private DigitalInput lsBot;
     private TalonSRX m_motor;
-    private QuadEncoder m_motorEncoder;
+    private Encoder m_motorEncoder;
 
     //
     private double m_motorOffsetTicks = 0;
@@ -32,16 +36,11 @@ public class Elevator extends Subsystem {
     // settings
     private boolean overrideLS = false;
 
-
-    public static final class Constants {
-
-    }
-
     public Elevator(TalonSRX motor, DigitalInput limitSwitchTop, DigitalInput limitSwitchBottom) {
         this.lsTop = limitSwitchTop;
         this.lsBot = limitSwitchBottom;
         this.overrideLS = false;
-        this.m_motorEncoder = (QuadEncoder) motor.getEncoder();
+        this.m_motorEncoder = motor.getEncoder();
 
         this.configMotionMagic(motor);
 
@@ -60,12 +59,12 @@ public class Elevator extends Subsystem {
         motor.configNominalOutputForward(0, TIMEOUT_MS);
         motor.configNominalOutputReverse(0, TIMEOUT_MS);
         motor.configPeakOutputForward(1, TIMEOUT_MS);
-        motor.configPeakOutputForward(-1, TIMEOUT_MS);
+//        motor.configPeakOutputForward(-1, TIMEOUT_MS);
+
+        motor.configClosedLoopPeakOutput(0, MAX_ELEVATOR_SPEED);
 
         // MARK - PIDF stuff
         motor.selectProfileSlot(ConstantsMM.kElevatorSlot, ConstantsMM.kElevatorPID);
-
-
     }
 
     public boolean areSensorsOverridden() {
@@ -84,29 +83,29 @@ public class Elevator extends Subsystem {
         // todo clamp/filter?
         // TODO LimitSwitch wrapper class
         // if we are not overriding the limit switches, and either is pressed
-        if (!overrideLS && (lsTop.get() || lsBot.get())) {
+        if (!overrideLS && ((!lsTop.get() && speed < 0) || (!lsBot.get() && speed > 0))) {
             m_motor.set(0);
         } else {
-            speed = Math.min(speed, MAX_ELEVATOR_SPEED);
             m_motor.set(speed);
         }
     }
 
-    public void moveWrist(double speed) {
-        speed = Math.min(speed, MAX_WRIST_SPEED);
-        m_motor.set(speed);
+    public void setMotorTarget(double target) {
+        m_motor.set(ControlMode.MotionMagic, target + m_motorOffsetTicks);
     }
-
-
 
     // todo reset encoders on every limitswitch hit
     // todo actually use this
     public void compensateEncoder() {
         if (this.lsBot.get()) {
-            m_motorOffsetTicks = -1 * m_motorEncoder.getRawPosition();
+            m_motorOffsetTicks = m_motorEncoder.getRawPosition();
         } else if (this.lsTop.get()) {
-            m_motorOffsetTicks = MAX_TICKS - m_motorEncoder.getRawPosition();
+            m_motorOffsetTicks = m_motorEncoder.getRawPosition() - MAX_TICKS;
         }
+    }
+
+    public double getPosition() {
+        return m_motorEncoder.getRawPosition() - m_motorOffsetTicks;
     }
 
     @Override

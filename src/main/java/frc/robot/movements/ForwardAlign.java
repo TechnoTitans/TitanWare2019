@@ -3,7 +3,6 @@ package frc.robot.movements;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.TechnoTitan;
-import frc.robot.movements.arm.ArmPosition;
 import frc.robot.sensors.NavXGyro;
 import frc.robot.sensors.TitanGyro;
 
@@ -21,11 +20,10 @@ public class ForwardAlign extends Command {
 	private TitanGyro gyro;
 
 
-	public ForwardAlign(ArmPosition stage, double slowdownDist, double speed) {
+	public ForwardAlign(double slowdownDist, double speed) {
 		requires(TechnoTitan.drive);
 		this.slowdownDist = slowdownDist;
-		SmartDashboard.putNumber("Horizontal arm length", stage.getHorizontalArmLength());
-		this.distEnd = stage.getHorizontalArmLength();
+		this.distEnd = 20;
 		distEnd = Math.max(distEnd, MIN_READABLE_DISTANCE); // the sensor can't read closer than 11.9 in
 		this.speed = speed;
 		gyro = new TitanGyro(TechnoTitan.centralGyro);

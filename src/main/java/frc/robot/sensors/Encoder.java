@@ -9,4 +9,6 @@ public interface Encoder {
 	double getSpeedInches();
 
 	void reset();
+
+    double getRawPosition();
 }
