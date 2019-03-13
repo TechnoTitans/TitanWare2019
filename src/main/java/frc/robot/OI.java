@@ -234,7 +234,7 @@ public class OI {
         forwardAlign.toggleWhenPressed(visionFilter);
 
         launchButton.whenPressed(new Launch());
-//        expelGrabberAndBackup.whenPressed(new ReleaseHatch());
+        expelGrabberAndBackup.whenPressed(new ReleaseHatch());
     }
 
     private double clampInput(double input) {
