@@ -10,6 +10,7 @@ import frc.robot.motor.TalonSRX;
 import frc.robot.movements.ConstantsMM;
 import frc.robot.movements.elevator.ControlElevator;
 import frc.robot.sensors.Encoder;
+import frc.robot.sensors.LimitSwitch;
 import frc.robot.sensors.QuadEncoder;
 
 public class Elevator extends Subsystem {
@@ -24,8 +25,8 @@ public class Elevator extends Subsystem {
     // MARK - motion magic config
     private static final int TIMEOUT_MS = 30;
 
-    private DigitalInput lsTop;
-    private DigitalInput lsBot;
+    private LimitSwitch lsTop;
+    private LimitSwitch lsBot;
     private TalonSRX m_motor;
     private Encoder m_motorEncoder;
 
@@ -36,7 +37,7 @@ public class Elevator extends Subsystem {
     // settings
     private boolean overrideLS = false;
 
-    public Elevator(TalonSRX motor, DigitalInput limitSwitchTop, DigitalInput limitSwitchBottom) {
+    public Elevator(TalonSRX motor, LimitSwitch limitSwitchTop, LimitSwitch limitSwitchBottom) {
         this.lsTop = limitSwitchTop;
         this.lsBot = limitSwitchBottom;
         this.overrideLS = false;
@@ -83,7 +84,7 @@ public class Elevator extends Subsystem {
         // todo clamp/filter?
         // TODO LimitSwitch wrapper class
         // if we are not overriding the limit switches, and either is pressed
-        if (!overrideLS && ((!lsTop.get() && speed < 0) || (!lsBot.get() && speed > 0))) {
+        if (!overrideLS && ((lsTop.isPressed() && speed < 0) || (lsBot.isPressed() && speed > 0))) {
             m_motor.set(0);
         } else {
             m_motor.set(speed);
@@ -97,9 +98,9 @@ public class Elevator extends Subsystem {
     // todo reset encoders on every limitswitch hit
     // todo actually use this
     public void compensateEncoder() {
-        if (this.lsBot.get()) {
+        if (this.lsBot.isPressed()) {
             m_motorOffsetTicks = m_motorEncoder.getRawPosition();
-        } else if (this.lsTop.get()) {
+        } else if (this.lsTop.isPressed()) {
             m_motorOffsetTicks = m_motorEncoder.getRawPosition() - MAX_TICKS;
         }
     }

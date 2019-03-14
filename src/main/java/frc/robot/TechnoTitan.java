@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
+import frc.robot.sensors.LimitSwitch;
 import frc.robot.sensors.NavXGyro;
 import frc.robot.sensors.QuadEncoder;
 import frc.robot.sensors.TimeOfFlight;
@@ -84,7 +85,7 @@ public class TechnoTitan extends TimedRobot {
 
 
      
-    elevator = new Elevator(elevatorMotor, limitSwitchTop, limitSwitchBottom);
+    elevator = new Elevator(elevatorMotor, new LimitSwitch(limitSwitchTop, true), new LimitSwitch(limitSwitchBottom, true));
 //    arm = new Arm(elbow, wrist, elbowAngleSensor, wristAngleSensor);
     wrist = new Wrist(wristMotor);
     grabber = new Grabber(new TalonSRX(BlinkyMap.GRABBER_MOTOR, false), new TalonSRX(BlinkyMap.WRIST_MOTOR, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_MECH_EXTEND_PISTON), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_GRAB_PISTON));
