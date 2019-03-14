@@ -72,6 +72,10 @@ public class OI {
         initialize();
     }
 
+    public boolean shouldToggleClaw() {
+        return right.getRawButtonPressed(4);
+    }
+
     // Joystick button with some extended features
     private static class Btn extends JoystickButton {
         private GenericHID hid;

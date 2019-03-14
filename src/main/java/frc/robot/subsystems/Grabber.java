@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.Motor;
 import frc.robot.movements.ControlGrabber;
 
@@ -53,6 +54,7 @@ public class Grabber extends Subsystem {
     }
 
     public void toggleClawPistons() {
+        SmartDashboard.putBoolean("Grabby piston set", !grabbyPiston.get());
         grabbyPiston.set(!grabbyPiston.get());
     }
 

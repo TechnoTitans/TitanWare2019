@@ -23,6 +23,9 @@ public class ControlGrabber extends Command {
             TechnoTitan.grabber.expelHatch();
             VisionSensor.resetSkew();
         }
+        if (TechnoTitan.oi.shouldToggleClaw()) {
+            TechnoTitan.grabber.toggleClawPistons();
+        }
         TechnoTitan.grabber.updatePistons();
     }
 
