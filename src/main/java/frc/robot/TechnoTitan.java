@@ -74,7 +74,7 @@ public class TechnoTitan extends TimedRobot {
 
     // elevator setup
     elevatorMotor = new TalonSRX(BlinkyMap.ELEVATOR_MOTOR, false);
-    elevatorMotor.setEncoder(new QuadEncoder(elevatorMotor, 1, false));
+    elevatorMotor.setEncoder(new QuadEncoder(elevatorMotor, 1, false)); // TODO: configure
     wristMotor = new TalonSRX(BlinkyMap.WRIST_MOTOR, false);
     wristMotor.setEncoder(new QuadEncoder(wristMotor, 1, false));
 
@@ -146,8 +146,6 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-
-
       SmartDashboard.putNumber("Elevator Talon Voltage", elevatorMotor.getCurrent());
       SmartDashboard.putNumber("Wrist Talon Voltage", wristMotor.getCurrent());
     // MARK - smart dashboard things
@@ -161,13 +159,16 @@ public class TechnoTitan extends TimedRobot {
     SmartDashboard.putNumber("Wrist encoder", wrist.getPosition());
     SmartDashboard.putNumber("Elevator encoder", elevator.getPosition());
 
-    // ball pickup: +1250
+    SmartDashboard.putNumber("Wrist angle", wrist.getAngle());
+    SmartDashboard.putNumber("Elevator height", elevator.getHeight());
+
+    wristMotor.postEstimatedKf("Wrist");
+    elevatorMotor.postEstimatedKf("Elevator");
+
     SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
     SmartDashboard.putBoolean("TF is valid?", tfDistance.isValid());
 
-    SmartDashboard.putBoolean("Is xbox on rocket", oi.isXboxOnRocket());
-    SmartDashboard.putNumber("Joystick left", oi.getLeft());
-    SmartDashboard.putNumber("Joystick right", oi.getRight());
+
 
     if (oi.shouldResetCommands()) {
       // TODO Uncomment out the remove all

@@ -231,8 +231,6 @@ public class OI {
 
         btnStow.whenPressed(new MoveElevatorToPosition(ElevatorPosition.STOW_POSITION));
 
-        btnOverrideSensors.whenPressed(new ControlElevator());
-
 
         VisionKalmanFilter visionFilter = new VisionKalmanFilter();
         autoAlign.toggleWhenPressed(new AutoAlign(0.8, 20, visionFilter));

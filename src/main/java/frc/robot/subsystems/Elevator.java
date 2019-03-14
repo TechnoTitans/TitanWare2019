@@ -1,29 +1,26 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
-import edu.wpi.first.wpilibj.DigitalInput;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.motor.TalonSRX;
-import frc.robot.movements.ConstantsMM;
 import frc.robot.movements.elevator.ControlElevator;
 import frc.robot.sensors.Encoder;
 import frc.robot.sensors.LimitSwitch;
-import frc.robot.sensors.QuadEncoder;
 
 public class Elevator extends Subsystem {
 
 
-    private static final double MAX_ELEVATOR_SPEED = 1.0,
-                                MAX_WRIST_SPEED = 1.0,
-                                MIN_ELEVATOR_SPEED = -0.5,
-                                MIN_WRIST_SPEED = -0.7;
-    private static final double MAX_TICKS = QuadEncoder.PULSES_PER_ROTATION * 2.5;
+    private static final double ELEVATOR_SPEED_UP = 18,  // in/s
+                                ELEVATOR_SPEED_DOWN = 18;
+
+    private static final double ELEVATOR_ACCEL_UP = 18,  // in/s^2
+                                ELEVATOR_ACCEL_DOWN = 18;
+    private static final double MAX_HEIGHT = 36;
+
+    private static final double feedForward = 0.0;
 
     // MARK - motion magic config
-    private static final int TIMEOUT_MS = 30;
 
     private LimitSwitch lsTop;
     private LimitSwitch lsBot;
@@ -43,29 +40,9 @@ public class Elevator extends Subsystem {
         this.overrideLS = false;
         this.m_motorEncoder = motor.getEncoder();
 
-        this.configMotionMagic(motor);
+        motor.configPID(0.2, 0, 0, 0.2);
 
         m_motor = motor;
-    }
-
-    private void configMotionMagic(TalonSRX motor) {
-        // config pid
-        // todo extract constatns
-        motor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, ConstantsMM.kElevatorPID, TIMEOUT_MS);
-        // todo configselected filter
-//        motor.setSensorPhase(true); // todo configure
-        motor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, TIMEOUT_MS);
-        motor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, TIMEOUT_MS);
-
-        motor.configNominalOutputForward(0, TIMEOUT_MS);
-        motor.configNominalOutputReverse(0, TIMEOUT_MS);
-        motor.configPeakOutputForward(1, TIMEOUT_MS);
-//        motor.configPeakOutputForward(-1, TIMEOUT_MS);
-
-        motor.configClosedLoopPeakOutput(0, MAX_ELEVATOR_SPEED);
-
-        // MARK - PIDF stuff
-        motor.selectProfileSlot(ConstantsMM.kElevatorSlot, ConstantsMM.kElevatorPID);
     }
 
     public boolean areSensorsOverridden() {
@@ -81,36 +58,46 @@ public class Elevator extends Subsystem {
     }
 
     public void moveElevator(double speed) {
-        // todo clamp/filter?
-        // TODO LimitSwitch wrapper class
         // if we are not overriding the limit switches, and either is pressed
-        if (!overrideLS && ((lsTop.isPressed() && speed < 0) || (lsBot.isPressed() && speed > 0))) {
+        if (!overrideLS && ((lsTop.isPressed() && speed > 0) || (lsBot.isPressed() && speed < 0))) {
             m_motor.set(0);
         } else {
             m_motor.set(speed);
         }
     }
 
-    public void setMotorTarget(double target) {
-        m_motor.set(ControlMode.MotionMagic, target + m_motorOffsetTicks);
+    /**
+     * Sets elevator target
+     * @param target  target height in inches
+     */
+    public void setTargetHeight(double target) {
+        boolean isMovingUp = target > m_motorEncoder.getDistance();
+        double speed = isMovingUp ? ELEVATOR_SPEED_UP : ELEVATOR_SPEED_DOWN;
+        double accel = isMovingUp ? ELEVATOR_ACCEL_UP : ELEVATOR_ACCEL_DOWN;
+        m_motor.configMotionCruiseVelocity((int) (speed / (m_motorEncoder.getInchesPerPulse() * 10)));
+        m_motor.configMotionAcceleration((int) (accel / (m_motorEncoder.getInchesPerPulse() * 10)));
+        m_motor.set(ControlMode.MotionMagic, target / m_motorEncoder.getInchesPerPulse(), DemandType.ArbitraryFeedForward, feedForward);
     }
 
-    // todo reset encoders on every limitswitch hit
     // todo actually use this
     public void compensateEncoder() {
         if (this.lsBot.isPressed()) {
-            m_motorOffsetTicks = m_motorEncoder.getRawPosition();
+            m_motor.getEncoder().reset();
         } else if (this.lsTop.isPressed()) {
-            m_motorOffsetTicks = m_motorEncoder.getRawPosition() - MAX_TICKS;
+            m_motor.getEncoder().resetTo(MAX_HEIGHT);
         }
     }
 
     public double getPosition() {
-        return m_motorEncoder.getRawPosition() - m_motorOffsetTicks;
+        return m_motorEncoder.getRawPosition();
     }
 
     @Override
     protected void initDefaultCommand() {
         setDefaultCommand(new ControlElevator());
+    }
+
+    public double getHeight() {
+        return m_motorEncoder.getDistance();
     }
 }

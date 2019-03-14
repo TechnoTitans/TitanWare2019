@@ -10,5 +10,11 @@ public interface Encoder {
 
 	void reset();
 
+	void resetToRaw(int position);
+
+	void resetTo(double position);
+
     double getRawPosition();
+
+    double getInchesPerPulse();
 }

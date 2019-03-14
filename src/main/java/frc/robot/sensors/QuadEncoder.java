@@ -55,8 +55,23 @@ public class QuadEncoder implements Encoder {
 		talonSRX.setSelectedSensorPosition(0, 0, 0);
 	}
 
+	@Override
+	public void resetToRaw(int position) {
+		talonSRX.setSelectedSensorPosition(position, 0, 0);
+	}
+
+	@Override
+	public void resetTo(double position) {
+		talonSRX.setSelectedSensorPosition((int) (position / inchesPerPulse), 0, 0);
+	}
+
 	public double getRawPosition() {
 		return talonSRX.getSelectedSensorPosition(0);
+	}
+
+	@Override
+	public double getInchesPerPulse() {
+		return inchesPerPulse;
 	}
 
 	public TalonSRX getTalon() {

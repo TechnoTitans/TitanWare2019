@@ -6,29 +6,25 @@ import frc.robot.motor.Filter;
 
 public class ControlElevator extends Command {
 
-    private Filter elevatorFilter, wristFilter;
+    private Filter elevatorFilter;
 
 
     private static final double MAX_ELEVATOR_SPEED = 1;
-    private static final double MAX_WRIST_SPEED = 0.6;
 
     public ControlElevator() {
         requires(TechnoTitan.elevator);
-        requires(TechnoTitan.wrist);
     }
 
     public void initialize() {
         elevatorFilter = new Filter(0.1);
-        wristFilter = new Filter(0.1);
     }
 
 
     public void execute() {
         elevatorFilter.update(TechnoTitan.oi.getElevatorMove());
-        wristFilter.update(TechnoTitan.oi.getWristMove());
-
         TechnoTitan.elevator.moveElevator(elevatorFilter.getValue() * MAX_ELEVATOR_SPEED);
-        TechnoTitan.wrist.moveWrist(wristFilter.getValue() * MAX_WRIST_SPEED);
+
+        if (TechnoTitan.oi.shouldToggleOverrideSensors()) TechnoTitan.elevator.toggleOverrideSensors();;
     }
 
 
