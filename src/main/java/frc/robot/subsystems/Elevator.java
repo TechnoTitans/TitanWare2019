@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
 import frc.robot.movements.elevator.ControlElevator;
 import frc.robot.sensors.Encoder;
@@ -59,11 +60,17 @@ public class Elevator extends Subsystem {
 
     public void moveElevator(double speed) {
         // if we are not overriding the limit switches, and either is pressed
+        double finalSpeed = speed;
         if (!overrideLS && ((lsTop.isPressed() && speed > 0) || (lsBot.isPressed() && speed < 0))) {
-            m_motor.set(0);
-        } else {
-            m_motor.set(speed);
+            finalSpeed = 0;
         }
+
+        if (overrideLS || !lsBot.isPressed()) {
+            finalSpeed += feedForward;
+        }
+
+        SmartDashboard.putNumber("Elevator speed set", finalSpeed);
+        m_motor.set(finalSpeed);
     }
 
     /**

@@ -165,6 +165,8 @@ public class TechnoTitan extends TimedRobot {
     wristMotor.postEstimatedKf("Wrist");
     elevatorMotor.postEstimatedKf("Elevator");
 
+    SmartDashboard.putBoolean("Are sensors overriden", elevator.areSensorsOverridden());
+
     SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
     SmartDashboard.putBoolean("TF is valid?", tfDistance.isValid());
 
