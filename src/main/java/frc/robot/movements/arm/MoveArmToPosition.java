@@ -21,7 +21,6 @@ public class MoveArmToPosition extends ConditionalCommand {
     private static class MoveArmToPositionSafe extends CommandGroup {
         MoveArmToPositionSafe(ArmPosition position) {
             addSequential(new MoveWristUp());
-            addSequential(new MoveArmPiston(position.isSolenoidEnabled()));
 //            addSequential(new ConditionalCommand((new InstantCommand(() -> TechnoTitan.arm.wristController.disable()))) {
 //                @Override
 //                protected boolean condition() {
@@ -36,7 +35,6 @@ public class MoveArmToPosition extends ConditionalCommand {
 
     private static class MoveArmToPositionFast extends CommandGroup {
         MoveArmToPositionFast(ArmPosition position) {
-            addSequential(new MoveArmPiston(position.isSolenoidEnabled()));
             addSequential(new ControlArmPID(position, true, true));
             disableNecessaryPIDs(position, this);
         }

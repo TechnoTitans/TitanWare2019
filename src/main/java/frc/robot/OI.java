@@ -65,15 +65,11 @@ public class OI {
                     btnResetCommands,
                     btnEmergencyResetSensors;
 
-    private Btn btnHatchEject;
+    private Btn btnHatchEject, btnClawToggle;
     private Btn btnMoveTargetLeft, btnMoveTargetRight;
 
     public OI() {
         initialize();
-    }
-
-    public boolean shouldToggleClaw() {
-        return right.getRawButtonPressed(4);
     }
 
     // Joystick button with some extended features
@@ -120,6 +116,7 @@ public class OI {
         btnMoveTargetRight = new Btn(left, 5);
 
         btnHatchEject = new Btn(right, 5);
+        btnClawToggle = new Btn(right, 4);
         btnGrabberIntake = new Btn(right, 2);
         btnGrabberExpel = new Btn(right, 3);
 
@@ -290,6 +287,10 @@ public class OI {
 
     public boolean shouldExpelHatch() {
         return btnHatchEject.isPressed();
+    }
+
+    public boolean shouldToggleClaw() {
+        return btnClawToggle.isPressed();
     }
 
     public boolean getMoveTargetLeft() { return btnMoveTargetLeft.isPressed(); }
