@@ -240,6 +240,7 @@ public class TechnoTitan extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    VisionSensor.initGyro();
     vision.startRecording();
   }
 

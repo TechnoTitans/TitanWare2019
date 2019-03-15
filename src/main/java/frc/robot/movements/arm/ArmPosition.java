@@ -15,7 +15,7 @@ public enum ArmPosition {
 //    CARGO_SHIP_BALL(10, 0, false),
     CARGO_SHIP_BALL(-18, 51, false),
 //    LOW_HATCH(-40, 85, false, 26), // All hatch levels except higher hatches on rocket
-    LOW_HATCH(-14, 0, false),
+    LOW_HATCH(-20, 0, false),
     BALL_PICKUP(-39, -20, false),
     HATCH_PICKUP(-56.0, 3, false),
     STOW_POSITION(-56, 88, false);
