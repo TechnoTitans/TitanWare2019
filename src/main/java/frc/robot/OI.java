@@ -238,7 +238,6 @@ public class OI {
 
         launchButton.whenPressed(new Launch());
         expelGrabberAndBackup.whenPressed(new ReleaseHatch());
-        toggleGrabberClaw.whenPressed(new InstantCommand(() -> TechnoTitan.grabber.toggleClawPistons()));
     }
 
     private double clampInput(double input) {
