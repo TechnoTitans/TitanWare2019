@@ -22,9 +22,10 @@ public class ControlGrabber extends Command {
         if (TechnoTitan.oi.shouldExpelHatch()) {
             TechnoTitan.grabber.expelHatch();
             VisionSensor.resetSkew();
-        }
-        if (TechnoTitan.oi.shouldToggleClaw()) {
+        } else if (TechnoTitan.oi.shouldToggleClaw()) {
             TechnoTitan.grabber.toggleClawPistons();
+        } else if (TechnoTitan.oi.shouldSetClawOn()) {
+            TechnoTitan.grabber.setClawPistons(true);
         }
         TechnoTitan.grabber.updatePistons();
     }

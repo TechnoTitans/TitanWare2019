@@ -5,8 +5,11 @@ import edu.wpi.first.wpilibj.command.TimedCommand;
 import frc.robot.TechnoTitan;
 
 public class Launch extends TimedCommand {
-    public Launch() {
-        super(.75);
+    private double speed;
+
+    public Launch(boolean isBeggining) {
+        super(isBeggining ? .75 : 1.25);
+        speed = isBeggining ? 0.8 : 0.85;
         requires(TechnoTitan.drive);
     }
 
@@ -18,7 +21,7 @@ public class Launch extends TimedCommand {
 
     @Override
     protected void execute() {
-        TechnoTitan.drive.set(0.8, 0.8);
+        TechnoTitan.drive.set(speed, speed);
     }
 
     @Override
