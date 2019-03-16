@@ -52,4 +52,5 @@ public class RobotMap {
 //  public static final int ARM_PISTON = 0;
   public static final int HATCH_PANEL_PISTON = 1;
   public static final int HATCH_GRABBER_PISTON = 0;
+  public static final int CLIMB_PISTON = 2;
 }

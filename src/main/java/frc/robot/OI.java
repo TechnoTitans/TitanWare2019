@@ -63,6 +63,7 @@ public class OI {
                     btnGrabberIntake,
                     btnOverrideSensors,
                     btnResetCommands,
+                    btnDriveSlow,
                     btnEmergencyResetSensors;
 
     private Btn btnHatchEject, btnClawToggle, btnClawOn;
@@ -152,7 +153,7 @@ public class OI {
         Button hatchPickup = new Button() {
             @Override
             public boolean get() {
-                return xbox.getTriggerAxis(GenericHID.Hand.kRight) > 0.5;
+                return false;
             }
         };
 
@@ -209,8 +210,15 @@ public class OI {
             }
         };
 
+        Button toggleClimbSolenoid = new Button() {
+            @Override
+            public boolean get() {
+                return xbox.getTriggerAxis(GenericHID.Hand.kRight) > 0.5;
+            }
+        };
 
-        driveTriggerLeft.whileHeld(new ControlDriveTrainStraight());
+
+//        driveTriggerLeft.whileHeld(new ControlDriveTrainStraight());
 
         // arm controls
         btnRocketBall1.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_1_BALL));
@@ -224,8 +232,9 @@ public class OI {
         btnHatch2.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_2_HATCH));
         //btnHatch3.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_3_HATCH));
 
-        hatchPickup.whenPressed(new MoveArmToPosition(ArmPosition.HATCH_PICKUP));
+//        hatchPickup.whenPressed(new MoveArmToPosition(ArmPosition.HATCH_PICKUP));
 
+        toggleClimbSolenoid.whenPressed(new InstantCommand(TechnoTitan.climb, () -> TechnoTitan.climb.toggle()));
         btnStow.whenPressed(new MoveArmToPosition(ArmPosition.STOW_POSITION));
 
         btnOverrideSensors.whenPressed(new ControlArm());
@@ -253,6 +262,10 @@ public class OI {
 
     public double getLeft() {
         return clampInput(-left.getRawAxis(1));
+    }
+
+    public boolean getSlowdown() {
+        return left.getRawButton(1);
     }
 
     public double getRight() {
@@ -297,6 +310,11 @@ public class OI {
 
     public boolean shouldToggleClaw() {
         return btnClawToggle.isPressed();
+    }
+
+
+    public boolean getClimbToggle() {
+        return left.getRawButtonPressed(8);
     }
 
     public boolean getMoveTargetLeft() { return btnMoveTargetLeft.isPressed(); }

@@ -22,10 +22,7 @@ import frc.robot.sensors.QuadEncoder;
 import frc.robot.sensors.TimeOfFlight;
 import frc.robot.sensors.gy521.Accel_GY521;
 import frc.robot.sensors.vision.VisionSensor;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Grabber;
-import frc.robot.subsystems.TankDrive;
+import frc.robot.subsystems.*;
 
 
 /**
@@ -39,6 +36,7 @@ public class TechnoTitan extends TimedRobot {
   public static OI oi;
   public static DriveTrain drive;
   public static Arm arm;
+  public static Climber climb;
   public static AHRS navx;
   public static VisionSensor vision;
   public static TimeOfFlight tfDistance;
@@ -85,6 +83,8 @@ public class TechnoTitan extends TimedRobot {
     arm = new Arm(elbow, wrist, elbowAngleSensor, wristAngleSensor);
     grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_PANEL_PISTON), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_GRABBER_PISTON));
 
+    Solenoid climbSolenoid = new Solenoid(RobotMap.PCM_ADDR, RobotMap.CLIMB_PISTON);
+    climb = new Climber(climbSolenoid);
 
     // Drivetrain setup
     TalonSRX leftETalonSRX = new TalonSRX(RobotMap.LEFT_TALON_E, LEFT_REVERSE),
