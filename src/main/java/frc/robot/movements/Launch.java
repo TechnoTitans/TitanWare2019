@@ -9,7 +9,7 @@ public class Launch extends TimedCommand {
 
     public Launch(boolean isBeggining) {
         super(isBeggining ? .75 : 1.25);
-        speed = isBeggining ? 0.8 : 0.85;
+        speed = isBeggining ? 0.8 : 1;
         requires(TechnoTitan.drive);
     }
 

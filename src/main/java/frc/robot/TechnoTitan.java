@@ -78,8 +78,8 @@ public class TechnoTitan extends TimedRobot {
     // MARK - accelerometer setup
 
 
-    elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR, false, -56);
-    wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR, false, 86.8);
+    elbowAngleSensor = new Accel_GY521(RobotMap.ELBOW_ANGLE_ADDR, true, -56);
+    wristAngleSensor = new Accel_GY521(RobotMap.WRIST_ANGLE_ADDR, true, 86.8);
     arm = new Arm(elbow, wrist, elbowAngleSensor, wristAngleSensor);
     grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_PANEL_PISTON), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_GRABBER_PISTON));
 
