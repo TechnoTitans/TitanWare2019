@@ -47,9 +47,6 @@ public class TechnoTitan extends TimedRobot {
 
   private TalonSRX elevatorMotor, wristMotor;
 
-    private DigitalInput limitSwitchTop;
-    private DigitalInput limitSwitchBottom;
-
   private static final boolean LEFT_REVERSE = false,
                                RIGHT_REVERSE = true;
 
@@ -73,15 +70,17 @@ public class TechnoTitan extends TimedRobot {
 
 
     // elevator setup
-    elevatorMotor = new TalonSRX(BlinkyMap.ELEVATOR_MOTOR, false);
-    elevatorMotor.setEncoder(new QuadEncoder(elevatorMotor, 1, false)); // TODO: configure
+    // 0.0000194 in/pulse?
+    elevatorMotor = new TalonSRX(BlinkyMap.ELEVATOR_MOTOR, true);
+    elevatorMotor.setEncoder(new QuadEncoder(elevatorMotor, 0.00274, false)); // TODO: configure
+    // moving down is positive
     wristMotor = new TalonSRX(BlinkyMap.WRIST_MOTOR, false);
     wristMotor.setEncoder(new QuadEncoder(wristMotor, 1, false));
 
     // MARK - accelerometer setup
 
-    limitSwitchTop = new DigitalInput(RobotMap.LS_TOP);
-    limitSwitchBottom = new DigitalInput(RobotMap.LS_BOT);
+    DigitalInput limitSwitchTop = new DigitalInput(RobotMap.LS_TOP);
+    DigitalInput limitSwitchBottom = new DigitalInput(RobotMap.LS_BOT);
 
 
      
@@ -165,6 +164,10 @@ public class TechnoTitan extends TimedRobot {
     wristMotor.postEstimatedKf("Wrist");
     elevatorMotor.postEstimatedKf("Elevator");
 
+    elevator.compensateEncoder();
+
+//    elevator.collectData();
+
     SmartDashboard.putBoolean("Are sensors overriden", elevator.areSensorsOverridden());
 
     SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
@@ -176,6 +179,10 @@ public class TechnoTitan extends TimedRobot {
       // TODO Uncomment out the remove all
       SmartDashboard.putNumber("Resetting", Math.random());
       Scheduler.getInstance().removeAll();
+    }
+
+    if (oi.shouldResetEncoders()) {
+      wrist.resetEncoder();
     }
   }
 

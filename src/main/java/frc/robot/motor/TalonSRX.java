@@ -163,7 +163,10 @@ public class TalonSRX extends com.ctre.phoenix.motorcontrol.can.TalonSRX impleme
 		brownout = false;
 	}
 
-	public void configPID(double P, double I, double D, double F) {
+	public void configPID(double P, double D, double F) {
+		configPID(P, 0, D, F, 0);
+	}
+	public void configPID(double P, double I, double D, double F, int iZone) {
 		// If these ever need to be nonzero, we can make them parameters instead
 		final int pidSlot = 0, profileSlot = 0;
 
@@ -182,6 +185,7 @@ public class TalonSRX extends com.ctre.phoenix.motorcontrol.can.TalonSRX impleme
 		config_kP(profileSlot, P, TIMEOUT_MS);
 		config_kI(profileSlot, I, TIMEOUT_MS);
 		config_kD(profileSlot, D, TIMEOUT_MS);
+		config_IntegralZone(profileSlot, iZone, TIMEOUT_MS);
 	}
 
 	public void postEstimatedKf(String name) {

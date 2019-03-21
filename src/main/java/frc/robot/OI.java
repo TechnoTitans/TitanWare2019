@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.movements.*;
-import frc.robot.movements.elevator.ControlElevator;
 import frc.robot.movements.elevator.ElevatorPosition;
 import frc.robot.movements.elevator.MoveElevatorToPosition;
 import frc.robot.sensors.vision.VisionKalmanFilter;
@@ -58,8 +57,7 @@ public class OI {
   // until it is finished as determined by it's isFinished method.
   // button.whenPressed(new ExampleCommand());
 
-    private Button btnToggleArmUp,
-                    btnGrabberExpel,
+    private Button btnGrabberExpel,
                     btnGrabberIntake,
                     btnOverrideSensors,
                     btnResetCommands,
@@ -115,27 +113,27 @@ public class OI {
         btnGrabberIntake = new Button() {
             @Override
             public boolean get() {
-                return xbox.getAButton();
+                return xbox.getBumper(GenericHID.Hand.kLeft);
             }
         };
         btnGrabberExpel = new Button() {
             @Override
             public boolean get() {
-                return xbox.getBButton();
+                return xbox.getBumper(GenericHID.Hand.kRight);
             }
         };
 
         Button btnRocketBall1 = new Button() {
             @Override
             public boolean get() {
-                return xbox.getAButton() && isXboxOnRocket() && false;
+                return xbox.getAButton() && isXboxOnRocket();
             }
         };
 
         Button btnRocketBall2 = new Button() {
             @Override
             public boolean get() {
-                return xbox.getXButton() && isXboxOnRocket() && false;
+                return xbox.getXButton() && isXboxOnRocket();
             }
         };
 
@@ -147,13 +145,6 @@ public class OI {
         };
 
         Button btnRocketBallPickup = new Button() {
-            @Override
-            public boolean get() {
-                return xbox.getBumper(GenericHID.Hand.kRight);
-            }
-        };
-
-        Button hatchPickup = new Button() {
             @Override
             public boolean get() {
                 return xbox.getTriggerAxis(GenericHID.Hand.kRight) > 0.5;
@@ -192,13 +183,6 @@ public class OI {
             }
         };
 
-        btnToggleArmUp = new Button() {
-            @Override
-            public boolean get() {
-                return xbox.getBumperPressed(GenericHID.Hand.kLeft);
-            }
-        };
-
         btnOverrideSensors = new Button() {
             @Override
             public boolean get() {
@@ -218,18 +202,16 @@ public class OI {
 
         // arm controls
         btnRocketBall1.whenPressed(new MoveElevatorToPosition(ElevatorPosition.ROCKET_LEVEL_1_BALL));
-        btnRocketBall2.whenPressed(new MoveElevatorToPosition(ElevatorPosition.ROCKET_LEVEL_2_BALL));
+        btnRocketBall2.whenPressed(new MoveElevatorToPosition((ElevatorPosition.ROCKET_LEVEL_2_BALL)));
         //btnRocketBall3.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_3_BALL));
-        btnRocketBallCargo.whenPressed(new MoveElevatorToPosition(ElevatorPosition.CARGO_SHIP_BALL));
-        btnRocketBallPickup.whenPressed(new MoveElevatorToPosition(ElevatorPosition.BALL_PICKUP));
+        btnRocketBallCargo.whenPressed(new MoveElevatorToPosition((ElevatorPosition.CARGO_SHIP_BALL)));
+        btnRocketBallPickup.whenPressed(new MoveElevatorToPosition((ElevatorPosition.BALL_PICKUP)));
 
-        btnHatch1.whenPressed(new MoveElevatorToPosition(ElevatorPosition.LOW_HATCH));
-        btnHatch2.whenPressed(new MoveElevatorToPosition(ElevatorPosition.ROCKET_LEVEL_2_HATCH));
+        btnHatch1.whenPressed(new MoveElevatorToPosition((ElevatorPosition.LOW_HATCH)));
+        btnHatch2.whenPressed(new MoveElevatorToPosition((ElevatorPosition.ROCKET_LEVEL_2_HATCH)));
         //btnHatch3.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_3_HATCH));
 
-        hatchPickup.whenPressed(new MoveElevatorToPosition(ElevatorPosition.HATCH_PICKUP));
-
-        btnStow.whenPressed(new MoveElevatorToPosition(ElevatorPosition.STOW_POSITION));
+        btnStow.whenPressed(new MoveElevatorToPosition((ElevatorPosition.STOW_POSITION)));
 
 
         VisionKalmanFilter visionFilter = new VisionKalmanFilter();
@@ -265,11 +247,7 @@ public class OI {
     }
 
     public double getWristMove() {
-        return clampInput(xbox.getY(GenericHID.Hand.kRight) * 2);
-    }
-
-    public boolean toggleArmUp() {
-        return btnToggleArmUp.get();
+        return -clampInput(xbox.getY(GenericHID.Hand.kRight) * 2);
     }
 
     public boolean shouldExpelGrabber() {
@@ -285,7 +263,11 @@ public class OI {
     }
 
     public boolean shouldResetCommands() {
-        return btnResetCommands.get();
+        return xbox.getBackButtonPressed();
+    }
+
+    public boolean shouldResetEncoders() {
+        return xbox.getStartButtonPressed();
     }
 
     public boolean shouldExpelHatch() {
