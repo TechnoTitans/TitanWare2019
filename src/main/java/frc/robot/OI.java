@@ -203,7 +203,7 @@ public class OI {
         // arm controls
         btnRocketBall1.whenPressed(new MoveElevatorToPosition(ElevatorPosition.ROCKET_LEVEL_1_BALL));
         btnRocketBall2.whenPressed(new MoveElevatorToPosition((ElevatorPosition.ROCKET_LEVEL_2_BALL)));
-        //btnRocketBall3.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_3_BALL));
+        btnRocketBall3.whenPressed(new MoveElevatorToPosition(ElevatorPosition.ROCKET_LEVEL_3_BALL));
         btnRocketBallCargo.whenPressed(new MoveElevatorToPosition((ElevatorPosition.CARGO_SHIP_BALL)));
         btnRocketBallPickup.whenPressed(new MoveElevatorToPosition((ElevatorPosition.BALL_PICKUP)));
 
