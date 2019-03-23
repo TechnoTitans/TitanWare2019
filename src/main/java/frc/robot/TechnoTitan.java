@@ -87,7 +87,7 @@ public class TechnoTitan extends TimedRobot {
     elevator = new Elevator(elevatorMotor, new LimitSwitch(limitSwitchTop, true), new LimitSwitch(limitSwitchBottom, true));
 //    arm = new Arm(elbow, wrist, elbowAngleSensor, wristAngleSensor);
     wrist = new Wrist(wristMotor);
-    grabber = new Grabber(new TalonSRX(BlinkyMap.GRABBER_MOTOR, false), new TalonSRX(BlinkyMap.WRIST_MOTOR, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_MECH_EXTEND_PISTON), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_GRAB_PISTON));
+    grabber = new Grabber(new TalonSRX(BlinkyMap.GRABBER_MOTOR, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_MECH_EXTEND_PISTON), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_GRAB_PISTON));
 
 
     // Drivetrain setup

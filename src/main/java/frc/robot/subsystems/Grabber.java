@@ -8,7 +8,7 @@ import frc.robot.movements.ControlGrabber;
 
 public class Grabber extends Subsystem {
 
-    private Motor grabberMotor, wristMotor;
+    private Motor grabberMotor;
 
 //    private Timer pancakeTimer;
     private static final double EXPEL_SPEED = 1;
@@ -16,9 +16,8 @@ public class Grabber extends Subsystem {
 
     private Solenoid extendHatchMechPiston, hatchGrabPiston;
 
-    public Grabber(Motor grabberMotor, Motor wristMotor, Solenoid extendHatchMechPiston, Solenoid hatchGrabPiston) {
+    public Grabber(Motor grabberMotor, Solenoid extendHatchMechPiston, Solenoid hatchGrabPiston) {
         this.grabberMotor = grabberMotor;
-        this.wristMotor = wristMotor;
 
         this.extendHatchMechPiston = extendHatchMechPiston;
         this.hatchGrabPiston = hatchGrabPiston;
@@ -39,10 +38,6 @@ public class Grabber extends Subsystem {
 
     public void setGrabberMotor(double speed) {
         grabberMotor.set(speed);
-    }
-
-    public void setWristMotor(double speed) {
-        this.wristMotor.set(speed);
     }
 
 
