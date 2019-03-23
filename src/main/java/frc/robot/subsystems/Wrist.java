@@ -22,11 +22,6 @@ public class Wrist extends Subsystem {
         resetEncoder();
         wristMotor.configMotionCruiseVelocity((int) (WRIST_SPEED / (degreesPerPulse *  10)));
         wristMotor.configMotionAcceleration((int) (WRIST_ACCEL / (degreesPerPulse * 10)));
-
-//        wristMotor.configContinuousCurrentLimit(40);
-//        wristMotor.configPeakCurrentLimit(40);
-//        wristMotor.configPeakCurrentDuration(200);
-//        wristMotor.enableCurrentLimit(true);
     }
 
     public void resetEncoder() {

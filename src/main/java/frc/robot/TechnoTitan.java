@@ -72,7 +72,7 @@ public class TechnoTitan extends TimedRobot {
     // elevator setup
     // 0.0000194 in/pulse?
     elevatorMotor = new TalonSRX(BlinkyMap.ELEVATOR_MOTOR, true);
-    elevatorMotor.setEncoder(new QuadEncoder(elevatorMotor, 0.00274, false)); // TODO: configure
+    elevatorMotor.setEncoder(new QuadEncoder(elevatorMotor, 0.00274, false));
     // moving down is positive
     wristMotor = new TalonSRX(BlinkyMap.WRIST_MOTOR, false);
     wristMotor.setEncoder(new QuadEncoder(wristMotor, 1, false));

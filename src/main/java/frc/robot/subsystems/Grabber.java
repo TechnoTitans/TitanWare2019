@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.motor.Motor;
+import frc.robot.motor.TalonSRX;
 import frc.robot.movements.ControlGrabber;
 
 public class Grabber extends Subsystem {
@@ -16,12 +17,16 @@ public class Grabber extends Subsystem {
 
     private Solenoid extendHatchMechPiston, hatchGrabPiston;
 
-    public Grabber(Motor grabberMotor, Solenoid extendHatchMechPiston, Solenoid hatchGrabPiston) {
+    public Grabber(TalonSRX grabberMotor, Solenoid extendHatchMechPiston, Solenoid hatchGrabPiston) {
         this.grabberMotor = grabberMotor;
 
         this.extendHatchMechPiston = extendHatchMechPiston;
         this.hatchGrabPiston = hatchGrabPiston;
 //        pancakeTimer = new Timer();
+//        grabberMotor.configContinuousCurrentLimit(40);
+//        grabberMotor.configPeakCurrentLimit(40);
+//        grabberMotor.configPeakCurrentDuration(200);
+//        grabberMotor.enableCurrentLimit(true);
     }
 
     public void expel() {
