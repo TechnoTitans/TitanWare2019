@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.Motor;
 import frc.robot.motor.TalonSRX;
 import frc.robot.movements.ControlGrabber;
@@ -53,6 +54,10 @@ public class Grabber extends Subsystem {
         extendHatchMechPiston.set(!extendHatchMechPiston.get());
     }
 
+    public void toggleHatchGrab() {
+        hatchGrabPiston.set(!hatchGrabPiston.get());
+        SmartDashboard.putBoolean("Hatch grab enables", hatchGrabPiston.get());
+    }
 //    public void setClawPistons(boolean on) {
 //        grabbyPiston.set(on);
 //    }

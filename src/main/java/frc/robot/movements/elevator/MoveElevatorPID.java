@@ -16,7 +16,6 @@ public class MoveElevatorPID extends Command {
     protected void execute() {
         TechnoTitan.wrist.setTargetAngle(position.getWristAngle());
         TechnoTitan.elevator.setTargetHeight(position.getElevatorHeight());
-
     }
 
     @Override

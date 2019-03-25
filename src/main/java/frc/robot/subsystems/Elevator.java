@@ -142,7 +142,6 @@ public class Elevator extends Subsystem {
 
     @Override
     protected void initDefaultCommand() {
-        setDefaultCommand(new ControlElevator());
     }
 
     public double getHeight() {

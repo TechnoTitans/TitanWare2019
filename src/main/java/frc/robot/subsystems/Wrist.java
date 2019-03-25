@@ -43,7 +43,6 @@ public class Wrist extends Subsystem {
 
     @Override
     protected void initDefaultCommand() {
-        setDefaultCommand(new ControlWrist());
     }
 
     public double getAngle() {

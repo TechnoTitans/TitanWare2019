@@ -51,7 +51,6 @@ public class TechnoTitan extends TimedRobot {
                                RIGHT_REVERSE = true;
 
   private static final double INCHES_PER_PULSE = 0.00570;
-
 //  private static final int MVA_TAPS = 25;
 
   /**
@@ -60,6 +59,7 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void robotInit() {
+
     navx = new AHRS(SPI.Port.kMXP);
     navx.reset();
 

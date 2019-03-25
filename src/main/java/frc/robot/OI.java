@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.movements.*;
+import frc.robot.movements.elevator.ControlElevatorWristTeleop;
 import frc.robot.movements.elevator.ElevatorPosition;
 import frc.robot.movements.elevator.MoveElevatorToPosition;
 import frc.robot.sensors.vision.VisionKalmanFilter;
@@ -107,21 +108,23 @@ public class OI {
         Button forwardAlign = new Btn(left, 2);
         Button launchButton = new Btn(left, 7);
         Button expelGrabberAndBackup = new Btn(right, 10);
-        Button toggleGrabberClaw = new Btn(right, 4);
-
-        btnHatchEject = new Btn(right, 5);
-        btnGrabberIntake = new Button() {
+        Button toggleExtendHatchMech = new Button() {
             @Override
             public boolean get() {
                 return xbox.getBumper(GenericHID.Hand.kLeft);
             }
         };
-        btnGrabberExpel = new Button() {
+
+        Button toggleGrabHatch = new Button() {
             @Override
             public boolean get() {
                 return xbox.getBumper(GenericHID.Hand.kRight);
             }
         };
+
+        btnHatchEject = new Btn(right, 5);
+        btnGrabberIntake = new Btn(right, 2);
+        btnGrabberExpel = new Btn(right, 3);
 
         Button btnRocketBall1 = new Button() {
             @Override
@@ -209,7 +212,7 @@ public class OI {
 
         btnHatch1.whenPressed(new MoveElevatorToPosition((ElevatorPosition.LOW_HATCH)));
         btnHatch2.whenPressed(new MoveElevatorToPosition((ElevatorPosition.ROCKET_LEVEL_2_HATCH)));
-        //btnHatch3.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_3_HATCH));
+        btnHatch3.whenPressed(new MoveElevatorToPosition(ElevatorPosition.ROCKET_LEVEL_3_HATCH));
 
         btnStow.whenPressed(new MoveElevatorToPosition((ElevatorPosition.STOW_POSITION)));
 
@@ -223,7 +226,11 @@ public class OI {
 
         launchButton.whenPressed(new Launch());
         expelGrabberAndBackup.whenPressed(new ReleaseHatch());
-        toggleGrabberClaw.whenPressed(new InstantCommand(() -> TechnoTitan.grabber.toggleExtendHatchMechPiston()));
+
+        toggleExtendHatchMech.whenPressed(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.toggleExtendHatchMechPiston()));
+        toggleGrabHatch.whenPressed(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.toggleHatchGrab()));
+
+        btnOverrideSensors.whenPressed(new ControlElevatorWristTeleop());
     }
 
     private double clampInput(double input) {
@@ -259,7 +266,7 @@ public class OI {
     }
 
     public boolean shouldToggleOverrideSensors() {
-        return btnOverrideSensors.get();
+        return false;
     }
 
     public boolean shouldResetCommands() {
