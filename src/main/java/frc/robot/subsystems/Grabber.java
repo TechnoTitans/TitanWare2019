@@ -5,22 +5,29 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.Motor;
+import frc.robot.motor.TalonSRX;
 import frc.robot.movements.ControlGrabber;
 
 public class Grabber extends Subsystem {
+
     private Motor grabberMotor;
-    private Timer pancakeTimer;
+
+//    private Timer pancakeTimer;
     private static final double EXPEL_SPEED = 1;
-    private static final double INTAKE_SPEED = -0.4;
+    private static final double INTAKE_SPEED = -1;
 
-    private Solenoid pancakePistons;
-    private Solenoid grabbyPiston;
+    private Solenoid extendHatchMechPiston, hatchGrabPiston;
 
-    public Grabber(Motor grabberMotor, Solenoid pancakePistons, Solenoid grabbyPiston) {
+    public Grabber(TalonSRX grabberMotor, Solenoid extendHatchMechPiston, Solenoid hatchGrabPiston) {
         this.grabberMotor = grabberMotor;
-        this.pancakePistons = pancakePistons;
-        this.grabbyPiston = grabbyPiston;
-        pancakeTimer = new Timer();
+
+        this.extendHatchMechPiston = extendHatchMechPiston;
+        this.hatchGrabPiston = hatchGrabPiston;
+//        pancakeTimer = new Timer();
+//        grabberMotor.configContinuousCurrentLimit(40);
+//        grabberMotor.configPeakCurrentLimit(40);
+//        grabberMotor.configPeakCurrentDuration(200);
+//        grabberMotor.enableCurrentLimit(true);
     }
 
     public void expel() {
@@ -35,38 +42,41 @@ public class Grabber extends Subsystem {
         grabberMotor.set(INTAKE_SPEED);
     }
 
-    public void setSpeed(double speed) {
+    public void setGrabberMotor(double speed) {
         grabberMotor.set(speed);
     }
 
-    public void expelHatch() {
-        pancakePistons.set(true);
-        pancakeTimer.reset();
-        pancakeTimer.start();
+
+    public void setExtendHatchMechPiston(boolean on) {
+        extendHatchMechPiston.set(on);
+    }
+    public void toggleExtendHatchMechPiston() {
+        extendHatchMechPiston.set(!extendHatchMechPiston.get());
     }
 
-    public void setPancakePistons(boolean on) {
-        pancakePistons.set(on);
+    public void toggleHatchGrab() {
+        hatchGrabPiston.set(!hatchGrabPiston.get());
+        SmartDashboard.putBoolean("Hatch grab enables", hatchGrabPiston.get());
     }
+//    public void setClawPistons(boolean on) {
+//        grabbyPiston.set(on);
+//    }
 
-    public void setClawPistons(boolean on) {
-        grabbyPiston.set(on);
-    }
+//    public void toggleClawPistons() {
+//        grabbyPiston.set(!grabbyPiston.get());
+//    }
 
-    public void toggleClawPistons() {
-        SmartDashboard.putBoolean("Grabby piston set", !grabbyPiston.get());
-        grabbyPiston.set(!grabbyPiston.get());
-    }
-
-    public void updatePistons() {
-        if (pancakeTimer.get() > 0.5) {
-            pancakeTimer.stop();
-            pancakePistons.set(false);
-        }
-    }
+//    public void updatePistons() {
+//        if (pancakeTimer.get() > 0.5) {
+//            pancakeTimer.stop();
+//            extendHatchMechPiston.set(false);
+//        }
+//    }
 
     @Override
     protected void initDefaultCommand() {
         setDefaultCommand(new ControlGrabber());
     }
+
+
 }

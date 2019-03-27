@@ -12,7 +12,7 @@ import frc.robot.motor.TalonSRX;
 public class QuadEncoder implements Encoder {
 
 	private TalonSRX talonSRX;
-	private static final double PULSES_PER_ROTATION = 4096;
+	public static final double PULSES_PER_ROTATION = 4096;
 	private double inchesPerPulse; // configure
 	
 	public QuadEncoder(TalonSRX talonSRX, double inchesPerPulse, boolean reversed) {
@@ -53,6 +53,25 @@ public class QuadEncoder implements Encoder {
 	@Override
 	public void reset() {
 		talonSRX.setSelectedSensorPosition(0, 0, 0);
+	}
+
+	@Override
+	public void resetToRaw(int position) {
+		talonSRX.setSelectedSensorPosition(position, 0, 0);
+	}
+
+	@Override
+	public void resetTo(double position) {
+		talonSRX.setSelectedSensorPosition((int) (position / inchesPerPulse), 0, 0);
+	}
+
+	public double getRawPosition() {
+		return talonSRX.getSelectedSensorPosition(0);
+	}
+
+	@Override
+	public double getInchesPerPulse() {
+		return inchesPerPulse;
 	}
 
 	public TalonSRX getTalon() {

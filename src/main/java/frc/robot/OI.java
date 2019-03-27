@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.movements.*;
-import frc.robot.movements.arm.ArmPosition;
-import frc.robot.movements.arm.ControlArm;
-import frc.robot.movements.arm.MoveArmToPosition;
+import frc.robot.movements.elevator.ControlElevatorWristTeleop;
+import frc.robot.movements.elevator.ElevatorPosition;
+import frc.robot.movements.elevator.MoveElevatorToPosition;
 import frc.robot.sensors.vision.VisionKalmanFilter;
 
 
@@ -58,8 +58,7 @@ public class OI {
   // until it is finished as determined by it's isFinished method.
   // button.whenPressed(new ExampleCommand());
 
-    private Button btnToggleArmUp,
-                    btnGrabberExpel,
+    private Button btnGrabberExpel,
                     btnGrabberIntake,
                     btnOverrideSensors,
                     btnResetCommands,
@@ -110,7 +109,19 @@ public class OI {
         Button forwardAlign = new Btn(left, 2);
         Button launchButton = new Btn(left, 7);
         Button expelGrabberAndBackup = new Btn(right, 10);
-        Button toggleGrabberClaw = new Btn(right, 4);
+        Button toggleExtendHatchMech = new Button() {
+            @Override
+            public boolean get() {
+                return xbox.getBumper(GenericHID.Hand.kLeft);
+            }
+        };
+
+        Button toggleGrabHatch = new Button() {
+            @Override
+            public boolean get() {
+                return xbox.getBumper(GenericHID.Hand.kRight);
+            }
+        };
 
         btnMoveTargetLeft = new Btn(left, 4);
         btnMoveTargetRight = new Btn(left, 5);
@@ -142,13 +153,6 @@ public class OI {
         };
 
         Button btnRocketBallPickup = new Button() {
-            @Override
-            public boolean get() {
-                return xbox.getBumper(GenericHID.Hand.kRight);
-            }
-        };
-
-        Button hatchPickup = new Button() {
             @Override
             public boolean get() {
                 return xbox.getTriggerAxis(GenericHID.Hand.kRight) > 0.5;
@@ -187,13 +191,6 @@ public class OI {
             }
         };
 
-        btnToggleArmUp = new Button() {
-            @Override
-            public boolean get() {
-                return xbox.getBumperPressed(GenericHID.Hand.kLeft);
-            }
-        };
-
         btnOverrideSensors = new Button() {
             @Override
             public boolean get() {
@@ -212,21 +209,17 @@ public class OI {
         driveTriggerLeft.whileHeld(new ControlDriveTrainStraight());
 
         // arm controls
-        btnRocketBall1.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_1_BALL));
-        btnRocketBall2.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_2_BALL));
-        //btnRocketBall3.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_3_BALL));
-        btnRocketBallCargo.whenPressed(new MoveArmToPosition(ArmPosition.CARGO_SHIP_BALL));
-        btnRocketBallPickup.whenPressed(new MoveArmToPosition(ArmPosition.BALL_PICKUP));
+        btnRocketBall1.whenPressed(new MoveElevatorToPosition(ElevatorPosition.ROCKET_LEVEL_1_BALL));
+        btnRocketBall2.whenPressed(new MoveElevatorToPosition((ElevatorPosition.ROCKET_LEVEL_2_BALL)));
+        btnRocketBall3.whenPressed(new MoveElevatorToPosition(ElevatorPosition.ROCKET_LEVEL_3_BALL));
+        btnRocketBallCargo.whenPressed(new MoveElevatorToPosition((ElevatorPosition.CARGO_SHIP_BALL)));
+        btnRocketBallPickup.whenPressed(new MoveElevatorToPosition((ElevatorPosition.BALL_PICKUP)));
 
-        btnHatch1.whenPressed(new MoveArmToPosition(ArmPosition.LOW_HATCH));
-        btnHatch2.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_2_HATCH));
-        //btnHatch3.whenPressed(new MoveArmToPosition(ArmPosition.ROCKET_LEVEL_3_HATCH));
+        btnHatch1.whenPressed(new MoveElevatorToPosition((ElevatorPosition.LOW_HATCH)));
+        btnHatch2.whenPressed(new MoveElevatorToPosition((ElevatorPosition.ROCKET_LEVEL_2_HATCH)));
+        btnHatch3.whenPressed(new MoveElevatorToPosition(ElevatorPosition.ROCKET_LEVEL_3_HATCH));
 
-        hatchPickup.whenPressed(new MoveArmToPosition(ArmPosition.HATCH_PICKUP));
-
-        btnStow.whenPressed(new MoveArmToPosition(ArmPosition.STOW_POSITION));
-
-        btnOverrideSensors.whenPressed(new ControlArm());
+        btnStow.whenPressed(new MoveElevatorToPosition((ElevatorPosition.STOW_POSITION)));
 
 
         VisionKalmanFilter visionFilter = new VisionKalmanFilter();
@@ -238,7 +231,11 @@ public class OI {
 
         launchButton.whenPressed(new Launch());
         expelGrabberAndBackup.whenPressed(new ReleaseHatch());
-        toggleGrabberClaw.whenPressed(new InstantCommand(() -> TechnoTitan.grabber.toggleClawPistons()));
+
+        toggleExtendHatchMech.whenPressed(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.toggleExtendHatchMechPiston()));
+        toggleGrabHatch.whenPressed(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.toggleHatchGrab()));
+
+        btnOverrideSensors.whenPressed(new ControlElevatorWristTeleop());
     }
 
     private double clampInput(double input) {
@@ -257,16 +254,12 @@ public class OI {
         return clampInput(-right.getRawAxis(1));
     }
 
-    public double getElbowMove() {
+    public double getElevatorMove() {
         return -clampInput(xbox.getY(GenericHID.Hand.kLeft) * 2);
     }
 
     public double getWristMove() {
-        return clampInput(xbox.getY(GenericHID.Hand.kRight) * 2);
-    }
-
-    public boolean toggleArmUp() {
-        return btnToggleArmUp.get();
+        return -clampInput(xbox.getY(GenericHID.Hand.kRight) * 2);
     }
 
     public boolean shouldExpelGrabber() {
@@ -278,11 +271,15 @@ public class OI {
     }
 
     public boolean shouldToggleOverrideSensors() {
-        return btnOverrideSensors.get();
+        return false;
     }
 
     public boolean shouldResetCommands() {
-        return btnResetCommands.get();
+        return xbox.getBackButtonPressed();
+    }
+
+    public boolean shouldResetEncoders() {
+        return xbox.getStartButtonPressed();
     }
 
     public boolean shouldExpelHatch() {

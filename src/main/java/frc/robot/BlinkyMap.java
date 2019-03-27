@@ -29,4 +29,10 @@ public class BlinkyMap {
     public static final int PCM_ADDR = 15;
     public static final int ARM_PISTON = 0;
     public static final int HATCH_PANEL_PISTON = 1;
+
+
+    public static final int WRIST_MOTOR = 9;
+    public static final int GRABBER_MOTOR = 7;
+    public static final int ELEVATOR_MOTOR = 10; // TODO calculate actual value
+
 }

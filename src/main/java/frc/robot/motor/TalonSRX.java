@@ -1,9 +1,13 @@
 package frc.robot.motor;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.movements.ConstantsMM;
 import frc.robot.sensors.Encoder;
 
 /*
@@ -12,6 +16,7 @@ import frc.robot.sensors.Encoder;
 public class TalonSRX extends com.ctre.phoenix.motorcontrol.can.TalonSRX implements Motor {
 
 	private Encoder encoder;
+	private static final int TIMEOUT_MS = 30;
 	Gyro gyro;
 	public static final int CURRENT_LIMIT = 41;
 	public static final int CURRENT_LIMIT_THRESHOLD = 41;
@@ -158,4 +163,35 @@ public class TalonSRX extends com.ctre.phoenix.motorcontrol.can.TalonSRX impleme
 		brownout = false;
 	}
 
+	public void configPID(double P, double D, double F) {
+		configPID(P, 0, D, F, 0);
+	}
+	public void configPID(double P, double I, double D, double F, int iZone) {
+		// If these ever need to be nonzero, we can make them parameters instead
+		final int pidSlot = 0, profileSlot = 0;
+
+		configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, pidSlot, TIMEOUT_MS);
+		setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, TIMEOUT_MS);
+		setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, TIMEOUT_MS);
+
+		configNominalOutputForward(0, TIMEOUT_MS);
+		configNominalOutputReverse(0, TIMEOUT_MS);
+		configPeakOutputForward(1, TIMEOUT_MS);
+		configPeakOutputReverse(-1, TIMEOUT_MS);
+
+		// MARK - PIDF stuff
+		selectProfileSlot(profileSlot, pidSlot);
+		config_kF(profileSlot, F, TIMEOUT_MS);
+		config_kP(profileSlot, P, TIMEOUT_MS);
+		config_kI(profileSlot, I, TIMEOUT_MS);
+		config_kD(profileSlot, D, TIMEOUT_MS);
+		config_IntegralZone(profileSlot, iZone, TIMEOUT_MS);
+	}
+
+	public void postEstimatedKf(String name) {
+		double speed = getSelectedSensorVelocity(0);
+		if (Math.abs(speed) > 10) {
+			SmartDashboard.putNumber("Estimated Kf for " + name, getPercentSpeed() / speed * 1023);
+		}
+	}
 }

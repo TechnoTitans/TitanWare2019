@@ -8,18 +8,27 @@ import frc.robot.TechnoTitan;
 public class ReleaseHatch extends CommandGroup {
     public ReleaseHatch() {
         requires(TechnoTitan.grabber);
+        requires(TechnoTitan.drive);
         addSequential(new InstantCommand(() -> {
-            TechnoTitan.grabber.setClawPistons(false); // make sure that they are in
-            TechnoTitan.grabber.setPancakePistons(true);
+            
+            TechnoTitan.grabber.toggleHatchGrab();
+            //TechnoTitan.drive.set(0.3);
         }));
         addSequential(new WaitCommand(0.25));
         addSequential(new InstantCommand(() -> {
-            TechnoTitan.grabber.setPancakePistons(false);
+            TechnoTitan.grabber.setExtendHatchMechPiston(false);
+            TechnoTitan.drive.set(-0.3);
         }));
+        addSequential(new WaitCommand(0.25));
+        addSequential(new InstantCommand(() -> {
+            TechnoTitan.drive.set(0);
+        }));  
+    
     }
 
     @Override
     public void interrupted() {
-        TechnoTitan.grabber.setPancakePistons(false);
+        TechnoTitan.grabber.setExtendHatchMechPiston(false);
+        TechnoTitan.drive.set(0);
     }
 }

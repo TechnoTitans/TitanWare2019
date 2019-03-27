@@ -30,15 +30,13 @@ public class RobotMap {
                           AUX_JOYSTICK_2 = 3;
 
 
-  public static final int WRIST_MOTOR = 1;
-  public static final int ELBOW_MOTOR = 3;
+//  public static final int ELBOW_MOTOR = 3;
 
   // Talons with encoders
   public static final int LEFT_TALON_E = 5, RIGHT_TALON_E = 8;
 
   // Other talons
   public static final int LEFT_TALON_2 = 6, LEFT_TALON_3 = 4, RIGHT_TALON_2 = 9, RIGHT_TALON_3 = 7;
-  public static final int GRABBER_MOTOR = 2;
 
   // accelerometers
 //  public static final int ELBOW_ACCEL_ADDR = 0x18;
@@ -50,6 +48,13 @@ public class RobotMap {
 
   public static final int PCM_ADDR = 15;
 //  public static final int ARM_PISTON = 0;
-  public static final int HATCH_PANEL_PISTON = 1;
-  public static final int HATCH_GRABBER_PISTON = 0;
+    public static final int HATCH_MECH_EXTEND_PISTON = 0;
+    public static final int HATCH_GRAB_PISTON = 1;
+
+    public static final int WRIST_MOTOR = 1;
+    public static final int GRABBER_MOTOR = 2;
+    public static final int ELEVATOR_MOTOR = 3; // TODO calculate actual value
+
+    public static final int LS_BOT = 0;
+    public static final int LS_TOP = 1;
 }
