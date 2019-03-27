@@ -88,7 +88,7 @@ public class TechnoTitan extends TimedRobot {
 //    arm = new Arm(elbow, wrist, elbowAngleSensor, wristAngleSensor);
     wrist = new Wrist(wristMotor);
     grabber = new Grabber(new TalonSRX(BlinkyMap.GRABBER_MOTOR, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_MECH_EXTEND_PISTON), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_GRAB_PISTON));
-
+    
 
     // Drivetrain setup
     TalonSRX leftETalonSRX = new TalonSRX(BlinkyMap.LEFT_TALON_E, LEFT_REVERSE),
@@ -106,12 +106,12 @@ public class TechnoTitan extends TimedRobot {
     rightFollow1.follow(rightETalonSRX);
     rightFollow2.follow(rightETalonSRX);
 
-    leftETalonSRX.setupCurrentLimiting();
-    rightETalonSRX.setupCurrentLimiting();
-    leftFollow1.setupCurrentLimiting();
-    leftFollow2.setupCurrentLimiting();
-    rightFollow1.setupCurrentLimiting();
-    rightFollow2.setupCurrentLimiting();
+    //leftETalonSRX.setupCurrentLimiting();
+    //rightETalonSRX.setupCurrentLimiting();
+    //leftFollow1.setupCurrentLimiting();
+    //leftFollow2.setupCurrentLimiting();
+    //rightFollow1.setupCurrentLimiting();
+    //rightFollow2.setupCurrentLimiting();
 
     drive = new TankDrive(leftETalonSRX, rightETalonSRX);
     oi = new OI(); // must initialize oi after drive because it requires it as a a subsystem
@@ -157,7 +157,8 @@ public class TechnoTitan extends TimedRobot {
 
     SmartDashboard.putNumber("Wrist encoder", wrist.getPosition());
     SmartDashboard.putNumber("Elevator encoder", elevator.getPosition());
-
+    SmartDashboard.putBoolean("Bottom Limit", elevator.isAtBottom());
+    SmartDashboard.putBoolean("Top Limit", elevator.isAtTop());
     SmartDashboard.putNumber("Wrist angle", wrist.getAngle());
     SmartDashboard.putNumber("Elevator height", elevator.getHeight());
 
