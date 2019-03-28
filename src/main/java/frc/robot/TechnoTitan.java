@@ -175,7 +175,6 @@ public class TechnoTitan extends TimedRobot {
 
 
     if (oi.shouldResetCommands()) {
-      // TODO Uncomment out the remove all
       SmartDashboard.putNumber("Resetting", Math.random());
       Scheduler.getInstance().removeAll();
     }
@@ -192,7 +191,6 @@ public class TechnoTitan extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    // todo reset elevator pid stuff
 //    TechnoTitan.arm.elbowController.reset();
 //    TechnoTitan.arm.wristController.reset();
   }
