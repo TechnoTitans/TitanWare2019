@@ -62,9 +62,10 @@ public class OI {
                     btnGrabberIntake,
                     btnOverrideSensors,
                     btnResetCommands,
+                    btnDriveSlow,
                     btnEmergencyResetSensors;
 
-    private Btn btnHatchEject, btnClawToggle;
+    private Btn btnHatchEject, btnClawToggle, btnClawOn;
     private Btn btnMoveTargetLeft, btnMoveTargetRight;
 
     public OI() {
@@ -108,6 +109,7 @@ public class OI {
         Button autoAlign = new Btn(left, 3);
         Button forwardAlign = new Btn(left, 2);
         Button launchButton = new Btn(left, 7);
+        Button launchButton2 = new Btn(left, 6);
         Button expelGrabberAndBackup = new Btn(right, 10);
         Button toggleExtendHatchMech = new Button() {
             @Override
@@ -127,6 +129,7 @@ public class OI {
         btnMoveTargetRight = new Btn(left, 5);
 
         btnHatchEject = new Btn(right, 5);
+        btnClawOn = new Btn(right, 11);
         btnClawToggle = new Btn(right, 4);
         btnGrabberIntake = new Btn(right, 2);
         btnGrabberExpel = new Btn(right, 3);
@@ -155,7 +158,14 @@ public class OI {
         Button btnRocketBallPickup = new Button() {
             @Override
             public boolean get() {
-                return xbox.getTriggerAxis(GenericHID.Hand.kRight) > 0.5;
+                return xbox.getBumper(GenericHID.Hand.kRight);
+            }
+        };
+
+        Button hatchPickup = new Button() {
+            @Override
+            public boolean get() {
+                return false;
             }
         };
 
@@ -205,8 +215,15 @@ public class OI {
             }
         };
 
+        Button toggleClimbSolenoid = new Button() {
+            @Override
+            public boolean get() {
+                return xbox.getTriggerAxis(GenericHID.Hand.kRight) > 0.5;
+            }
+        };
 
-        driveTriggerLeft.whileHeld(new ControlDriveTrainStraight());
+
+//        driveTriggerLeft.whileHeld(new ControlDriveTrainStraight());
 
         // arm controls
         btnRocketBall1.whenPressed(new MoveElevatorToPosition(ElevatorPosition.ROCKET_LEVEL_1_BALL));
@@ -229,7 +246,8 @@ public class OI {
 //        forwardAlign.whenPressed(new ForwardAlign(ArmPosition.LOW_HATCH, 60, 0.5));
         forwardAlign.toggleWhenPressed(visionFilter);
 
-        launchButton.whenPressed(new Launch());
+        launchButton.whenPressed(new Launch(true));
+        launchButton2.whenPressed(new Launch(false));
         expelGrabberAndBackup.whenPressed(new ReleaseHatch());
 
         toggleExtendHatchMech.whenPressed(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.toggleExtendHatchMechPiston()));
@@ -248,6 +266,10 @@ public class OI {
 
     public double getLeft() {
         return clampInput(-left.getRawAxis(1));
+    }
+
+    public boolean getSlowdown() {
+        return left.getRawButton(1);
     }
 
     public double getRight() {
@@ -286,8 +308,17 @@ public class OI {
         return btnHatchEject.isPressed();
     }
 
+    public boolean shouldSetClawOn() {
+        return btnClawOn.isPressed();
+    }
+
     public boolean shouldToggleClaw() {
         return btnClawToggle.isPressed();
+    }
+
+
+    public boolean getClimbToggle() {
+        return left.getRawButtonPressed(8);
     }
 
     public boolean getMoveTargetLeft() { return btnMoveTargetLeft.isPressed(); }

@@ -29,8 +29,9 @@ public class ControlDriveTrain extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    leftFilter.update(TechnoTitan.oi.getLeft());
-    rightFilter.update(TechnoTitan.oi.getRight());
+    double maxSpeed = TechnoTitan.oi.getSlowdown() ? 0.25 : 1;
+    leftFilter.update(TechnoTitan.oi.getLeft() * maxSpeed);
+    rightFilter.update(TechnoTitan.oi.getRight() * maxSpeed);
     TechnoTitan.drive.set(leftFilter.getValue(), rightFilter.getValue());
   }
 

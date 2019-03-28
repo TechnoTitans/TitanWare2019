@@ -48,6 +48,6 @@ public class MoveArmToPosition extends ConditionalCommand {
 
     protected boolean condition() {
         double elbowAngle = TechnoTitan.arm.getElbowAngle();
-        return elbowAngle > -5 || position.getElbowAngle() > -5;
+        return elbowAngle > -15 || position.getElbowAngle() > -15;
     }
 }

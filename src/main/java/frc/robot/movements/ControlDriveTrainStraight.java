@@ -9,7 +9,7 @@ import frc.robot.sensors.TitanGyro;
 public class ControlDriveTrainStraight extends Command  {
     private Gyro gyro;
 
-    private final double kP = 0.05;
+    private final double kP = 0.0;
 
     private static final double MAX_STRAIGHT_SPEED = 0.25;
 

@@ -8,6 +8,7 @@
 <canvas width="700" height="1200" style="border: 1px solid black;"></canvas>
 <script type="text/javascript">
 var table = "/SmartDashboard/";
+var STRAIGHT_END_COEFF = 2.7;
 var canvas = document.querySelector("canvas"),
     ctx = canvas.getContext("2d"),
     width = canvas.width,
@@ -26,7 +27,89 @@ var drawTargets = function() {
     ctx.beginPath();
     ctx.arc(targetX, targetY, 5, 0, 2*Math.PI, false);
     ctx.fill();
-}
+};
+
+var getX = () => NetworkTables.getValue(table + "X", 0);
+var getY = () => NetworkTables.getValue(table + "Distance", 0);
+var getAngle = () => NetworkTables.getValue(table + "Angle", 0);
+
+var getSplineX = () => NetworkTables.getValue(table + "spline-x", [0, 0, 0, 0]);
+var getSplineY = () => NetworkTables.getValue(table + "spline-y", [0, 0, 0, 0]);
+
+
+var setXYAngle = (x, y, angle) => {
+  getX = () => x;
+  getY = () => y;
+  getAngle = () => angle;
+};
+
+
+var calculateCurvature = function() {
+        var x = getX();
+        var y = getY();
+	var skew = getAngle() * Math.PI / 180;
+        /*
+        h00(t) = (1+2t)(1-t)^2 = 2t^3 - 3t^2 + 1    p0
+        h10(t) = t(1-t)^2 = t^3 - 2t^2 + t          m0
+        h01(t) = t^2(3-2t) = -2t^3 + 3t^2           p1
+        h11(t) = t^2(t - 1) = t^3 - t^2             m1
+         */
+
+        var distance = Math.hypot(x, y);
+
+        /*
+        A brief explanation of the math:
+        We are using a hermite cubic spline to connect the points (x, y) and (0, 0)
+        The formula is h00 * p0 + h10 * m0 + h01 * p1 + h11 * m1
+        Here, p0, m0, p1, and m1 are vectors representing
+          - The initial location (x, y)
+          - The initial direction (mx, my)
+          - The final location (0, 0)
+          - The final direction (0, -distance) * STRAIGHT_END_COEFF
+         The lengths of m0 and m1 control how strongly the tangent lines for the initial curves are pulled in
+         that direction. By default, when STRAIGHT_END_COEFF is 1, both have the same length as the distance left
+         to the target.
+
+         Then, to calculate curvature, we use the formula
+         K = (r'(t) x r''(t)) / |r'(t)|^3      (where x denotes the cross product)
+         where K is the curvature (the reciprocal of the radius of a circle touching the path)
+         This formula is derived from a = v^2 / r = v^2 * K where a is centripetal acceleration
+         Then, K = a / v^2, note that r'(t), the velocity, cross r''(t), the acceleration, is a * v
+         so K = |r'(t) x r''(t)| / |r'(t)|^3
+
+         Now, by construction, r'(t) = <mx, my> so we only need to find r''(t), for which we only need the
+         t^2 coefficient of the hermite polynomials.
+
+         Check out this desmos I made to play with the variables: https://www.desmos.com/calculator/lupevjbr8s
+         */
+
+        // px = h00 * x + h10 * mx
+        // py = h00 * y + h10 * my + h11 * distance
+        var mx = distance * Math.sin(skew);
+        var my = distance * Math.cos(skew);
+//        double pxB = -3 * x - 2 * mx,
+//                pyB = -3 * y - 2 * my - 1 * distance * STRAIGHT_END_COEFF;
+
+        // TODO: try this out maybe?
+//        double coeff = Math.abs(x) / distance * 1 + STRAIGHT_END_COEFF;
+        var pyA = 2 * y + 1 * my  + 1 * distance * STRAIGHT_END_COEFF,
+                pyB = -3 * y - 2 * my  - 1 * distance * STRAIGHT_END_COEFF,
+                pyC = 1 * my,
+                pyD = 1 * y;
+        var pxA = 2 * x + 1 * mx,
+                pxB = -3 * x - 2 * mx,
+                pxC = 1 * mx,
+                pxD = 1 * x;
+
+	getSplineX = () => [pxA, pxB, pxC, pxD];
+	getSplineY = () => [pyA, pyB, pyC, pyD];
+
+        // K = <mx, my> cross <px''(0), py''(0)> / distance^3
+        // px''(0) = 2 * pxB
+        var kappa = (my * 2 * pxB - mx * 2 * pyB) / Math.pow(distance, 3);
+
+        return kappa;
+};
 
 var STRAIGHT_END_COEFF = 2.4;
 
@@ -90,7 +173,7 @@ function calculateCurvature(x, y, skew) {
 var refreshCanvas = function() {
     ctx.clearRect(0, 0, width, height);
     drawTargets();
-    var robotX = NetworkTables.getValue(table + "X", 0), robotY = NetworkTables.getValue(table + "Distance", 0), robotAngle = NetworkTables.getValue(table + "Angle", 0);
+    var robotX = getX(), robotY = getY(), robotAngle = getAngle(); 
     robotAngle *= Math.PI / 180;
     var x = targetX + robotX * scale, y = targetY - robotY * scale;
     ctx.fillStyle = "gray";
@@ -106,6 +189,8 @@ var refreshCanvas = function() {
     ctx.stroke();
 
     ctx.strokeStyle = "red";
+    var pX = getSplineX();
+    var pY = getSplineY();
     // var pX = NetworkTables.getValue(table + "spline-x", [0, 0, 0, 0]);
     // var pY = NetworkTables.getValue(table + "spline-y", [0, 0, 0, 0]);
     var pX, pY;

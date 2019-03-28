@@ -120,7 +120,7 @@ public class Arm extends Subsystem {
 
         elbowController = new PIDAngleController("Elbow", kElbowP, kElbowI, kElbowD, MAX_STEADY_VOLTAGE_ELBOW, elbowAngleSensor, this::moveElbow, 50, 25);
         wristController = new PIDAngleController("Wrist", kWristP, kWristI, kWristD, MAX_STEADY_VOLTAGE_WRIST, wristAngleSensor, this::moveWrist, 65, 65);
-        elbowController.setOutputRange(-0.05, 0.6);
+        elbowController.setOutputRange(-0.05, 0.9);
         wristController.setOutputRange(-0.5, 0.5);
 
         SmartDashboard.putData("Elbow", elbowController);

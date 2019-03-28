@@ -22,8 +22,10 @@ public class VisionSensor {
     }
 
     public static void initGyro() {
-        if (visionGyro == null) visionGyro = new TitanGyro(TechnoTitan.centralGyro);
-        visionGyro.resetTo(0);;
+        if (visionGyro == null) {
+            visionGyro = new TitanGyro(TechnoTitan.centralGyro);
+            visionGyro.resetTo(0);;
+        }
     }
 
     public void startRecording() {
