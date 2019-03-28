@@ -14,6 +14,8 @@ public class MoveElevatorPID extends Command {
 
     @Override
     protected void execute() {
+        // Note: this does not need to be called repeatedly and can be safely set in the initialize method
+        // however, we are putting it in execute to be sure
         TechnoTitan.wrist.setTargetAngle(position.getWristAngle());
         TechnoTitan.elevator.setTargetHeight(position.getElevatorHeight());
     }
@@ -24,5 +26,6 @@ public class MoveElevatorPID extends Command {
         double elevatorError = Math.abs(TechnoTitan.elevator.getHeight() - position.getElevatorHeight());
 
         return wristError < 2 && elevatorError < 1;
+        // return false;
     }
 }

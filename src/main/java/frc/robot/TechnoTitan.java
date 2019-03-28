@@ -11,7 +11,6 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.TalonSRX;
@@ -19,7 +18,6 @@ import frc.robot.sensors.LimitSwitch;
 import frc.robot.sensors.NavXGyro;
 import frc.robot.sensors.QuadEncoder;
 import frc.robot.sensors.TimeOfFlight;
-import frc.robot.sensors.gy521.Accel_GY521;
 import frc.robot.sensors.vision.VisionSensor;
 import frc.robot.subsystems.*;
 
@@ -106,12 +104,12 @@ public class TechnoTitan extends TimedRobot {
     rightFollow1.follow(rightETalonSRX);
     rightFollow2.follow(rightETalonSRX);
 
-    //leftETalonSRX.setupCurrentLimiting();
-    //rightETalonSRX.setupCurrentLimiting();
-    //leftFollow1.setupCurrentLimiting();
-    //leftFollow2.setupCurrentLimiting();
-    //rightFollow1.setupCurrentLimiting();
-    //rightFollow2.setupCurrentLimiting();
+    leftETalonSRX.setupCurrentLimiting();
+    rightETalonSRX.setupCurrentLimiting();
+    leftFollow1.setupCurrentLimiting();
+    leftFollow2.setupCurrentLimiting();
+    rightFollow1.setupCurrentLimiting();
+    rightFollow2.setupCurrentLimiting();
 
     drive = new TankDrive(leftETalonSRX, rightETalonSRX);
     oi = new OI(); // must initialize oi after drive because it requires it as a a subsystem

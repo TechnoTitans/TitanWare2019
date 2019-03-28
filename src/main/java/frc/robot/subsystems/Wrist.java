@@ -14,11 +14,12 @@ public class Wrist extends Subsystem {
 
     private static final double INIT_ANGLE = -93.4;
 
-    private static final double degreesPerPulse = 360 / QuadEncoder.PULSES_PER_ROTATION;
+    // private static final double degreesPerPulse = 360 / QuadEncoder.PULSES_PER_ROTATION;
+    private static final double degreesPerPulse = 0.11703511;
 
     public Wrist(TalonSRX wristMotor) {
         this.wristMotor = wristMotor;
-        wristMotor.configPID(4, 0.001, 0, 7, (int) (5 / degreesPerPulse));
+        wristMotor.configPID(2, 0.001, 0, 7, (int) (5 / degreesPerPulse));
         resetEncoder();
         wristMotor.configMotionCruiseVelocity((int) (WRIST_SPEED / (degreesPerPulse *  10)));
         wristMotor.configMotionAcceleration((int) (WRIST_ACCEL / (degreesPerPulse * 10)));
@@ -37,7 +38,7 @@ public class Wrist extends Subsystem {
     }
 
     public void setTargetAngle(double angle) {
-        double target = angle / 360 * QuadEncoder.PULSES_PER_ROTATION;
+        double target = angle / degreesPerPulse;
         wristMotor.set(ControlMode.MotionMagic, target);
     }
 
@@ -46,6 +47,6 @@ public class Wrist extends Subsystem {
     }
 
     public double getAngle() {
-        return wristMotor.getEncoder().getRawPosition() / QuadEncoder.PULSES_PER_ROTATION * 360;
+        return wristMotor.getEncoder().getRawPosition() * degreesPerPulse;
     }
 }
