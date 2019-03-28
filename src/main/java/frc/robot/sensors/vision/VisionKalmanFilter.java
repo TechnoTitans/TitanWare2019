@@ -112,9 +112,9 @@ public class VisionKalmanFilter extends Command {
         Matrix invert() {
             double[][] a = data;
             int n = rows;
-            double x[][] = new double[n][n];
-            double b[][] = new double[n][n];
-            int index[] = new int[n];
+            double[][] x = new double[n][n];
+            double[][] b = new double[n][n];
+            int[] index = new int[n];
             for (int i=0; i<n; ++i)
                 b[i][i] = 1;
 
@@ -148,9 +148,9 @@ public class VisionKalmanFilter extends Command {
         // Method to carry out the partial-pivoting Gaussian
         // elimination.  Here index[] stores pivoting order.
 
-        private static void gaussian(double a[][], int index[]) {
+        private static void gaussian(double[][] a, int[] index) {
             int n = index.length;
-            double c[] = new double[n];
+            double[] c = new double[n];
 
             // Initialize the index
             for (int i=0; i<n; ++i)

@@ -24,7 +24,7 @@ public class ControlElevator extends Command {
         elevatorFilter.update(TechnoTitan.oi.getElevatorMove());
         TechnoTitan.elevator.moveElevator(elevatorFilter.getValue() * MAX_ELEVATOR_SPEED);
 
-        if (TechnoTitan.oi.shouldToggleOverrideSensors()) TechnoTitan.elevator.toggleOverrideSensors();;
+        if (TechnoTitan.oi.shouldToggleOverrideSensors()) TechnoTitan.elevator.toggleOverrideSensors();
     }
 
 

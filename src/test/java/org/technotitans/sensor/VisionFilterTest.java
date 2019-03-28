@@ -1,7 +1,6 @@
  package org.technotitans.sensor;
 
  import com.kauailabs.navx.frc.AHRS;
- import edu.wpi.first.wpilibj.command.Scheduler;
  import edu.wpi.first.wpilibj.interfaces.Gyro;
  import frc.robot.OI;
  import frc.robot.TechnoTitan;

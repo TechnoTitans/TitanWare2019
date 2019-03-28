@@ -118,7 +118,7 @@ public class AutoAlign extends Command {
         if (!visionKalmanFilter.isRunning() || visionKalmanFilter.timeSinceInitialized() < 0.1) {
             TechnoTitan.drive.stop();
             return;
-        };
+        }
 
         double lSpeed, rSpeed;
 
