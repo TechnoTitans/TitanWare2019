@@ -58,6 +58,7 @@
      }
 
      @Test
+     @Ignore
      public void filterShouldUseEncodersToMakeUpForVision() {
          final double dist = 45.0;
 
