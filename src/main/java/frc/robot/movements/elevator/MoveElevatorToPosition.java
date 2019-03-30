@@ -3,11 +3,12 @@ package frc.robot.movements.elevator;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.TechnoTitan;
 
 public class MoveElevatorToPosition extends ConditionalCommand {
     private ElevatorPosition position;
-    private static final double SAFE_WRIST_ANGLE = -85;
+    private static final double SAFE_WRIST_ANGLE = -79;
 
     private static class MoveElevatorToPositionWristDown extends CommandGroup {
         public MoveElevatorToPositionWristDown(ElevatorPosition position) {
@@ -18,7 +19,7 @@ public class MoveElevatorToPosition extends ConditionalCommand {
                     return TechnoTitan.wrist.getAngle() > SAFE_WRIST_ANGLE;
                 }
             });
-            addSequential(new MoveElevatorPID(position.getElevatorHeight(), 1));
+            addSequential(new MoveElevatorPID(position.getElevatorHeight(), 0.5));
             addSequential(new MoveWristPID(position.getWristAngle(), 2));
         }
     }

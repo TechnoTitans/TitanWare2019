@@ -11,6 +11,7 @@ public class Launch extends TimedCommand {
         super(isBeggining ? .75 : 1.25);
         speed = isBeggining ? 0.8 : 1;
         requires(TechnoTitan.drive);
+        requires(TechnoTitan.grabber);
     }
 
     @Override
@@ -22,11 +23,13 @@ public class Launch extends TimedCommand {
     @Override
     protected void execute() {
         TechnoTitan.drive.set(speed, speed);
+        TechnoTitan.grabber.hold();
     }
 
     @Override
     protected void end() {
         TechnoTitan.drive.stop();
+        TechnoTitan.grabber.stop();
     }
 
 }

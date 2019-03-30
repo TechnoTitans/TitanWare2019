@@ -109,7 +109,7 @@ public class OI {
         Button forwardAlign = new Btn(left, 2);
         Button launchButton = new Btn(left, 7);
         Button launchButton2 = new Btn(left, 6);
-        Button expelGrabberAndBackup = new Btn(right, 10);
+        Button expelGrabberAndBackup = new Btn(right, 5);
         Button toggleExtendHatchMech = new Button() {
             @Override
             public boolean get() {
@@ -127,7 +127,7 @@ public class OI {
         btnMoveTargetLeft = new Btn(left, 4);
         btnMoveTargetRight = new Btn(left, 5);
 
-        Button btnGrabHatch = new Btn(right, 11);
+        Button btnGrabHatch = new Btn(right, 4);
         btnGrabberIntake = new Btn(right, 2);
         btnGrabberExpel = new Btn(right, 3);
 

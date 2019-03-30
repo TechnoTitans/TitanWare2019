@@ -42,6 +42,10 @@ public class Grabber extends Subsystem {
         grabberMotor.set(INTAKE_SPEED);
     }
 
+    public void hold() {
+        grabberMotor.set(INTAKE_SPEED / 2);
+    }
+
     public void setGrabberMotor(double speed) {
         grabberMotor.set(speed);
     }
@@ -56,12 +60,10 @@ public class Grabber extends Subsystem {
 
     public void toggleHatchGrab() {
         hatchGrabPiston.set(!hatchGrabPiston.get());
-        SmartDashboard.putBoolean("Hatch grab enables", hatchGrabPiston.get());
     }
 
     public void setHatchGrab(boolean on) {
         hatchGrabPiston.set(on);
-        SmartDashboard.putBoolean("Hatch grab enables", hatchGrabPiston.get());
     }
 //    public void setClawPistons(boolean on) {
 //        grabbyPiston.set(on);
@@ -84,4 +86,11 @@ public class Grabber extends Subsystem {
     }
 
 
+    public boolean isHatchMechExtended() {
+        return extendHatchMechPiston.get();
+    }
+
+    public boolean isHatchGrabbed() {
+        return hatchGrabPiston.get();
+    }
 }

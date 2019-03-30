@@ -9,7 +9,7 @@ import frc.robot.sensors.QuadEncoder;
 public class Wrist extends Subsystem {
     private TalonSRX wristMotor;
 
-    private static final double WRIST_SPEED = 50;  // degrees per second
+    private static final double WRIST_SPEED = 100;  // degrees per second
     private static final double WRIST_ACCEL = 75;  // degrees/second/second
 
     private static final double INIT_ANGLE = -90;

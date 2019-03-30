@@ -11,7 +11,7 @@ public class ReleaseHatch extends CommandGroup {
         requires(TechnoTitan.drive);
         addSequential(new InstantCommand(() -> {
             
-            TechnoTitan.grabber.setHatchGrab(true);
+            TechnoTitan.grabber.setHatchGrab(false);
             //TechnoTitan.drive.set(0.3);
         }));
         addSequential(new WaitCommand(0.1));

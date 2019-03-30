@@ -9,10 +9,9 @@ import frc.robot.movements.elevator.MoveElevatorPID;
 
 public class GrabHatch extends CommandGroup {
     public GrabHatch() {
-        addSequential(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.setHatchGrab(false)));
-        addSequential(new MoveElevatorPID(ElevatorPosition.LOW_HATCH.getElevatorHeight() + 2, 1));
-        addSequential(new InstantCommand(TechnoTitan.drive, () -> TechnoTitan.drive.set(-0.5)));
-        addSequential(new WaitCommand(0.2));
-        addSequential(new InstantCommand(TechnoTitan.drive, () -> TechnoTitan.drive.stop()));
+        addSequential(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.setHatchGrab(true)));
+        addSequential(new InstantCommand(TechnoTitan.elevator, () -> TechnoTitan.elevator.moveElevator(0.5)));
+        addSequential(new WaitCommand(1));
+        addSequential(new InstantCommand(TechnoTitan.elevator, () -> TechnoTitan.elevator.moveElevator(0.2)));
     }
 }

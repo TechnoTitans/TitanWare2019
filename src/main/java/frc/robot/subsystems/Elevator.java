@@ -16,16 +16,16 @@ import java.util.List;
 public class Elevator extends Subsystem {
 
 
-    private static final double ELEVATOR_SPEED_UP = 18,  // in/s
+    private static final double ELEVATOR_SPEED_UP = 30,  // in/s
                                 ELEVATOR_SPEED_DOWN = 18;
 
-    private static final double ELEVATOR_ACCEL_UP = 18,  // in/s^2
-                                ELEVATOR_ACCEL_DOWN = 18;
+    private static final double ELEVATOR_ACCEL_UP = 13,  // in/s^2
+                                ELEVATOR_ACCEL_DOWN = 13;
 
 
     private static final double MAX_HEIGHT = 62.125;
 
-    private static final double feedForward = 0.0;
+    private static final double feedForward = 0.1;
 
     private LimitSwitch lsTop;
     private LimitSwitch lsBot;
@@ -84,7 +84,7 @@ public class Elevator extends Subsystem {
         this.m_motorEncoder = motor.getEncoder();
         m_motorEncoder.reset();
 
-        motor.configPID(0.12, 0.001, 0, 2, (int) (4 / m_motorEncoder.getInchesPerPulse()));
+        motor.configPID(0.05, 0.001, 0.5, 2.5, (int) (4 / m_motorEncoder.getInchesPerPulse()));
         // 22680 / (75.375 - 13.25)
         m_motor = motor;
     }
@@ -107,10 +107,10 @@ public class Elevator extends Subsystem {
         if (!overrideLS && ((lsTop.isPressed() && speed > 0) || (lsBot.isPressed() && speed < 0))) {
             finalSpeed = 0;
         }
-
-        if (overrideLS || !lsBot.isPressed()) {
-            finalSpeed += feedForward;
-        }
+//
+//        if (overrideLS || !lsBot.isPressed()) {
+//            finalSpeed += feedForward;
+//        }
         m_motor.set(finalSpeed);
     }
 

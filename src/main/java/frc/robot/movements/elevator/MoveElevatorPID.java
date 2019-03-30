@@ -5,10 +5,11 @@ import frc.robot.TechnoTitan;
 
 public class MoveElevatorPID extends Command {
     private double elevatorHeight, maxError;
+    private static final double MIN_HEIGHT = 3;
 
     public MoveElevatorPID(double elevatorHeight, double maxError) {
         requires(TechnoTitan.elevator);
-        this.elevatorHeight = elevatorHeight;
+        this.elevatorHeight = Math.max(elevatorHeight, MIN_HEIGHT);
         this.maxError = maxError;
     }
 
@@ -21,7 +22,7 @@ public class MoveElevatorPID extends Command {
 
     @Override
     protected boolean isFinished() {
-        double elevatorError = Math.abs(TechnoTitan.elevator.getHeight() - maxError);
+        double elevatorError = Math.abs(TechnoTitan.elevator.getHeight() - elevatorHeight);
         return elevatorError < maxError;
     }
 }
