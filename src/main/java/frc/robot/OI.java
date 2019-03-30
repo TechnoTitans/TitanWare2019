@@ -158,7 +158,7 @@ public class OI {
         Button btnRocketBallPickup = new Button() {
             @Override
             public boolean get() {
-                return xbox.getBumper(GenericHID.Hand.kRight);
+                return xbox.getTriggerAxis(GenericHID.Hand.kRight) > 0.5;
             }
         };
 
@@ -212,13 +212,6 @@ public class OI {
             @Override
             public boolean get() {
                 return xbox.getStartButtonPressed() || xbox.getBackButtonPressed();  // todo: see if these work
-            }
-        };
-
-        Button toggleClimbSolenoid = new Button() {
-            @Override
-            public boolean get() {
-                return xbox.getTriggerAxis(GenericHID.Hand.kRight) > 0.5;
             }
         };
 

@@ -72,8 +72,8 @@ public class TechnoTitan extends TimedRobot {
     elevatorMotor = new TalonSRX(RobotMap.ELEVATOR_MOTOR, true);
     elevatorMotor.setEncoder(new QuadEncoder(elevatorMotor, 0.00274, false));
     // moving down is positive
-    wristMotor = new TalonSRX(RobotMap.WRIST_MOTOR, false);
-    wristMotor.setEncoder(new QuadEncoder(wristMotor, 1, false));
+    wristMotor = new TalonSRX(RobotMap.WRIST_MOTOR, true);
+    wristMotor.setEncoder(new QuadEncoder(wristMotor, 1, true));
 
     // MARK - accelerometer setup
 
@@ -82,7 +82,7 @@ public class TechnoTitan extends TimedRobot {
 
 
      
-    elevator = new Elevator(elevatorMotor, new LimitSwitch(limitSwitchTop, true), new LimitSwitch(limitSwitchBottom, true));
+    elevator = new Elevator(elevatorMotor, new LimitSwitch(limitSwitchTop, false), new LimitSwitch(limitSwitchBottom, true));
 //    arm = new Arm(elbow, wrist, elbowAngleSensor, wristAngleSensor);
     wrist = new Wrist(wristMotor);
     grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_MECH_EXTEND_PISTON), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_GRAB_PISTON));
