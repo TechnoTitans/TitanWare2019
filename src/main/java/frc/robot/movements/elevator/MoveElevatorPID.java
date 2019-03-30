@@ -4,28 +4,24 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.TechnoTitan;
 
 public class MoveElevatorPID extends Command {
-    private ElevatorPosition position;
+    private double elevatorHeight, maxError;
 
-    public MoveElevatorPID(ElevatorPosition position) {
-        requires(TechnoTitan.wrist);
+    public MoveElevatorPID(double elevatorHeight, double maxError) {
         requires(TechnoTitan.elevator);
-        this.position = position;
+        this.elevatorHeight = elevatorHeight;
+        this.maxError = maxError;
     }
 
     @Override
     protected void execute() {
         // Note: this does not need to be called repeatedly and can be safely set in the initialize method
         // however, we are putting it in execute to be sure
-        TechnoTitan.wrist.setTargetAngle(position.getWristAngle());
-        TechnoTitan.elevator.setTargetHeight(position.getElevatorHeight());
+        TechnoTitan.elevator.setTargetHeight(elevatorHeight);
     }
 
     @Override
     protected boolean isFinished() {
-        double wristError = Math.abs(TechnoTitan.wrist.getAngle() - position.getWristAngle());
-        double elevatorError = Math.abs(TechnoTitan.elevator.getHeight() - position.getElevatorHeight());
-
-        return wristError < 2 && elevatorError < 1;
-        // return false;
+        double elevatorError = Math.abs(TechnoTitan.elevator.getHeight() - maxError);
+        return elevatorError < maxError;
     }
 }

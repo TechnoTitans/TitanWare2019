@@ -10,9 +10,9 @@ public class Wrist extends Subsystem {
     private TalonSRX wristMotor;
 
     private static final double WRIST_SPEED = 50;  // degrees per second
-    private static final double WRIST_ACCEL = 50;  // degrees/second/second
+    private static final double WRIST_ACCEL = 75;  // degrees/second/second
 
-    private static final double INIT_ANGLE = -93.4;
+    private static final double INIT_ANGLE = -90;
 
     // private static final double degreesPerPulse = 360 / QuadEncoder.PULSES_PER_ROTATION;
     private static final double degreesPerPulse = 0.11703511;

@@ -65,7 +65,6 @@ public class OI {
                     btnDriveSlow,
                     btnEmergencyResetSensors;
 
-    private Btn btnHatchEject, btnClawToggle, btnClawOn;
     private Btn btnMoveTargetLeft, btnMoveTargetRight;
 
     public OI() {
@@ -128,9 +127,7 @@ public class OI {
         btnMoveTargetLeft = new Btn(left, 4);
         btnMoveTargetRight = new Btn(left, 5);
 
-        btnHatchEject = new Btn(right, 5);
-        btnClawOn = new Btn(right, 11);
-        btnClawToggle = new Btn(right, 4);
+        Button btnGrabHatch = new Btn(right, 11);
         btnGrabberIntake = new Btn(right, 2);
         btnGrabberExpel = new Btn(right, 3);
 
@@ -159,13 +156,6 @@ public class OI {
             @Override
             public boolean get() {
                 return xbox.getTriggerAxis(GenericHID.Hand.kRight) > 0.5;
-            }
-        };
-
-        Button hatchPickup = new Button() {
-            @Override
-            public boolean get() {
-                return false;
             }
         };
 
@@ -245,6 +235,7 @@ public class OI {
 
         toggleExtendHatchMech.whenPressed(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.toggleExtendHatchMechPiston()));
         toggleGrabHatch.whenPressed(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.toggleHatchGrab()));
+        btnGrabHatch.whenPressed(new GrabHatch());
 
         btnOverrideSensors.whenPressed(new ControlElevatorWristTeleop());
     }
@@ -295,23 +286,6 @@ public class OI {
 
     public boolean shouldResetEncoders() {
         return xbox.getStartButtonPressed();
-    }
-
-    public boolean shouldExpelHatch() {
-        return btnHatchEject.isPressed();
-    }
-
-    public boolean shouldSetClawOn() {
-        return btnClawOn.isPressed();
-    }
-
-    public boolean shouldToggleClaw() {
-        return btnClawToggle.isPressed();
-    }
-
-
-    public boolean getClimbToggle() {
-        return left.getRawButtonPressed(8);
     }
 
     public boolean getMoveTargetLeft() { return btnMoveTargetLeft.isPressed(); }

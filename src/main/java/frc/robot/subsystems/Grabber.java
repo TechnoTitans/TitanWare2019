@@ -58,6 +58,11 @@ public class Grabber extends Subsystem {
         hatchGrabPiston.set(!hatchGrabPiston.get());
         SmartDashboard.putBoolean("Hatch grab enables", hatchGrabPiston.get());
     }
+
+    public void setHatchGrab(boolean on) {
+        hatchGrabPiston.set(on);
+        SmartDashboard.putBoolean("Hatch grab enables", hatchGrabPiston.get());
+    }
 //    public void setClawPistons(boolean on) {
 //        grabbyPiston.set(on);
 //    }
