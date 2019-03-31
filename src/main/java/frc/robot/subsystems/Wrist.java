@@ -19,7 +19,7 @@ public class Wrist extends Subsystem {
 
     public Wrist(TalonSRX wristMotor) {
         this.wristMotor = wristMotor;
-        wristMotor.configPID(2, 0.001, 0, 7, (int) (5 / degreesPerPulse));
+        wristMotor.configPID(3, 0.001, 0, 7, (int) (5 / degreesPerPulse));
         resetEncoder();
         wristMotor.configMotionCruiseVelocity((int) (WRIST_SPEED / (degreesPerPulse *  10)));
         wristMotor.configMotionAcceleration((int) (WRIST_ACCEL / (degreesPerPulse * 10)));

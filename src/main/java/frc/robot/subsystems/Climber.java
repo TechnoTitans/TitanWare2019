@@ -17,4 +17,8 @@ public class Climber extends Subsystem {
     protected void initDefaultCommand() {
 
     }
+
+    public boolean isClimbing() {
+        return climbSolenoid.get();
+    }
 }

@@ -103,7 +103,7 @@ public class OI {
         left = new Joystick(RobotMap.LEFT_JOYSTICK);
         right = new Joystick(RobotMap.RIGHT_JOYSTICK);
         xbox = new XboxController(RobotMap.AUX_JOYSTICK_1);
-
+        Button climb = new Btn(left, 11);
         Button driveTriggerLeft = new JoystickButton(left, 1);
         Button autoAlign = new Btn(left, 3);
         Button forwardAlign = new Btn(left, 2);
@@ -113,7 +113,7 @@ public class OI {
         Button toggleExtendHatchMech = new Button() {
             @Override
             public boolean get() {
-                return xbox.getBumper(GenericHID.Hand.kLeft);
+                return xbox.getBumper(GenericHID.Hand.kLeft) && TechnoTitan.wrist.getAngle() < -50;
             }
         };
 
@@ -230,13 +230,13 @@ public class OI {
         forwardAlign.toggleWhenPressed(visionFilter);
 
         launchButton.whenPressed(new Launch(true));
-        launchButton2.whenPressed(new Launch(false));
+        launchButton2.whenPressed(new Yeet());
         expelGrabberAndBackup.whenPressed(new ReleaseHatch());
 
         toggleExtendHatchMech.whenPressed(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.toggleExtendHatchMechPiston()));
         toggleGrabHatch.whenPressed(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.toggleHatchGrab()));
         btnGrabHatch.whenPressed(new GrabHatch());
-
+        climb.whenPressed(new InstantCommand(TechnoTitan.climber, () -> TechnoTitan.climber.toggle()));
         btnOverrideSensors.whenPressed(new ControlElevatorWristTeleop());
     }
 

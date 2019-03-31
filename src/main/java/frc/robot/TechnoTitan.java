@@ -41,7 +41,7 @@ public class TechnoTitan extends TimedRobot {
   public static TimeOfFlight tfDistance;
   public static Grabber grabber;
   public static Gyro centralGyro;
-
+  public static Climber climber;
 
   private TalonSRX elevatorMotor, wristMotor;
 
@@ -86,7 +86,7 @@ public class TechnoTitan extends TimedRobot {
 //    arm = new Arm(elbow, wrist, elbowAngleSensor, wristAngleSensor);
     wrist = new Wrist(wristMotor);
     grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, true), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_MECH_EXTEND_PISTON), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_GRAB_PISTON));
-    
+    climber = new Climber(new Solenoid(RobotMap.PCM_ADDR, RobotMap.CLIMB_PISTON));
 
     // Drivetrain setup
     TalonSRX leftETalonSRX = new TalonSRX(RobotMap.LEFT_TALON_E, LEFT_REVERSE),
@@ -174,6 +174,8 @@ public class TechnoTitan extends TimedRobot {
 
     SmartDashboard.putBoolean("Hatch mech extended", TechnoTitan.grabber.isHatchMechExtended());
     SmartDashboard.putBoolean("Hatch grabber on", TechnoTitan.grabber.isHatchGrabbed());
+
+    SmartDashboard.putBoolean("Climb pistons extended", TechnoTitan.climber.isClimbing());
 
     if (oi.shouldResetCommands()) {
       SmartDashboard.putNumber("Resetting", Math.random());
