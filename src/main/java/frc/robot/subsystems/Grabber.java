@@ -93,4 +93,8 @@ public class Grabber extends Subsystem {
     public boolean isHatchGrabbed() {
         return hatchGrabPiston.get();
     }
+
+    public double getCurrentDraw() {
+        return grabberMotor.getCurrent();
+    }
 }

@@ -16,16 +16,16 @@ import java.util.List;
 public class Elevator extends Subsystem {
 
 
-    private static final double ELEVATOR_SPEED_UP = 30,  // in/s
-                                ELEVATOR_SPEED_DOWN = 30;
+    private static final double ELEVATOR_SPEED_UP = 12,  // in/s
+                                ELEVATOR_SPEED_DOWN = 12;
 
     private static final double ELEVATOR_ACCEL_UP = 13,  // in/s^2
                                 ELEVATOR_ACCEL_DOWN = 13;
 
 
-    private static final double MAX_HEIGHT = 62.125;
+    private static final double MAX_HEIGHT = 58.5;
 
-    private static final double feedForward = 0.15;
+    private static final double feedForward = 0.1;
 
     private LimitSwitch lsTop;
     private LimitSwitch lsBot;
