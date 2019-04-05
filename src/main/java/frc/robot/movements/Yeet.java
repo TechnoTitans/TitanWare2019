@@ -11,7 +11,7 @@ public class Yeet extends TimedCommand {
 
     @Override
     protected void execute() {
-        TechnoTitan.drive.set(0.75);
+        TechnoTitan.drive.set(0.90);
 
     }
 

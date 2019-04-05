@@ -30,6 +30,7 @@ public class ControlDriveTrain extends Command {
   @Override
   protected void execute() {
     double maxSpeed = TechnoTitan.oi.getSlowdown() ? 0.25 : 1;
+    if (TechnoTitan.climber.isClimbing()) maxSpeed *= 0.3;
     leftFilter.update(TechnoTitan.oi.getLeft() * maxSpeed);
     rightFilter.update(TechnoTitan.oi.getRight() * maxSpeed);
     TechnoTitan.drive.set(leftFilter.getValue(), rightFilter.getValue());

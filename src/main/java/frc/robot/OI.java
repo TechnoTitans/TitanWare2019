@@ -113,7 +113,7 @@ public class OI {
         Button toggleExtendHatchMech = new Button() {
             @Override
             public boolean get() {
-                return xbox.getBumper(GenericHID.Hand.kLeft) && TechnoTitan.wrist.getAngle() < -50;
+                return xbox.getBumper(GenericHID.Hand.kLeft) && TechnoTitan.wrist.getAngle() < -50 && isXboxOnRocket();
             }
         };
 
@@ -137,7 +137,12 @@ public class OI {
                 return xbox.getAButton() && isXboxOnRocket();
             }
         };
-
+        Button defense = new Button() {
+            @Override
+            public boolean get() {
+                return xbox.getBumper(GenericHID.Hand.kLeft) && !isXboxOnRocket();
+            }
+        };
         Button btnRocketBall2 = new Button() {
             @Override
             public boolean get() {
@@ -190,7 +195,6 @@ public class OI {
                 return xbox.getYButton() && !isXboxOnRocket();
             }
         };
-
         btnOverrideSensors = new Button() {
             @Override
             public boolean get() {
@@ -218,14 +222,14 @@ public class OI {
         btnHatch1.whenPressed(new MoveElevatorToPosition((ElevatorPosition.LOW_HATCH)));
         btnHatch2.whenPressed(new MoveElevatorToPosition((ElevatorPosition.ROCKET_LEVEL_2_HATCH)));
         btnHatch3.whenPressed(new MoveElevatorToPosition(ElevatorPosition.ROCKET_LEVEL_3_HATCH));
-
+        defense.whenPressed(new MoveElevatorToPosition(ElevatorPosition.DEFENSE));
         btnStow.whenPressed(new MoveElevatorToPosition((ElevatorPosition.STOW_POSITION)));
 
 
         VisionKalmanFilter visionFilter = new VisionKalmanFilter();
-        autoAlign.toggleWhenPressed(new AutoAlign(0.8, 20, visionFilter));
+//        autoAlign.toggleWhenPressed(new AutoAlign(0.8, 20, visionFilter));
 //        autoAlign.toggleWhenPressed(new AutoAlignAngle());
-
+        autoAlign.whileHeld(new AutoAlignLine());
 //        forwardAlign.whenPressed(new ForwardAlign(ArmPosition.LOW_HATCH, 60, 0.5));
         forwardAlign.toggleWhenPressed(visionFilter);
 

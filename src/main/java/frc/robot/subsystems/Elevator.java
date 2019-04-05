@@ -16,8 +16,8 @@ import java.util.List;
 public class Elevator extends Subsystem {
 
 
-    private static final double ELEVATOR_SPEED_UP = 12,  // in/s
-                                ELEVATOR_SPEED_DOWN = 12;
+    private static final double ELEVATOR_SPEED_UP = 30 ,  // in/s
+                                ELEVATOR_SPEED_DOWN = 30;
 
     private static final double ELEVATOR_ACCEL_UP = 13,  // in/s^2
                                 ELEVATOR_ACCEL_DOWN = 13;
@@ -84,7 +84,7 @@ public class Elevator extends Subsystem {
         this.m_motorEncoder = motor.getEncoder();
         m_motorEncoder.reset();
 
-        motor.configPID(0.08, 0.001, 0.8, 2.5, (int) (4 / m_motorEncoder.getInchesPerPulse()));
+        motor.configPID(0.12, 0.001, 1.4, 2.5, (int) (4 / m_motorEncoder.getInchesPerPulse()));
         // 22680 / (75.375 - 13.25)
         m_motor = motor;
     }

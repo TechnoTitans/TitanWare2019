@@ -119,7 +119,6 @@ public class TechnoTitan extends TimedRobot {
     vision.stopRecording();
 
     CameraServer.getInstance().startAutomaticCapture(0);
-//    CameraServer.getInstance().startAutomaticCapture(1);
 
     Thread updateToF = new Thread(() -> {
       while (!Thread.interrupted()) {
