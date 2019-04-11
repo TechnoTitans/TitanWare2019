@@ -10,7 +10,8 @@ public class AutoAlignAngle extends Command {
     private TitanGyro gyro;
     private int onTargetCount = 0;
 
-    private static final double kP = 0.075;
+    private static final double kP = 0.06;
+    private static final double MAX_ERROR = kP * 5;
     public AutoAlignAngle() {
         requires(TechnoTitan.drive);
         gyro = new TitanGyro(TechnoTitan.centralGyro);
@@ -24,8 +25,8 @@ public class AutoAlignAngle extends Command {
     @Override
     protected void execute() {
         double angle = gyro.getAngle();
-        TechnoTitan.drive.set(-angle * kP, angle * kP);
-        SmartDashboard.putNumber("Auto align angle", angle);
+        double error = Math.min(MAX_ERROR, Math.abs(angle) * kP) * Math.signum(angle);
+        TechnoTitan.drive.set(-error, error);
     }
 
     @Override

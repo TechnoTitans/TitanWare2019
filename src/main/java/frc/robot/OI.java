@@ -65,7 +65,7 @@ public class OI {
                     btnDriveSlow,
                     btnEmergencyResetSensors;
 
-    private Btn btnMoveTargetLeft, btnMoveTargetRight;
+//    private Btn btnMoveTargetLeft, btnMoveTargetRight;
 
     public OI() {
         initialize();
@@ -107,6 +107,8 @@ public class OI {
         Button driveTriggerLeft = new JoystickButton(left, 1);
         Button autoAlign = new Btn(left, 3);
         Button forwardAlign = new Btn(left, 2);
+        Button forwardAlignHit = new Btn(left, 5);
+        Button autoAlignAngle = new Btn(left, 4);
         Button launchButton = new Btn(left, 7);
         Button launchButton2 = new Btn(left, 6);
         Button expelGrabberAndBackup = new Btn(right, 5);
@@ -123,9 +125,9 @@ public class OI {
                 return xbox.getBumper(GenericHID.Hand.kRight);
             }
         };
-
-        btnMoveTargetLeft = new Btn(left, 4);
-        btnMoveTargetRight = new Btn(left, 5);
+//
+//        btnMoveTargetLeft = new Btn(left, 4);
+//        btnMoveTargetRight = new Btn(left, 5);
 
         Button btnGrabHatch = new Btn(right, 4);
         btnGrabberIntake = new Btn(right, 2);
@@ -231,7 +233,9 @@ public class OI {
 //        autoAlign.toggleWhenPressed(new AutoAlignAngle());
         autoAlign.whileHeld(new AutoAlignLine());
 //        forwardAlign.whenPressed(new ForwardAlign(ArmPosition.LOW_HATCH, 60, 0.5));
-        forwardAlign.toggleWhenPressed(visionFilter);
+        forwardAlign.whileHeld(new ControlDriveTrainStraight());
+        forwardAlignHit.toggleWhenPressed(new ForwardAlignLine());
+        autoAlignAngle.toggleWhenPressed(new AutoAlignAngle());
 
         launchButton.whenPressed(new Launch(true));
         launchButton2.whenPressed(new Yeet());
@@ -292,7 +296,7 @@ public class OI {
         return xbox.getStartButtonPressed();
     }
 
-    public boolean getMoveTargetLeft() { return btnMoveTargetLeft.isPressed(); }
+    public boolean getMoveTargetLeft() { return false; } //btnMoveTargetLeft.isPressed(); }
 
-    public boolean getMoveTargetRight() { return btnMoveTargetRight.isPressed(); }
+    public boolean getMoveTargetRight() { return false; } //btnMoveTargetRight.isPressed(); }
 }
