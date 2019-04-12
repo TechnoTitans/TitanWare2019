@@ -9,6 +9,7 @@ package frc.robot.sensors;
 
 
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.sensors.util.CircularByteBuffer;
 
 /**
@@ -50,7 +51,9 @@ public class TimeOfFlight {
         if (buffer.available() > 18) {
             buffer.clear();
         }
-        buffer.put(serial.read(bytesToRead));
+        byte[] read = serial.read(bytesToRead);
+        SmartDashboard.putRaw("Raw serial", read);
+        buffer.put(read);
         parse();
     }
 

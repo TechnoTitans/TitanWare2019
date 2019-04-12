@@ -2,6 +2,7 @@ package frc.robot.movements;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
+import frc.robot.BlinkyMap;
 import frc.robot.TechnoTitan;
 import frc.robot.motor.Filter;
 import frc.robot.sensors.TitanGyro;
@@ -30,7 +31,7 @@ public class ForwardAlignLine extends Command {
 
     @Override
     protected boolean isFinished() {
-        return TechnoTitan.navx.getRawAccelY() <= -0.25;
+        return BlinkyMap.NAVX_Y_ORIENTATION > 0 ? TechnoTitan.navx.getRawAccelY() <= -0.25 : TechnoTitan.navx.getRawAccelY() >= 0.25;
     }
 
     public void end() {

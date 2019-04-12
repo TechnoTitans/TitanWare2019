@@ -33,4 +33,6 @@ public class BlinkyMap {
     public static final int GRABBER_MOTOR = 7;
     public static final int ELEVATOR_MOTOR = 9;
     public static final int WRIST_MOTOR = 10;
+
+    public static final int NAVX_Y_ORIENTATION = -1;
 }

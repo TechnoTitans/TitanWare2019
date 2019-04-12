@@ -232,6 +232,7 @@ public class OI {
 //        autoAlign.toggleWhenPressed(new AutoAlign(0.8, 20, visionFilter));
 //        autoAlign.toggleWhenPressed(new AutoAlignAngle());
         autoAlign.whileHeld(new AutoAlignLine());
+        autoAlign.whenReleased(new AutoAlignLineTotal());
 //        forwardAlign.whenPressed(new ForwardAlign(ArmPosition.LOW_HATCH, 60, 0.5));
         forwardAlign.whileHeld(new ControlDriveTrainStraight());
         forwardAlignHit.toggleWhenPressed(new ForwardAlignLine());
