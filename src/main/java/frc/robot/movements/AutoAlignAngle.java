@@ -19,7 +19,8 @@ public class AutoAlignAngle extends Command {
 
     @Override
     protected void initialize() {
-        gyro.resetTo(VisionSensor.getAngleTargetDiff());
+        AutoAlignLine.angle.update();
+        gyro.resetTo(-AutoAlignLine.angle.getAngle());
     }
 
     @Override

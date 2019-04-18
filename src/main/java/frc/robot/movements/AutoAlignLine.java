@@ -9,10 +9,12 @@ import frc.robot.sensors.vision.LineAngle;
 public class AutoAlignLine extends Command {
     private Filter xFilter;
 
-    private static final LineAngle angle = new LineAngle();
+    static final LineAngle angle = new LineAngle();
 
     private static final double K_ANGLE = 0.005, K_X = 0.0025;
     private final double speed = 0.15;
+
+    private static final double MAX_ERROR = 0.2;
 
     public AutoAlignLine() {
         requires(TechnoTitan.drive);
@@ -27,6 +29,7 @@ public class AutoAlignLine extends Command {
         SmartDashboard.putNumber("Auto align angle", angle.getAngle());
 
         double error = K_ANGLE * angle.getAngle() + K_X * xFilter.getValue();
+        if (Math.abs(error) > MAX_ERROR) error = MAX_ERROR * Math.signum(error);
         TechnoTitan.drive.set(speed + error, speed - error);
     }
 
