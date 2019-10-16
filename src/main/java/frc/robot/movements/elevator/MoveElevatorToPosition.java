@@ -1,8 +1,6 @@
 package frc.robot.movements.elevator;
 
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.ConditionalCommand;
+import edu.wpi.first.wpilibj.command.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.TechnoTitan;
 
@@ -11,7 +9,7 @@ public class MoveElevatorToPosition extends ConditionalCommand {
     private static final double SAFE_WRIST_ANGLE = -79;
 
     private static class MoveElevatorToPositionWristDown extends CommandGroup {
-        public MoveElevatorToPositionWristDown(ElevatorPosition position) {
+        public MoveElevatorToPositionWristDown(ElevatorPosition position, boolean stopElevator) {
             addParallel(new MoveWristPID(SAFE_WRIST_ANGLE + 5, -1));
             addSequential(new Command() {
                 @Override
@@ -20,6 +18,11 @@ public class MoveElevatorToPosition extends ConditionalCommand {
                 }
             });
             addSequential(new MoveElevatorPID(position.getElevatorHeight(), 0.5));
+//            if (stopElevator) addParallel(new InstantCommand(() -> TechnoTitan.elevator.moveElevator(0)));
+            if (stopElevator) {
+                addParallel(new HoldElevator());
+                addSequential(new WaitCommand(0.1));
+            }
             addSequential(new MoveWristPID(position.getWristAngle(), 2));
         }
     }
@@ -38,7 +41,8 @@ public class MoveElevatorToPosition extends ConditionalCommand {
     }
 
     public MoveElevatorToPosition(ElevatorPosition position) {
-        super(new MoveElevatorToPositionWristDown(position), new MoveElevatorToPositionParallel(position));
+        super(new MoveElevatorToPositionWristDown(position, position == ElevatorPosition.ROCKET_LEVEL_2_HATCH),
+                new MoveElevatorToPositionParallel(position));
         this.position = position;
     }
 

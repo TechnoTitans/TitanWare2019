@@ -130,6 +130,9 @@ public class TechnoTitan extends TimedRobot {
     });
     updateToF.setDaemon(true);
     updateToF.start();
+
+
+
   }
 
   /**
@@ -175,6 +178,9 @@ public class TechnoTitan extends TimedRobot {
     SmartDashboard.putBoolean("Hatch grabber on", TechnoTitan.grabber.isHatchGrabbed());
 
     SmartDashboard.putBoolean("Climb pistons extended", TechnoTitan.climber.isClimbing());
+
+    SmartDashboard.putNumber("Wrist Error: ", wristMotor.getError());
+    SmartDashboard.putNumber("Elevator Error: ", elevatorMotor.getError());
 
     if (oi.shouldResetCommands()) {
       SmartDashboard.putNumber("Resetting", Math.random());

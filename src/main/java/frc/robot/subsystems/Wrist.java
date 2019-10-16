@@ -9,8 +9,8 @@ import frc.robot.sensors.QuadEncoder;
 public class Wrist extends Subsystem {
     private TalonSRX wristMotor;
 
-    private static final double WRIST_SPEED = 150;  // degrees per second
-    private static final double WRIST_ACCEL = 75;  // degrees/second/second
+    private static final double WRIST_SPEED = 90;  // degrees per second
+    private static final double WRIST_ACCEL = 35;  // degrees/second/second
 
     private static final double INIT_ANGLE = -90;
 
@@ -19,7 +19,9 @@ public class Wrist extends Subsystem {
 
     public Wrist(TalonSRX wristMotor) {
         this.wristMotor = wristMotor;
+//        wristMotor.configPID(2, 0.001, 20, 7, (int) (5 / degreesPerPulse));
         wristMotor.configPID(3, 0.001, 10, 7, (int) (5 / degreesPerPulse));
+
         resetEncoder();
         wristMotor.configMotionCruiseVelocity((int) (WRIST_SPEED / (degreesPerPulse *  10)));
         wristMotor.configMotionAcceleration((int) (WRIST_ACCEL / (degreesPerPulse * 10)));
