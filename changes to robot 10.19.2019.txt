@@ -1,0 +1,21 @@
+* test elevator raw
+* test elevator presets/pid
+* write code for new grabber
+* test code for new grabber
+
+* wrist motor behavior stays the same
+* positions/presets will have to change
+
+new grabber:
+* 2 modes: hatch and ball (controls)
+
+pneumatics
+* solenoid 0 -> toggles between hatch and ball mode
+* solenoid 1 -> removed (will not have solenoid in this slot)
+* solenoid 2 -> lift (same old functionality)
+
+
+* add new talon
+	* add to can network
+	* 2 intake motors instead of one
+	* is gonna be running equal and opposite speed of other motor (both hatch and ball)

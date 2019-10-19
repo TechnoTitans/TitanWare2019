@@ -1,78 +1,91 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motor.Motor;
 import frc.robot.motor.TalonSRX;
 import frc.robot.movements.ControlGrabber;
 
 public class Grabber extends Subsystem {
 
-    private Motor grabberMotor;
+    private Motor grabberMotorLeft, grabberMotorRight;
 
-//    private Timer pancakeTimer;
-    private static final double EXPEL_SPEED = 1;
-    private static final double INTAKE_SPEED = -1;
+    private static final double EXPEL_BALL_SPEED = 1;
+    private static final double EXPEL_HATCH_SPEED = 1;
 
-    private Solenoid extendHatchMechPiston, hatchGrabPiston;
+    private static final double BALL_INTAKE_SPEED = -0.4;
+    private static final double HATCH_INTAKE_SPEED = -0.4;
 
-    public Grabber(TalonSRX grabberMotor, Solenoid extendHatchMechPiston, Solenoid hatchGrabPiston) {
-        this.grabberMotor = grabberMotor;
+    private Solenoid ballHatchModePiston;
 
-        this.extendHatchMechPiston = extendHatchMechPiston;
-        this.hatchGrabPiston = hatchGrabPiston;
-//        pancakeTimer = new Timer();
-//        grabberMotor.configContinuousCurrentLimit(40);
-//        grabberMotor.configPeakCurrentLimit(40);
-//        grabberMotor.configPeakCurrentDuration(200);
-//        grabberMotor.enableCurrentLimit(true);
+    public Grabber(TalonSRX grabberMotorLeft, TalonSRX grabberMotorRight, Solenoid ballHatchModePiston) {
+        this.grabberMotorLeft = grabberMotorLeft;
+        this.grabberMotorRight = grabberMotorRight;
+        // we assume that one of these motors is set to reversed so that it goes opposite to the other one
+        // this is why there are no negative signs in this code, even though one of the motors will be turning opposite
+
+        this.ballHatchModePiston = ballHatchModePiston; // true -> ball mode
+                                                        // false -> hatch mode
+//        grabberMotorLeft.configContinuousCurrentLimit(40);
+//        grabberMotorLeft.configPeakCurrentLimit(40);
+//        grabberMotorLeft.configPeakCurrentDuration(200);
+//        grabberMotorLeft.enableCurrentLimit(true);
     }
 
-    public void expel() {
-        grabberMotor.set(EXPEL_SPEED);
+    public void expelBall() {
+        setBallMode(true);
+        grabberMotorLeft.set(EXPEL_BALL_SPEED);
+        grabberMotorRight.set(EXPEL_BALL_SPEED);
+    }
+    public void expelHatch() {
+        setBallMode(false);
+        grabberMotorLeft.set(EXPEL_HATCH_SPEED);
+        grabberMotorRight.set(EXPEL_HATCH_SPEED);
     }
 
     public void stop() {
-        grabberMotor.set(0);
+        grabberMotorLeft.set(0);
+        grabberMotorRight.set(0);
     }
 
-    public void intake() {
-        grabberMotor.set(INTAKE_SPEED);
+    public void intakeBall() {
+        grabberMotorLeft.set(BALL_INTAKE_SPEED);
+        grabberMotorRight.set(BALL_INTAKE_SPEED);
+    }
+    public void intakeHatch() {
+        grabberMotorLeft.set(HATCH_INTAKE_SPEED);
+        grabberMotorRight.set(HATCH_INTAKE_SPEED);
     }
 
-    public void hold() {
-        grabberMotor.set(INTAKE_SPEED / 2);
+    public void holdBall() {
+        grabberMotorLeft.set(BALL_INTAKE_SPEED / 2);
+        grabberMotorRight.set(BALL_INTAKE_SPEED / 2);
     }
 
-    public void setGrabberMotor(double speed) {
-        grabberMotor.set(speed);
+    public void holdHatch() {
+        grabberMotorLeft.set(HATCH_INTAKE_SPEED / 2);
+        grabberMotorRight.set(HATCH_INTAKE_SPEED / 2);
     }
 
-
-    public void setExtendHatchMechPiston(boolean on) {
-        extendHatchMechPiston.set(on);
-    }
-    public void toggleExtendHatchMechPiston() {
-        extendHatchMechPiston.set(!extendHatchMechPiston.get());
+    // convenience method to help readability
+    public void setBallMode(boolean isBallMode) {
+        setBallHatchModePiston(isBallMode);
     }
 
-    public void toggleHatchGrab() {
-        hatchGrabPiston.set(!hatchGrabPiston.get());
+    public void setBallHatchModePiston(boolean on) {
+        ballHatchModePiston.set(on);
+    }
+    public void toggleBallHatchMode() {
+        ballHatchModePiston.set(!ballHatchModePiston.get());
     }
 
-    public void setHatchGrab(boolean on) {
-        hatchGrabPiston.set(on);
-    }
-//    public void setClawPistons(boolean on) {
-//        grabbyPiston.set(on);
+//    public void toggleHatchGrab() {
+//        hatchGrabPiston.set(!hatchGrabPiston.get());
 //    }
-
-//    public void toggleClawPistons() {
-//        grabbyPiston.set(!grabbyPiston.get());
+//
+//    public void setHatchGrab(boolean on) {
+//        hatchGrabPiston.set(on);
 //    }
-
 //    public void updatePistons() {
 //        if (pancakeTimer.get() > 0.5) {
 //            pancakeTimer.stop();
@@ -85,16 +98,11 @@ public class Grabber extends Subsystem {
         setDefaultCommand(new ControlGrabber());
     }
 
-
-    public boolean isHatchMechExtended() {
-        return extendHatchMechPiston.get();
-    }
-
-    public boolean isHatchGrabbed() {
-        return hatchGrabPiston.get();
+    public boolean isBallMode() {
+        return ballHatchModePiston.get();
     }
 
     public double getCurrentDraw() {
-        return grabberMotor.getCurrent();
+        return grabberMotorLeft.getCurrent();
     }
 }

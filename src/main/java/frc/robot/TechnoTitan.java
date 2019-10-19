@@ -85,7 +85,7 @@ public class TechnoTitan extends TimedRobot {
     elevator = new Elevator(elevatorMotor, new LimitSwitch(limitSwitchTop, true), new LimitSwitch(limitSwitchBottom, true));
 //    arm = new Arm(elbow, wrist, elbowAngleSensor, wristAngleSensor);
     wrist = new Wrist(wristMotor);
-    grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR, true), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_MECH_EXTEND_PISTON), new Solenoid(RobotMap.PCM_ADDR, RobotMap.HATCH_GRAB_PISTON));
+    grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR_LEFT, true), new TalonSRX(RobotMap.GRABBER_MOTOR_RIGHT, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.BALL_HATCH_TOGGLE_PISTON));
     climber = new Climber(new Solenoid(RobotMap.PCM_ADDR, RobotMap.CLIMB_PISTON));
 
     // Drivetrain setup
@@ -120,6 +120,7 @@ public class TechnoTitan extends TimedRobot {
 
     CameraServer.getInstance().startAutomaticCapture(0);
 
+    // TODO Remove this block of code if unnecessary?
     Thread updateToF = new Thread(() -> {
       while (!Thread.interrupted()) {
         tfDistance.update();
@@ -174,8 +175,8 @@ public class TechnoTitan extends TimedRobot {
     SmartDashboard.putNumber("TF Distance", tfDistance.getDistance());
     SmartDashboard.putBoolean("TF is valid?", tfDistance.isValid());
 
-    SmartDashboard.putBoolean("Hatch mech extended", TechnoTitan.grabber.isHatchMechExtended());
-    SmartDashboard.putBoolean("Hatch grabber on", TechnoTitan.grabber.isHatchGrabbed());
+//    SmartDashboard.putBoolean("Hatch mech extended", TechnoTitan.grabber.isHatchMechExtended());
+//    SmartDashboard.putBoolean("Hatch grabber on", TechnoTitan.grabber.isHatchGrabbed());
 
     SmartDashboard.putBoolean("Climb pistons extended", TechnoTitan.climber.isClimbing());
 

@@ -1,6 +1,5 @@
 package frc.robot.movements;
 
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.TimedCommand;
 import frc.robot.TechnoTitan;
 
@@ -25,7 +24,7 @@ public class Launch extends TimedCommand {
     protected void execute() {
         if (timeSinceInitialized() <= CUTOFF_DRIVE_TRAIN) TechnoTitan.drive.set(speed, speed);
         else TechnoTitan.drive.stop();
-        TechnoTitan.grabber.hold();
+        TechnoTitan.grabber.holdBall();
 
     }
 

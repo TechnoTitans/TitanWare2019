@@ -242,7 +242,7 @@ public class OI {
         launchButton2.whenPressed(new Yeet());
         expelGrabberAndBackup.whenPressed(new ReleaseHatch());
 
-        toggleExtendHatchMech.whenPressed(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.toggleExtendHatchMechPiston()));
+        toggleExtendHatchMech.whenPressed(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.toggleBallHatchMode()));
         toggleGrabHatch.whenPressed(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.toggleHatchGrab()));
         btnGrabHatch.whenPressed(new GrabHatch());
         climb.whenPressed(new InstantCommand(TechnoTitan.climber, () -> TechnoTitan.climber.toggle()));

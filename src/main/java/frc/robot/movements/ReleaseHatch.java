@@ -16,7 +16,7 @@ public class ReleaseHatch extends CommandGroup {
         }));
         addSequential(new WaitCommand(0.1));
         addSequential(new InstantCommand(() -> {
-            TechnoTitan.grabber.setExtendHatchMechPiston(false);
+            TechnoTitan.grabber.setBallHatchModePiston(false);
             TechnoTitan.drive.set(-0.3);
         }));
         addSequential(new WaitCommand(0.25));
@@ -28,7 +28,7 @@ public class ReleaseHatch extends CommandGroup {
 
     @Override
     public void interrupted() {
-        TechnoTitan.grabber.setExtendHatchMechPiston(false);
+        TechnoTitan.grabber.setBallHatchModePiston(false);
         TechnoTitan.drive.set(0);
     }
 }

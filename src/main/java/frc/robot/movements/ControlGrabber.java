@@ -2,7 +2,6 @@ package frc.robot.movements;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.TechnoTitan;
-import frc.robot.sensors.vision.VisionSensor;
 
 public class ControlGrabber extends Command {
     public ControlGrabber() {
@@ -12,9 +11,9 @@ public class ControlGrabber extends Command {
     @Override
     protected void execute() {
         if (TechnoTitan.oi.shouldExpelGrabber()) {
-            TechnoTitan.grabber.expel();
+            TechnoTitan.grabber.expelBall();
         } else if (TechnoTitan.oi.shouldIntakeGrabber()) {
-            TechnoTitan.grabber.intake();
+            TechnoTitan.grabber.intakeBall();
         } else {
             TechnoTitan.grabber.stop();
         }
