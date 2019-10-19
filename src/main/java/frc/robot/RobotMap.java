@@ -49,7 +49,7 @@ public class RobotMap {
     public static final int CLIMB_PISTON = 2;
     public static final int WRIST_MOTOR = 1;
     public static final int GRABBER_MOTOR_LEFT = 2;
-    public static final int GRABBER_MOTOR_RIGHT = 4;
+    public static final int GRABBER_MOTOR_RIGHT = 4; // todo do initial setup (assign talon id) on this talon
     public static final int ELEVATOR_MOTOR = 3;
 
     public static final int LS_BOT = 0;

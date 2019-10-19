@@ -11,9 +11,9 @@ public class ControlGrabber extends Command {
     @Override
     protected void execute() {
         if (TechnoTitan.oi.shouldExpelGrabber()) {
-            TechnoTitan.grabber.expelBall();
+            TechnoTitan.grabber.expel();
         } else if (TechnoTitan.oi.shouldIntakeGrabber()) {
-            TechnoTitan.grabber.intakeBall();
+            TechnoTitan.grabber.intake();
         } else {
             TechnoTitan.grabber.stop();
         }

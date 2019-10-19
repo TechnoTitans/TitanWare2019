@@ -32,13 +32,22 @@ public class Grabber extends Subsystem {
 //        grabberMotorLeft.enableCurrentLimit(true);
     }
 
+
+    public void expel() {
+        if (this.isBallMode()) {
+            this.expelBall();
+        } else {
+            this.expelHatch();
+        }
+    }
+
     public void expelBall() {
-        setBallMode(true);
+//        setBallMode(true);
         grabberMotorLeft.set(EXPEL_BALL_SPEED);
         grabberMotorRight.set(EXPEL_BALL_SPEED);
     }
     public void expelHatch() {
-        setBallMode(false);
+//        setBallMode(false);
         grabberMotorLeft.set(EXPEL_HATCH_SPEED);
         grabberMotorRight.set(EXPEL_HATCH_SPEED);
     }
@@ -46,6 +55,15 @@ public class Grabber extends Subsystem {
     public void stop() {
         grabberMotorLeft.set(0);
         grabberMotorRight.set(0);
+    }
+
+
+    public void intake() {
+        if (this.isBallMode()) {
+            this.intakeBall();
+        } else {
+            this.intakeHatch();
+        }
     }
 
     public void intakeBall() {

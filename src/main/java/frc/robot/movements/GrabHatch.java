@@ -9,7 +9,8 @@ import frc.robot.movements.elevator.MoveElevatorPID;
 
 public class GrabHatch extends CommandGroup {
     public GrabHatch() {
-        addSequential(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.setHatchGrab(true)));
+        // todo test this command
+        addSequential(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.setBallMode(false)));
         addSequential(new InstantCommand(TechnoTitan.elevator, () -> TechnoTitan.elevator.moveElevator(1)));
         addSequential(new WaitCommand(1.5));
         addSequential(new InstantCommand(TechnoTitan.elevator, () -> TechnoTitan.elevator.moveElevator(0.2)));

@@ -9,15 +9,17 @@ public class ReleaseHatch extends CommandGroup {
     public ReleaseHatch() {
         requires(TechnoTitan.grabber);
         requires(TechnoTitan.drive);
+
         addSequential(new InstantCommand(() -> {
-            
-            TechnoTitan.grabber.setHatchGrab(false);
-            //TechnoTitan.drive.set(0.3);
+            TechnoTitan.grabber.setBallMode(false);
+            TechnoTitan.grabber.expelHatch();
+            TechnoTitan.drive.set(0.3);
         }));
         addSequential(new WaitCommand(0.1));
         addSequential(new InstantCommand(() -> {
-            TechnoTitan.grabber.setBallHatchModePiston(false);
             TechnoTitan.drive.set(-0.3);
+            TechnoTitan.grabber.stop();
+            TechnoTitan.grabber.setBallMode(true);
         }));
         addSequential(new WaitCommand(0.25));
         addSequential(new InstantCommand(() -> {

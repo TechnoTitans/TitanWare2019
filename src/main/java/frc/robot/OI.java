@@ -112,7 +112,7 @@ public class OI {
         Button launchButton = new Btn(left, 7);
         Button launchButton2 = new Btn(left, 6);
         Button expelGrabberAndBackup = new Btn(right, 5);
-        Button toggleExtendHatchMech = new Button() {
+        Button toggleBallHatchMode = new Button() {
             @Override
             public boolean get() {
                 return xbox.getBumper(GenericHID.Hand.kLeft) && TechnoTitan.wrist.getAngle() < -50 && isXboxOnRocket();
@@ -242,8 +242,8 @@ public class OI {
         launchButton2.whenPressed(new Yeet());
         expelGrabberAndBackup.whenPressed(new ReleaseHatch());
 
-        toggleExtendHatchMech.whenPressed(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.toggleBallHatchMode()));
-        toggleGrabHatch.whenPressed(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.toggleHatchGrab()));
+        toggleBallHatchMode.whenPressed(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.toggleBallHatchMode()));
+//        toggleGrabHatch.whenPressed(new InstantCommand(TechnoTitan.grabber, () -> TechnoTitan.grabber.intakeBall()));
         btnGrabHatch.whenPressed(new GrabHatch());
         climb.whenPressed(new InstantCommand(TechnoTitan.climber, () -> TechnoTitan.climber.toggle()));
         btnOverrideSensors.whenPressed(new ControlElevatorWristTeleop());

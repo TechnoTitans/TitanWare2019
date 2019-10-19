@@ -13,9 +13,22 @@ pneumatics
 * solenoid 0 -> toggles between hatch and ball mode
 * solenoid 1 -> removed (will not have solenoid in this slot)
 * solenoid 2 -> lift (same old functionality)
+(pneumatics is now done)
 
 
 * add new talon
 	* add to can network
 	* 2 intake motors instead of one
 	* is gonna be running equal and opposite speed of other motor (both hatch and ball)
+----------------
+
+controls for grabber: 
+* expel hatch
+	(for now)
+	1. set speed to expel speed for a bit
+	2. wait for a bit
+	3. set speed to 0
+* expel ball
+* intake hatch
+* intake ball
+* toggle ball/hatch mode 
