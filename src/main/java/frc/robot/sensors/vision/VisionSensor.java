@@ -45,7 +45,7 @@ public class VisionSensor {
     }
 
     /**
-     * @return the y distance from the tarrgets in inches
+     * @return the y distance from the targets in inches
      */
     public double getYDistance() {
         return SmartDashboard.getNumber("pi-distance", 600) - CAMERA_ROBOT_CENTER_OFFSET;

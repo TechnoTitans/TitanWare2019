@@ -32,3 +32,10 @@ controls for grabber:
 * intake hatch
 * intake ball
 * toggle ball/hatch mode 
+
+----------------
+
+Berkan:
+ * adding changes for pids
+   1. Raised D value of elevator motor
+   2. Unreversed talon and encoder of the wrist motor

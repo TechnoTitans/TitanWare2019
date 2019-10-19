@@ -84,7 +84,7 @@ public class Elevator extends Subsystem {
         this.m_motorEncoder = motor.getEncoder();
         m_motorEncoder.reset();
 
-        motor.configPID(0.12, 0.001, 1.4, 2.5, (int) (4 / m_motorEncoder.getInchesPerPulse()));
+        motor.configPID(0.12, 0.001, 30, 2.5, (int) (4 / m_motorEncoder.getInchesPerPulse()));
         // 22680 / (75.375 - 13.25)
         m_motor = motor;
     }

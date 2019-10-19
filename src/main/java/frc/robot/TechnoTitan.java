@@ -18,6 +18,7 @@ import frc.robot.sensors.LimitSwitch;
 import frc.robot.sensors.NavXGyro;
 import frc.robot.sensors.QuadEncoder;
 import frc.robot.sensors.TimeOfFlight;
+import frc.robot.sensors.vision.DriverCamera;
 import frc.robot.sensors.vision.VisionSensor;
 import frc.robot.subsystems.*;
 
@@ -42,6 +43,7 @@ public class TechnoTitan extends TimedRobot {
   public static Grabber grabber;
   public static Gyro centralGyro;
   public static Climber climber;
+  public static DriverCamera driverCamera;
 
   private TalonSRX elevatorMotor, wristMotor;
 
@@ -65,15 +67,15 @@ public class TechnoTitan extends TimedRobot {
     tfDistance = new TimeOfFlight();
     centralGyro = new NavXGyro(navx);
 
-
+    driverCamera = new DriverCamera();
 
     // elevator setup
     // 0.0000194 in/pulse?
     elevatorMotor = new TalonSRX(RobotMap.ELEVATOR_MOTOR, true);
     elevatorMotor.setEncoder(new QuadEncoder(elevatorMotor, 0.00274, false));
     // moving down is positive
-    wristMotor = new TalonSRX(RobotMap.WRIST_MOTOR, true);
-    wristMotor.setEncoder(new QuadEncoder(wristMotor, 1, true));
+    wristMotor = new TalonSRX(RobotMap.WRIST_MOTOR, false);
+    wristMotor.setEncoder(new QuadEncoder(wristMotor, 1, false));
 
     // MARK - accelerometer setup
 
@@ -81,7 +83,7 @@ public class TechnoTitan extends TimedRobot {
     DigitalInput limitSwitchBottom = new DigitalInput(RobotMap.LS_BOT);
 
 
-     
+
     elevator = new Elevator(elevatorMotor, new LimitSwitch(limitSwitchTop, true), new LimitSwitch(limitSwitchBottom, true));
 //    arm = new Arm(elbow, wrist, elbowAngleSensor, wristAngleSensor);
     wrist = new Wrist(wristMotor);
@@ -182,6 +184,8 @@ public class TechnoTitan extends TimedRobot {
 
     SmartDashboard.putNumber("Wrist Error: ", wristMotor.getError());
     SmartDashboard.putNumber("Elevator Error: ", elevatorMotor.getError());
+
+    driverCamera.updateImage();
 
     if (oi.shouldResetCommands()) {
       SmartDashboard.putNumber("Resetting", Math.random());
