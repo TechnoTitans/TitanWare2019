@@ -67,8 +67,6 @@ public class TechnoTitan extends TimedRobot {
     tfDistance = new TimeOfFlight();
     centralGyro = new NavXGyro(navx);
 
-    driverCamera = new DriverCamera();
-
     // elevator setup
     // 0.0000194 in/pulse?
     elevatorMotor = new TalonSRX(RobotMap.ELEVATOR_MOTOR, true);
@@ -185,7 +183,6 @@ public class TechnoTitan extends TimedRobot {
     SmartDashboard.putNumber("Wrist Error: ", wristMotor.getError());
     SmartDashboard.putNumber("Elevator Error: ", elevatorMotor.getError());
 
-    driverCamera.updateImage();
 
     if (oi.shouldResetCommands()) {
       SmartDashboard.putNumber("Resetting", Math.random());

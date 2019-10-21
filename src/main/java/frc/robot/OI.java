@@ -115,7 +115,7 @@ public class OI {
         Button toggleBallHatchMode = new Button() {
             @Override
             public boolean get() {
-                return xbox.getBumper(GenericHID.Hand.kLeft) && TechnoTitan.wrist.getAngle() < -50 && isXboxOnRocket();
+                return xbox.getBumper(GenericHID.Hand.kLeft) && isXboxOnRocket();
             }
         };
 
