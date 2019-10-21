@@ -1,15 +1,17 @@
-* test elevator raw
+# New Grabber Task List
+
+* test elevator raw (done)
 * test elevator presets/pid
-* write code for new grabber
-* test code for new grabber
+* write code for new grabber (done)
+* test code for new grabber (done)
 
 * wrist motor behavior stays the same
 * positions/presets will have to change
 
 new grabber:
-* 2 modes: hatch and ball (controls)
+* 2 modes: hatch and ball (update controls)
 
-pneumatics
+changes to pneumatics:
 * solenoid 0 -> toggles between hatch and ball mode
 * solenoid 1 -> removed (will not have solenoid in this slot)
 * solenoid 2 -> lift (same old functionality)
@@ -39,4 +41,10 @@ Berkan:
  * adding changes for pids
    1. Raised D value of elevator motor
    2. Unreversed talon and encoder of the wrist motor
+<<<<<<< HEAD
 TODO: the grabber
+=======
+
+Yaseen:
+    * finished writing new code for grabber subsystem and updating all affected commands
+>>>>>>> f6cea8b038526333bbe1dca016d5cd22ed1cbdf1
