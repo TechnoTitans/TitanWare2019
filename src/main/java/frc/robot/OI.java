@@ -274,15 +274,15 @@ public class OI {
     }
 
     public double getWristMove() {
-        return -clampInput(xbox.getY(GenericHID.Hand.kRight) * 2);
+//        return -clampInput(xbox.getY(GenericHID.Hand.kRight) * 2);
+        return clampInput(xbox.getY(GenericHID.Hand.kRight) * 2);
     }
 
     public boolean shouldExpelGrabber() {
         return btnGrabberExpel.get();
     }
 
-    public boolean shouldIntakeGrabber() {
-        return btnGrabberIntake.get();
+    public boolean shouldIntakeGrabber() { return btnGrabberIntake.get();
     }
 
     public boolean shouldToggleOverrideSensors() {
