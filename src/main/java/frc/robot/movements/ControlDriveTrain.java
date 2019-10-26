@@ -40,7 +40,7 @@ public class ControlDriveTrain extends Command {
 
         // MARK - Limit speed while turning
         if (Math.signum(joystickLeft) == -Math.signum(joystickRight)) {
-            // if the joystick values are opposite signs, then the operator is turning/rotating the robot
+            // (above) if the joystick values are opposite signs, then the operator is turning/rotating the robot
 
             // here, we set adjust the speeds
             // the first part of the code preserves the sign of the input, which means that it preserves the direction the joystick is facing (up or down)
