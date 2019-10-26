@@ -13,38 +13,57 @@ import frc.robot.TechnoTitan;
 import frc.robot.motor.Filter;
 
 public class ControlDriveTrain extends Command {
-  private Filter leftFilter, rightFilter;
 
-  public ControlDriveTrain() {
-    requires(TechnoTitan.drive);
-  }
+    private static final double MAX_TURN_SPEED = 0.5;
 
-  // Called just before this Command runs the first time
-  @Override
-  protected void initialize() {
-    leftFilter = new Filter(0.1);
-    rightFilter = new Filter(0.1);
-  }
+    private Filter leftFilter, rightFilter;
 
-  // Called repeatedly when this Command is scheduled to run
-  @Override
-  protected void execute() {
-    double maxSpeed = TechnoTitan.oi.getSlowdown() ? 0.25 : 1;
-    if (TechnoTitan.climber.isClimbing()) maxSpeed *= 0.3;
-    leftFilter.update(TechnoTitan.oi.getLeft() * maxSpeed);
-    rightFilter.update(TechnoTitan.oi.getRight() * maxSpeed);
-    TechnoTitan.drive.set(leftFilter.getValue(), rightFilter.getValue());
-  }
+    public ControlDriveTrain() {
+        requires(TechnoTitan.drive);
+    }
 
-  // Make this return true when this Command no longer needs to run execute()
-  @Override
-  protected boolean isFinished() {
-    return false;
-  }
+    // Called just before this Command runs the first time
+    @Override
+    protected void initialize() {
+        leftFilter = new Filter(0.1);
+        rightFilter = new Filter(0.1);
+    }
 
-  // Called once after isFinished returns true
-  @Override
-  protected void end() {
-    TechnoTitan.drive.stop();
-  }
+    // Called repeatedly when this Command is scheduled to run
+    @Override
+    protected void execute() {
+        double maxSpeed = TechnoTitan.oi.getSlowdown() ? 0.25 : 1;
+        double joystickLeft = TechnoTitan.oi.getLeft();
+        double joystickRight = TechnoTitan.oi.getRight();
+
+        if (TechnoTitan.climber.isClimbing()) maxSpeed *= 0.3;
+
+        // MARK - Limit speed while turning
+        if (Math.signum(joystickLeft) == -Math.signum(joystickRight)) {
+            // if the joystick values are opposite signs, then the operator is turning/rotating the robot
+
+            // here, we set adjust the speeds
+            // the first part of the code preserves the sign of the input, which means that it preserves the direction the joystick is facing (up or down)
+            // the second part looks at simply the magnitude of the joystick input, and selects which ever is smaller, the input or the maximum speed
+            // thus restricting the speed to the desired maximum value
+            joystickLeft = Math.signum(joystickLeft) * Math.min(Math.abs(joystickLeft), MAX_TURN_SPEED);
+            joystickRight = Math.signum(joystickRight) * Math.min(Math.abs(joystickRight), MAX_TURN_SPEED);
+        }
+
+        leftFilter.update(joystickLeft * maxSpeed);
+        rightFilter.update(joystickRight * maxSpeed);
+        TechnoTitan.drive.set(leftFilter.getValue(), rightFilter.getValue());
+    }
+
+    // Make this return true when this Command no longer needs to run execute()
+    @Override
+    protected boolean isFinished() {
+        return false;
+    }
+
+    // Called once after isFinished returns true
+    @Override
+    protected void end() {
+        TechnoTitan.drive.stop();
+    }
 }
