@@ -142,7 +142,7 @@ public class OI {
         Button defense = new Button() {
             @Override
             public boolean get() {
-                return xbox.getBumper(GenericHID.Hand.kLeft) && !isXboxOnRocket();
+                return xbox.getBumper(GenericHID.Hand.kRight) && isXboxOnRocket();
             }
         };
         Button btnRocketBall2 = new Button() {

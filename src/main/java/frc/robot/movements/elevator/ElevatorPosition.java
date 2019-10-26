@@ -1,17 +1,18 @@
 package frc.robot.movements.elevator;
 
 public enum ElevatorPosition {
-    DEFENSE(-90, 0),
-    ROCKET_LEVEL_1_BALL(-60, 0), // ROCKET_LEVEL_1_BALL(-40, 7),
-    ROCKET_LEVEL_2_BALL(-40, 38),
-    ROCKET_LEVEL_3_BALL(-60, 57.5),
-    CARGO_SHIP_BALL(0, 30),
-    BALL_PICKUP(10, 0),
-    LOW_HATCH(-20, 4),
-    ROCKET_LEVEL_2_HATCH(-20, 35),
-    ROCKET_LEVEL_3_HATCH(-20, 57.5),
+    DEFENSE(-85, 0),
+    ROCKET_LEVEL_1_BALL(-20, 9),
+    ROCKET_LEVEL_2_BALL(-20, 40),
+    ROCKET_LEVEL_3_BALL(-60, 58.5),
+    CARGO_SHIP_BALL(0, 33),
+    BALL_PICKUP(25, 0),
+    LOW_HATCH(5, 4),
+    ROCKET_LEVEL_2_HATCH(5, 35),
+    ROCKET_LEVEL_3_HATCH(5, 58.5),
     HATCH_PICKUP(-90, 0),
     STOW_POSITION(-70, 0);
+//    STOW_POSITION(-70, 0);
 //    DEFENSE(-90, 0),
 //    ROCKET_LEVEL_1_BALL(-80, 0),
 //
