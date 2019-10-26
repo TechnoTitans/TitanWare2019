@@ -51,6 +51,14 @@ public class TechnoTitan extends TimedRobot {
                                RIGHT_REVERSE = true;
 
   private static final double INCHES_PER_PULSE = 0.00570;
+
+  public static final int CURRENT_LIMIT_DRIVETRAIN = 41;
+  public static final int CURRENT_LIMIT_THRESHOLD_DRIVETRAIN = 41;
+  public static final int LIMIT_TIMEOUT_DRIVETRAIN = 200; //ms
+
+  public static final int CURRENT_LIMIT_WRIST = 41;
+  public static final int CURRENT_LIMIT_THRESHOLD_WRIST = 41;
+  public static final int LIMIT_TIMEOUT_WRIST = 200; //ms
 //  private static final int MVA_TAPS = 25;
 
   /**
@@ -73,6 +81,7 @@ public class TechnoTitan extends TimedRobot {
     elevatorMotor.setEncoder(new QuadEncoder(elevatorMotor, 0.00274, false));
     // moving down is positive
     wristMotor = new TalonSRX(RobotMap.WRIST_MOTOR, false);
+    wristMotor.setupCurrentLimiting(CURRENT_LIMIT_WRIST, CURRENT_LIMIT_THRESHOLD_WRIST, LIMIT_TIMEOUT_WRIST);
     wristMotor.setEncoder(new QuadEncoder(wristMotor, 1, true));
 
     // MARK - accelerometer setup
@@ -104,12 +113,12 @@ public class TechnoTitan extends TimedRobot {
     rightFollow1.follow(rightETalonSRX);
     rightFollow2.follow(rightETalonSRX);
 
-    leftETalonSRX.setupCurrentLimiting();
-    rightETalonSRX.setupCurrentLimiting();
-    leftFollow1.setupCurrentLimiting();
-    leftFollow2.setupCurrentLimiting();
-    rightFollow1.setupCurrentLimiting();
-    rightFollow2.setupCurrentLimiting();
+    leftETalonSRX.setupCurrentLimiting(CURRENT_LIMIT_DRIVETRAIN, CURRENT_LIMIT_THRESHOLD_DRIVETRAIN, LIMIT_TIMEOUT_DRIVETRAIN);
+    rightETalonSRX.setupCurrentLimiting(CURRENT_LIMIT_DRIVETRAIN, CURRENT_LIMIT_THRESHOLD_DRIVETRAIN, LIMIT_TIMEOUT_DRIVETRAIN);
+    leftFollow1.setupCurrentLimiting(CURRENT_LIMIT_DRIVETRAIN, CURRENT_LIMIT_THRESHOLD_DRIVETRAIN, LIMIT_TIMEOUT_DRIVETRAIN);
+    leftFollow2.setupCurrentLimiting(CURRENT_LIMIT_DRIVETRAIN, CURRENT_LIMIT_THRESHOLD_DRIVETRAIN, LIMIT_TIMEOUT_DRIVETRAIN);
+    rightFollow1.setupCurrentLimiting(CURRENT_LIMIT_DRIVETRAIN, CURRENT_LIMIT_THRESHOLD_DRIVETRAIN, LIMIT_TIMEOUT_DRIVETRAIN);
+    rightFollow2.setupCurrentLimiting(CURRENT_LIMIT_DRIVETRAIN, CURRENT_LIMIT_THRESHOLD_DRIVETRAIN, LIMIT_TIMEOUT_DRIVETRAIN);
 
     drive = new TankDrive(leftETalonSRX, rightETalonSRX);
     oi = new OI(); // must initialize oi after drive because it requires it as a a subsystem

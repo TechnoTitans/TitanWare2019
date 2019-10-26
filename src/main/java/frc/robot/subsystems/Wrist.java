@@ -20,11 +20,6 @@ public class Wrist extends Subsystem {
 
     public Wrist(TalonSRX wristMotor) {
         this.wristMotor = wristMotor;
-        wristMotor.configContinuousCurrentLimit(10, 0);
-        wristMotor.configPeakCurrentLimit(15, 0);
-        wristMotor.configPeakCurrentDuration(100, 0);
-        wristMotor.enableCurrentLimit(true);
-
 //        wristMotor.configPID(2, 0.001, 20, 7, (int) (5 / degreesPerPulse));
         wristMotor.configPID(3, 0.001, 10, 7, (int) (5 / degreesPerPulse));
 
