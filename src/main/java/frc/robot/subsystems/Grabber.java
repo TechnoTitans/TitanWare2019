@@ -13,15 +13,12 @@ public class Grabber extends Subsystem {
     private static final double EXPEL_BALL_SPEED = 1;
     private static final double EXPEL_HATCH_SPEED = -1;
 
-<<<<<<< HEAD
-    private static final double BALL_INTAKE_SPEED = -1;
-    private static final double HATCH_INTAKE_SPEED = 1;
+//    private static final double BALL_INTAKE_SPEED = -1;
+//    private static final double HATCH_INTAKE_SPEED = 1;
 //    private static final double BALL_INTAKE_SPEED = 0.4;
 //    private static final double HATCH_INTAKE_SPEED = 0.4;
-=======
-    private static final double BALL_INTAKE_SPEED = -0.25;
-    private static final double HATCH_INTAKE_SPEED = -0.4;
->>>>>>> e175ce9bd15bf65549e5753f9f3e77ef4c4d62e2
+    private static final double BALL_INTAKE_SPEED = -0.5;
+    private static final double HATCH_INTAKE_SPEED = 1;
 
     private Solenoid ballHatchModePiston;
 
