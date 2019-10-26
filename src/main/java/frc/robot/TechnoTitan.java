@@ -56,9 +56,9 @@ public class TechnoTitan extends TimedRobot {
   public static final int CURRENT_LIMIT_THRESHOLD_DRIVETRAIN = 41;
   public static final int LIMIT_TIMEOUT_DRIVETRAIN = 200; //ms
 
-  public static final int CURRENT_LIMIT_WRIST = 41;
-  public static final int CURRENT_LIMIT_THRESHOLD_WRIST = 41;
-  public static final int LIMIT_TIMEOUT_WRIST = 200; //ms
+  public static final int CURRENT_LIMIT_WRIST = 5;
+  public static final int CURRENT_LIMIT_THRESHOLD_WRIST = 5;
+  public static final int LIMIT_TIMEOUT_WRIST = 100; //ms
 //  private static final int MVA_TAPS = 25;
 
   /**
