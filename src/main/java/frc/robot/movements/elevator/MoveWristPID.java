@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.TechnoTitan;
 
 public class MoveWristPID extends Command {
+    private static final double MIN_VALID_ANGLE = -120;
+    private static final double MAX_VALID_ANGLE = 100;
     private double wristAngle;
     private double maxError;
 
@@ -24,9 +26,15 @@ public class MoveWristPID extends Command {
 
     @Override
     protected boolean isFinished() {
-        double wristError = Math.abs(TechnoTitan.wrist.getAngle() - wristAngle);
+        double currentAngle = TechnoTitan.wrist.getAngle();
+        double wristError = Math.abs(currentAngle - wristAngle);
 
-        return wristError < maxError;
-        // return false;
+        // Emergency Protection
+        // If the current angle of the wrist isn't between the defined min and max angles, we will stop immediately
+        if (!(MIN_VALID_ANGLE < currentAngle && currentAngle < MAX_VALID_ANGLE)) {
+            return true;
+        } else {
+            return wristError < maxError;
+        }
     }
 }
