@@ -5,7 +5,7 @@ public enum ElevatorPosition {
     ROCKET_LEVEL_1_BALL(-20, 9),
     ROCKET_LEVEL_2_BALL(-20, 40),
     ROCKET_LEVEL_3_BALL(-60, 58.5),
-    CARGO_SHIP_BALL(0, 33),
+    CARGO_SHIP_BALL(18, 33),
     BALL_PICKUP(21.5, 0),
     LOW_HATCH(5, 4),
     ROCKET_LEVEL_2_HATCH(5, 35),
