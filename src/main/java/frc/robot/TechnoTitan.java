@@ -45,6 +45,9 @@ public class TechnoTitan extends TimedRobot {
   public static Climber climber;
   public static DriverCamera driverCamera;
 
+  public TalonSRX grabberMotorLeft;
+  public TalonSRX grabberMotorRight;
+
   private TalonSRX elevatorMotor, wristMotor;
 
   private static final boolean LEFT_REVERSE = false,
@@ -94,7 +97,9 @@ public class TechnoTitan extends TimedRobot {
     elevator = new Elevator(elevatorMotor, new LimitSwitch(limitSwitchTop, true), new LimitSwitch(limitSwitchBottom, true));
 //    arm = new Arm(elbow, wrist, elbowAngleSensor, wristAngleSensor);
     wrist = new Wrist(wristMotor);
-    grabber = new Grabber(new TalonSRX(RobotMap.GRABBER_MOTOR_LEFT, true), new TalonSRX(RobotMap.GRABBER_MOTOR_RIGHT, false), new Solenoid(RobotMap.PCM_ADDR, RobotMap.BALL_HATCH_TOGGLE_PISTON));
+    grabberMotorLeft = new TalonSRX(RobotMap.GRABBER_MOTOR_LEFT, true);
+    grabberMotorRight = new TalonSRX(RobotMap.GRABBER_MOTOR_RIGHT, false);
+    grabber = new Grabber(grabberMotorLeft, grabberMotorRight, new Solenoid(RobotMap.PCM_ADDR, RobotMap.BALL_HATCH_TOGGLE_PISTON));
     climber = new Climber(new Solenoid(RobotMap.PCM_ADDR, RobotMap.CLIMB_PISTON));
 
     // Drivetrain setup
@@ -171,6 +176,9 @@ public class TechnoTitan extends TimedRobot {
     SmartDashboard.putBoolean("Top Limit", elevator.isAtTop());
     SmartDashboard.putNumber("Wrist angle", wrist.getAngle());
     SmartDashboard.putNumber("Elevator height", elevator.getHeight());
+
+    SmartDashboard.putNumber("Grabber speed left", grabberMotorLeft.getSpeed());
+    SmartDashboard.putNumber("Grabber speed right", grabberMotorRight.getSpeed());
 
     wristMotor.postEstimatedKf("Wrist");
     elevatorMotor.postEstimatedKf("Elevator");
