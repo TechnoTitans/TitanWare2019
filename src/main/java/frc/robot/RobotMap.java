@@ -34,7 +34,7 @@ public class RobotMap {
 
   // Talons with encoders
   public static final int LEFT_TALON_E = 5, RIGHT_TALON_E = 8;
-
+  //public static final int LEFT_TALON_E = 8, RIGHT_TALON_E = 5;
   // Other talons
   public static final int LEFT_TALON_2 = 6, LEFT_TALON_3 = 4, RIGHT_TALON_2 = 9, RIGHT_TALON_3 = 7;
 
